@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>稲荷&チキン Bio（ビオ）| Inari & Chicken BIO</title>
+<meta name="description" content="注文を受けてから作る、できたておにぎりとガーリックチキンの専門店。沖縄県南城市のテイクアウト専門店「Bio（ビオ）」。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   リセット & ベース
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;
+  --bg-light:#faf7f2;
+  --bg-dark:#1c1a17;
+  --bg-scene:#2a2218;
+  --text:#1a1a1a;
+  --text-mid:#666;
+  --text-light:#aaa;
+  --orange:#FF6B2B;
+  --orange-y:#FFD900;
+  --border:#e8e2da;
+  --inner:1160px;
+  --pad:clamp(20px,4vw,60px);
+  --f-en:'Josefin Sans',sans-serif;
+  --f-sub:'Plus Jakarta Sans',sans-serif;
+  --f-ja:'Noto Sans JP',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--f-ja);color:var(--text);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;width:100%;height:100%;object-fit:cover}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+
+/* フェードイン */
+[data-sr]{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+[data-sr].is-visible{opacity:1;transform:none}
+
+/* レスポンシブ */
+.u-pc{display:block}
+.u-sp{display:none}
+@media(max-width:767px){.u-pc{display:none}.u-sp{display:block}}
+
+/* ============================================================
+   共通パーツ
+   ============================================================ */
+.c-title{
+  font-family:var(--f-en);
+  font-size:clamp(3.4rem,6vw,7rem);
+  font-weight:700;
+  letter-spacing:.02em;
+  line-height:1;
+  color:var(--text)
+}
+.c-title--white{color:#fff}
+.c-title--orange{color:var(--orange)}
+
+.c-more{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-family:var(--f-en);
+  font-size:1.3rem;
+  font-weight:600;
+  letter-spacing:.12em;
+  padding:12px 32px;
+  border:1.5px solid var(--text);
+  transition:background .25s,color .25s
+}
+.c-more::after{content:'';display:block;width:20px;height:1px;background:currentColor;transition:width .25s}
+.c-more:hover{background:var(--text);color:#fff}
+.c-more:hover::after{width:28px}
+.c-more--orange{border-color:var(--orange);color:var(--orange)}
+.c-more--orange:hover{background:var(--orange);color:#fff}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.l-header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s}
+.l-header.is-scrolled .l-header__bar{background:rgba(255,255,255,.96);backdrop-filter:blur(8px);box-shadow:0 1px 0 var(--border)}
+
+.l-header__bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--pad);height:60px;transition:background .3s,box-shadow .3s
+}
+
+.l-header__nav{display:flex;gap:32px}
+.l-header__nav a{
+  font-family:var(--f-en);font-size:1.3rem;font-weight:600;
+  letter-spacing:.1em;color:var(--text);transition:opacity .2s
+}
+.l-header__nav a:hover{opacity:.55}
+
+/* ハンバーガー */
+.l-ham{
+  display:flex;flex-direction:column;justify-content:center;gap:5px;
+  width:36px;height:36px;background:none;border:none;cursor:pointer;padding:4px
+}
+.l-ham span{display:block;width:100%;height:1.5px;background:var(--text);transition:transform .3s,opacity .3s;transform-origin:center}
+.l-ham.is-open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.l-ham.is-open span:nth-child(2){opacity:0}
+.l-ham.is-open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* ドロワー */
+.l-drawer{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px var(--pad) 40px;
+  opacity:0;pointer-events:none;transition:opacity .35s;z-index:90
+}
+.l-drawer.is-open{opacity:1;pointer-events:all}
+.l-drawer__main{margin-bottom:40px}
+.l-drawer__link{
+  display:flex;align-items:baseline;gap:16px;
+  padding:14px 0;border-bottom:1px solid var(--border)
+}
+.l-drawer__link .en{font-family:var(--f-en);font-size:2.8rem;font-weight:700;letter-spacing:.04em}
+.l-drawer__link .ja{font-size:1.2rem;color:var(--text-mid)}
+.l-drawer__sub{margin-bottom:32px}
+.l-drawer__link-sub{display:flex;align-items:baseline;gap:12px;padding:10px 0}
+.l-drawer__link-sub .en{font-family:var(--f-en);font-size:1.6rem;font-weight:600;letter-spacing:.06em}
+.l-drawer__link-sub .ja{font-size:1.1rem;color:var(--text-mid)}
+.l-drawer__sns{display:flex;gap:20px}
+.l-drawer__sns a{color:var(--text);transition:opacity .2s}
+.l-drawer__sns a:hover{opacity:.5}
+
+/* ============================================================
+   HERO（A: Attention）
+   Z視線: 全画面写真。左下にロゴ・タグライン
+   ============================================================ */
+.p-hero{position:relative;width:100%;height:100svh;min-height:600px;overflow:hidden}
+.p-hero__slides{position:absolute;inset:0}
+.p-hero__slide{position:absolute;inset:0;opacity:0;transition:opacity 1.4s ease}
+.p-hero__slide.is-active{opacity:1}
+
+/* テキスト（Z動線：左下） */
+.p-hero__text{
+  position:absolute;bottom:clamp(40px,8vh,80px);left:var(--pad);
+  color:#fff;z-index:2
+}
+.p-hero__logo{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.p-hero__logo-en{
+  font-family:var(--f-en);font-size:clamp(3rem,5.5vw,5.6rem);
+  font-weight:700;letter-spacing:.04em;line-height:1;
+  text-shadow:0 2px 20px rgba(0,0,0,.45)
+}
+.p-hero__logo-ja{
+  font-size:clamp(1.3rem,2vw,1.8rem);font-weight:300;
+  letter-spacing:.2em;text-shadow:0 1px 12px rgba(0,0,0,.4)
+}
+.p-hero__logo-type{
+  font-family:var(--f-en);font-size:clamp(.9rem,1.3vw,1.3rem);
+  font-weight:300;letter-spacing:.35em;opacity:.8
+}
+.p-hero__tagline{
+  font-size:clamp(1.1rem,1.8vw,1.5rem);font-weight:300;
+  letter-spacing:.15em;text-shadow:0 1px 12px rgba(0,0,0,.5)
+}
+
+/* ============================================================
+   STORY（I: Interest）
+   Z視線: 左=写真2枚（感情訴求）、右=テキスト＋CTA
+   ============================================================ */
+.p-story{padding:clamp(60px,10vw,120px) var(--pad)}
+.p-story__inner{
+  max-width:var(--inner);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(40px,6vw,80px);align-items:center
+}
+
+.p-story__imgs{position:relative;height:520px}
+.p-story__img{position:absolute;overflow:hidden}
+.p-story__img--main{width:78%;height:78%;top:0;left:0;background:#c8a888}
+.p-story__img--sub{width:55%;height:52%;bottom:0;right:0;background:#a07850;border:6px solid var(--bg)}
+
+.p-story__texts{display:flex;flex-direction:column;gap:24px}
+.p-story__lead{
+  font-size:clamp(1.8rem,2.8vw,2.4rem);font-weight:700;
+  line-height:1.6;letter-spacing:.04em
+}
+.p-story__body{
+  font-size:clamp(1.3rem,1.5vw,1.5rem);line-height:2.1;
+  color:var(--text-mid)
+}
+
+@media(max-width:1023px){
+  .p-story__inner{grid-template-columns:1fr;gap:40px}
+  .p-story__imgs{height:360px}
+}
+@media(max-width:767px){
+  .p-story__imgs{height:280px}
+  .p-story__img--sub{border-width:4px}
+}
+
+/* ============================================================
+   FEATURES（D: Desire①）
+   素材・商品の強みで「欲しい」気持ちを高める
+   ============================================================ */
+.p-features{padding:clamp(60px,10vw,120px) var(--pad);background:var(--bg-light)}
+.p-features__inner{max-width:var(--inner);margin:0 auto}
+.p-features__heading{margin-bottom:48px}
+
+.p-features__layout{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:60px;align-items:start
+}
+.p-features__photo{aspect-ratio:4/5;overflow:hidden;background:#c8a070}
+
+.p-features__items{display:flex;flex-direction:column;gap:32px;justify-content:center}
+
+/* メインアイテム（いなり） */
+.p-feat-main{padding:28px;background:var(--bg);border:1.5px solid var(--border)}
+.p-feat-main__num{
+  font-family:var(--f-en);font-size:6rem;font-weight:700;
+  line-height:1;color:var(--orange);opacity:.2;margin-bottom:-16px
+}
+.p-feat-main__heading{font-size:1.9rem;font-weight:700;margin-bottom:10px}
+.p-feat-main__text{font-size:1.3rem;line-height:1.9;color:var(--text-mid);margin-bottom:12px}
+.p-feat-main__quality{font-size:1.2rem;font-weight:700;color:var(--orange);margin-bottom:8px}
+.p-feat-main__list li{
+  font-size:1.3rem;padding-left:16px;position:relative;
+  color:var(--text-mid);line-height:1.8
+}
+.p-feat-main__list li::before{content:'•';position:absolute;left:0;color:var(--orange)}
+
+/* サブアイテム（チキン・その他） */
+.p-feat-sub{display:flex;gap:16px;align-items:flex-start;padding-bottom:28px;border-bottom:1px solid var(--border)}
+.p-feat-sub:last-child{border-bottom:none;padding-bottom:0}
+.p-feat-sub__num{
+  font-family:var(--f-en);font-size:3.6rem;font-weight:700;
+  line-height:1;color:var(--orange);flex-shrink:0;width:48px
+}
+.p-feat-sub__heading{font-size:1.5rem;font-weight:700;margin-bottom:6px}
+.p-feat-sub__text{font-size:1.2rem;line-height:1.8;color:var(--text-mid)}
+
+@media(max-width:1023px){
+  .p-features__layout{grid-template-columns:1fr;gap:40px}
+  .p-features__photo{aspect-ratio:16/7;max-height:300px}
+}
+
+/* ============================================================
+   MENU（D: Desire②）
+   料理写真で食欲を刺激する
+   ============================================================ */
+.p-menu{padding:clamp(60px,10vw,120px) var(--pad) 0}
+.p-menu__inner{max-width:var(--inner);margin:0 auto 56px}
+.p-menu__head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:40px
+}
+.p-menu__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.p-menu__item{overflow:hidden}
+.p-menu__link{display:block}
+.p-menu__thumb{aspect-ratio:4/3;overflow:hidden;transition:transform .4s ease}
+.p-menu__thumb img{transition:transform .4s ease}
+.p-menu__link:hover .p-menu__thumb img{transform:scale(1.06)}
+.p-menu__label{display:flex;flex-direction:column;gap:3px;padding:14px 4px 6px}
+.p-menu__en{
+  font-family:var(--f-en);font-size:1.6rem;font-weight:600;
+  letter-spacing:.06em;line-height:1
+}
+.p-menu__ja{font-size:1.1rem;color:var(--text-mid);letter-spacing:.04em}
+.p-menu__btn{margin-top:28px}
+
+@media(max-width:767px){
+  .p-menu__grid{grid-template-columns:repeat(2,1fr);gap:1px}
+}
+
+/* ============================================================
+   TICKER（ブランドワード無限スクロール）
+   ============================================================ */
+.c-ticker{overflow:hidden;padding:18px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg)}
+.c-ticker__inner{
+  display:flex;width:max-content;
+  animation:ticker 30s linear infinite
+}
+.c-ticker__item{
+  font-family:var(--f-en);font-size:1.3rem;font-weight:300;
+  letter-spacing:.2em;color:var(--text-light);
+  white-space:nowrap;padding:0 36px
+}
+.c-ticker__item::after{content:'✦';margin-left:36px;font-size:.8rem;opacity:.4}
+@keyframes ticker{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+
+/* ============================================================
+   SCENE（M: Memory）
+   使用シーン・店内の雰囲気でブランドを記憶に刻む
+   ============================================================ */
+.p-scene{background:var(--bg-scene);padding:clamp(60px,10vw,120px) 0;overflow:hidden}
+.p-scene__head{max-width:var(--inner);margin:0 auto clamp(32px,5vw,56px);padding:0 var(--pad)}
+.p-scene__gallery{
+  display:flex;gap:8px;overflow-x:auto;
+  padding:0 var(--pad) 12px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent;
+  cursor:grab
+}
+.p-scene__gallery:active{cursor:grabbing}
+.p-scene__gallery::-webkit-scrollbar{height:3px}
+.p-scene__gallery::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px}
+.p-scene__photo{flex-shrink:0;width:240px;height:320px;overflow:hidden;background:#5c4433;opacity:.82;transition:opacity .3s}
+.p-scene__photo:hover{opacity:1}
+.p-scene__photo--wide{width:320px}
+@media(max-width:767px){
+  .p-scene__photo{width:190px;height:260px}
+  .p-scene__photo--wide{width:250px}
+}
+
+/* ============================================================
+   ORDER（A: Action①）
+   電話番号大きく・行動を促す
+   ============================================================ */
+.p-order{padding:clamp(60px,10vw,120px) var(--pad);background:var(--bg)}
+.p-order__inner{
+  max-width:var(--inner);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(40px,6vw,80px);align-items:center
+}
+.p-order__texts{display:flex;flex-direction:column;gap:24px}
+.p-order__lead{
+  font-size:clamp(1.5rem,2vw,1.8rem);font-weight:400;
+  line-height:1.8;color:var(--text-mid)
+}
+.p-order__tel-wrap{margin:8px 0}
+.p-order__tel-label{font-size:1.2rem;letter-spacing:.1em;color:var(--text-mid);margin-bottom:6px}
+.p-order__tel{
+  font-family:var(--f-en);font-size:clamp(2.8rem,4.5vw,4.4rem);
+  font-weight:700;letter-spacing:.04em;color:var(--text)
+}
+.p-order__tel:hover{color:var(--orange)}
+.p-order__hours{font-size:1.3rem;line-height:1.9;color:var(--text-mid)}
+.p-order__hours strong{color:var(--text);font-weight:700}
+.p-order__photo{aspect-ratio:4/5;overflow:hidden;background:#c8a070}
+
+@media(max-width:1023px){
+  .p-order__inner{grid-template-columns:1fr;gap:40px}
+  .p-order__photo{aspect-ratio:16/7}
+}
+
+/* ============================================================
+   ACCESS（A: Action②）
+   住所・地図で来店を促す
+   ============================================================ */
+.p-access{padding:clamp(60px,10vw,120px) var(--pad);background:var(--bg-light)}
+.p-access__inner{max-width:var(--inner);margin:0 auto}
+.p-access__heading{margin-bottom:48px}
+
+.p-access__layout{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:start}
+.p-access__info{display:flex;flex-direction:column;gap:28px}
+
+.p-access__block-label{
+  font-family:var(--f-en);font-size:1.1rem;font-weight:600;
+  letter-spacing:.15em;color:var(--orange);margin-bottom:8px
+}
+.p-access__block-text{font-size:1.4rem;line-height:1.9;color:var(--text-mid)}
+.p-access__block-text strong{color:var(--text);font-weight:700}
+.p-access__sns{display:flex;gap:16px;align-items:center}
+.p-access__sns a{
+  display:flex;align-items:center;gap:8px;
+  font-size:1.2rem;letter-spacing:.05em;
+  color:var(--text-mid);transition:color .2s
+}
+.p-access__sns a:hover{color:var(--orange)}
+
+.p-access__map{overflow:hidden;border-radius:4px}
+.p-access__map iframe{width:100%;height:400px;border:none;display:block}
+
+@media(max-width:1023px){
+  .p-access__layout{grid-template-columns:1fr;gap:40px}
+  .p-access__map iframe{height:300px}
+}
+
+/* ============================================================
+   NEWS（M: Memory）
+   最新情報でリピート誘導
+   ============================================================ */
+.p-news{padding:clamp(60px,10vw,120px) var(--pad)}
+.p-news__inner{max-width:var(--inner);margin:0 auto}
+.p-news__head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px}
+.p-news__list{border-top:1px solid var(--border)}
+.p-news__item{border-bottom:1px solid var(--border)}
+.p-news__link{
+  display:flex;align-items:center;gap:24px;
+  padding:22px 0;transition:opacity .2s
+}
+.p-news__link:hover{opacity:.6}
+.p-news__meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.p-news__date{font-family:var(--f-sub);font-size:1.3rem;color:var(--text-mid);white-space:nowrap}
+.p-news__cat{
+  font-size:1.1rem;padding:3px 12px;
+  border:1px solid var(--border);white-space:nowrap;color:var(--text-mid)
+}
+.p-news__title{font-size:clamp(1.3rem,1.5vw,1.5rem);line-height:1.5}
+.p-news__btn{margin-top:32px}
+.p-news__sns{display:flex;gap:18px;margin-top:40px}
+.p-news__sns a{color:var(--text);transition:opacity .2s}
+.p-news__sns a:hover{opacity:.5}
+@media(max-width:767px){
+  .p-news__link{flex-direction:column;align-items:flex-start;gap:8px}
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.l-footer{background:var(--bg-dark);color:rgba(255,255,255,.8);padding:60px var(--pad) 28px}
+.l-footer__inner{max-width:var(--inner);margin:0 auto}
+.l-footer__logo{margin-bottom:48px}
+.l-footer__logo a{display:flex;flex-direction:column;gap:3px;width:fit-content}
+.l-footer__logo-en{
+  font-family:var(--f-en);font-size:2.8rem;font-weight:700;
+  letter-spacing:.04em;color:#fff;line-height:1
+}
+.l-footer__logo-sub{
+  font-family:var(--f-en);font-size:1.1rem;font-weight:300;
+  letter-spacing:.3em;color:rgba(255,255,255,.5)
+}
+
+.l-footer__body{
+  display:grid;grid-template-columns:1fr auto;gap:40px;
+  border-top:1px solid rgba(255,255,255,.08);
+  padding-top:40px;margin-bottom:48px
+}
+.l-footer__nav{display:grid;grid-template-columns:auto 1fr;gap:56px}
+.l-footer__nav-main{display:flex;flex-direction:column;gap:12px}
+.l-footer__nav-main a{
+  font-family:var(--f-en);font-size:1.3rem;font-weight:600;
+  letter-spacing:.1em;color:rgba(255,255,255,.8);transition:color .2s
+}
+.l-footer__nav-main a:hover{color:#fff}
+.l-footer__nav-sub{display:flex;flex-direction:column;gap:8px}
+.l-footer__nav-sub-head a{
+  font-family:var(--f-en);font-size:1.2rem;font-weight:600;
+  letter-spacing:.08em;color:rgba(255,255,255,.8)
+}
+.l-footer__nav-sub li:not(.l-footer__nav-sub-head) a{
+  font-size:1.1rem;color:rgba(255,255,255,.4);
+  letter-spacing:.04em;transition:color .2s
+}
+.l-footer__nav-sub li:not(.l-footer__nav-sub-head) a:hover{color:rgba(255,255,255,.8)}
+
+.l-footer__info{display:flex;flex-direction:column;gap:16px;align-items:flex-end}
+.l-footer__info-links{display:flex;flex-direction:column;gap:8px;text-align:right}
+.l-footer__info-links a{font-size:1.1rem;color:rgba(255,255,255,.4);transition:color .2s}
+.l-footer__info-links a:hover{color:rgba(255,255,255,.8)}
+.l-footer__sns{display:flex;gap:16px}
+.l-footer__sns a{color:rgba(255,255,255,.5);transition:color .2s}
+.l-footer__sns a:hover{color:#fff}
+
+.l-footer__copy{
+  text-align:center;font-size:1.1rem;color:rgba(255,255,255,.25);
+  border-top:1px solid rgba(255,255,255,.06);padding-top:24px
+}
+
+@media(max-width:1023px){
+  .l-footer__body{grid-template-columns:1fr}
+  .l-footer__nav{grid-template-columns:1fr}
+  .l-footer__info{align-items:flex-start}
+}
+
+/* ============================================================
+   ページトップボタン
+   ============================================================ */
+.totop{
+  position:fixed;bottom:28px;right:20px;
+  width:48px;height:48px;background:var(--text);color:#fff;
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s,transform .3s;z-index:50
+}
+.totop.is-visible{opacity:1;pointer-events:all}
+.totop:hover{transform:translateY(-4px)}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+  HEADER
+  ============================================================ -->
+<header class="l-header js-header">
+  <div class="l-header__bar">
+    <nav class="l-header__nav">
+      <a href="#menu">Menu</a>
+      <a href="#access">SHOP</a>
+      <a href="#news">NEWS</a>
+    </nav>
+    <button class="l-ham js-ham" aria-label="メニューを開く">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <nav class="l-drawer js-drawer">
+    <ul class="l-drawer__main">
+      <li><a href="#top" class="l-drawer__link"><span class="en">TOP</span><span class="ja">トップ</span></a></li>
+      <li><a href="#menu" class="l-drawer__link"><span class="en">Menu</span><span class="ja">メニュー</span></a></li>
+      <li><a href="#access" class="l-drawer__link"><span class="en">SHOP</span><span class="ja">店舗情報</span></a></li>
+      <li><a href="#news" class="l-drawer__link"><span class="en">NEWS</span><span class="ja">お知らせ</span></a></li>
+    </ul>
+    <ul class="l-drawer__sub">
+      <li><a href="#story" class="l-drawer__link-sub"><span class="en">ABOUT</span><span class="ja">Bio（ビオ）について</span></a></li>
+      <li><a href="#order" class="l-drawer__link-sub"><span class="en">ORDER</span><span class="ja">テイクアウト</span></a></li>
+    </ul>
+    <ul class="l-drawer__sns">
+      <li><a href="https://www.instagram.com/" target="_blank" aria-label="Instagram">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      </a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <!-- ============================================================
+    HERO（A: Attention）
+    注文を受けてから作る、できたてのおいしさを一目で伝える
+    ============================================================ -->
+  <section class="p-hero" id="top">
+    <div class="p-hero__slides js-slides">
+      <div class="p-hero__slide is-active" style="background:#7a5028">
+        <img src="bio/menu-inari-chicken.jpg" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="p-hero__slide" style="background:#5c3a1a">
+        <img src="bio/menu-chicken.jpg" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="p-hero__slide" style="background:#8c6030">
+        <img src="bio/menu-inari.jpg" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="p-hero__slide" style="background:#3a4a28">
+        <img src="bio/sign-orange.jpg" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="p-hero__slide" style="background:#6a4820">
+        <img src="bio/open-sign.jpg" alt="" onerror="this.style.display='none'">
+      </div>
+    </div>
+
+    <div class="p-hero__text" data-sr>
+      <h1 class="p-hero__logo">
+        <span class="p-hero__logo-en">Inari &amp; Chicken</span>
+        <span class="p-hero__logo-ja">稲荷&amp;チキン Bio（ビオ）</span>
+        <span class="p-hero__logo-type">takeout specialty store</span>
+      </h1>
+      <p class="p-hero__tagline">できたて、片手のごちそう。</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    STORY（I: Interest）
+    Bio誕生のストーリーで共感を生む
+    ============================================================ -->
+  <section class="p-story" id="story">
+    <div class="p-story__inner">
+      <div class="p-story__imgs u-pc" data-sr>
+        <figure class="p-story__img p-story__img--main">
+          <img src="bio/menu-set.jpg" alt="いなり＋チキンセット" onerror="this.style.display='none'">
+        </figure>
+        <figure class="p-story__img p-story__img--sub">
+          <img src="bio/sign-orange.jpg" alt="Bio（ビオ）の看板" onerror="this.style.display='none'">
+        </figure>
+      </div>
+
+      <div class="p-story__texts">
+        <div data-sr>
+          <h2 class="c-title">STORY</h2>
+        </div>
+        <p class="p-story__lead" data-sr>
+          沖縄のソウルフードを、<br>
+          できたてで。
+        </p>
+
+        <div class="p-story__imgs u-sp" data-sr>
+          <figure class="p-story__img p-story__img--main">
+            <img src="bio/menu-set.jpg" alt="" onerror="this.style.display='none'">
+          </figure>
+          <figure class="p-story__img p-story__img--sub">
+            <img src="bio/sign-orange.jpg" alt="" onerror="this.style.display='none'">
+          </figure>
+        </div>
+
+        <p class="p-story__body" data-sr>
+          いなり寿司とガーリックチキン——それぞれが沖縄で長く愛されてきた味です。<br>
+          コンビニでも買えるけれど、注文を受けてから手作りしたできたては全然違う。ふかふかで、あつあつ。<br><br>
+          沖縄県南城市に生まれた「Bio（ビオ）」は、より多くの方に愛情のこもった最も美味しいできたてを食べてほしい——その想いから誕生したテイクアウト専門店です。
+        </p>
+        <div data-sr>
+          <a href="#features" class="c-more">MORE</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    FEATURES（D: Desire①）
+    看板商品の特徴・品質で「食べたい」気持ちを高める
+    ============================================================ -->
+  <section class="p-features" id="features">
+    <div class="p-features__inner">
+      <div class="p-features__heading">
+        <h2 class="c-title" data-sr>Features</h2>
+      </div>
+      <div class="p-features__layout">
+        <div class="p-features__photo" data-sr>
+          <img src="bio/menu-inari-chicken.jpg" alt="いなり寿司とガーリックチキン" onerror="this.style.display='none'">
+        </div>
+
+        <div class="p-features__items">
+          <div class="p-feat-main" data-sr>
+            <p class="p-feat-main__num">01</p>
+            <h3 class="p-feat-main__heading">さっぱりいなり寿司</h3>
+            <p class="p-feat-main__text">
+              甘みを抑えたさっぱり味の油揚げと、ふっくら炊いたご飯が絶妙なバランス。<br>
+              注文を受けてから握る、できたての温かさが一番の自慢です。
+            </p>
+            <p class="p-feat-main__quality">Bio品質</p>
+            <ol class="p-feat-main__list">
+              <li>注文後に手作り（できたて保証）</li>
+              <li>保存料・添加物不使用</li>
+              <li>沖縄県産食材にこだわり</li>
+            </ol>
+          </div>
+
+          <div class="p-feat-sub" data-sr>
+            <span class="p-feat-sub__num">02</span>
+            <div>
+              <h3 class="p-feat-sub__heading">やみつきガーリックチキン</h3>
+              <p class="p-feat-sub__text">ジューシーな鶏肉にガーリックがたまらない一品。一口食べたらやみつきになると評判。揚げたてのサクサク食感をお楽しみください。</p>
+            </div>
+          </div>
+
+          <div class="p-feat-sub" data-sr>
+            <span class="p-feat-sub__num">03</span>
+            <div>
+              <h3 class="p-feat-sub__heading">いなり＋チキン セット</h3>
+              <p class="p-feat-sub__text">いなりとチキン、どちらも食べたい方のために。両方の味が楽しめるお得なセットメニューです。¥360〜でご提供。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    MENU（D: Desire②）
+    メニューカテゴリを写真で見せる
+    ============================================================ -->
+  <section class="p-menu" id="menu">
+    <div class="p-menu__inner">
+      <div class="p-menu__head">
+        <h2 class="c-title" data-sr>Menu</h2>
+        <div class="u-pc" data-sr><a href="#order" class="c-more">ORDER</a></div>
+      </div>
+
+      <ul class="p-menu__grid">
+        <li class="p-menu__item" data-sr>
+          <a href="#order" class="p-menu__link">
+            <div class="p-menu__thumb" style="background:#a07840"><img src="bio/menu-inari.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="p-menu__label">
+              <span class="p-menu__en">standard</span>
+              <span class="p-menu__ja">さっぱりいなり寿司</span>
+            </div>
+          </a>
+        </li>
+        <li class="p-menu__item" data-sr>
+          <a href="#order" class="p-menu__link">
+            <div class="p-menu__thumb" style="background:#8c5020"><img src="bio/menu-chicken.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="p-menu__label">
+              <span class="p-menu__en">special</span>
+              <span class="p-menu__ja">やみつきガーリックチキン</span>
+            </div>
+          </a>
+        </li>
+        <li class="p-menu__item" data-sr>
+          <a href="#order" class="p-menu__link">
+            <div class="p-menu__thumb" style="background:#7a6030"><img src="bio/menu-set.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="p-menu__label">
+              <span class="p-menu__en">SET MENU</span>
+              <span class="p-menu__ja">いなり＋チキンセット</span>
+            </div>
+          </a>
+        </li>
+        <li class="p-menu__item" data-sr>
+          <a href="#order" class="p-menu__link">
+            <div class="p-menu__thumb" style="background:#6a7840"><img src="bio/open-sign.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="p-menu__label">
+              <span class="p-menu__en">daily</span>
+              <span class="p-menu__ja">本日のいなり（日替わり）</span>
+            </div>
+          </a>
+        </li>
+        <li class="p-menu__item" data-sr>
+          <a href="#order" class="p-menu__link">
+            <div class="p-menu__thumb" style="background:#b07838"><img src="bio/menu-inari-chicken.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="p-menu__label">
+              <span class="p-menu__en">BOX</span>
+              <span class="p-menu__ja">いなりボックス（5個入り）</span>
+            </div>
+          </a>
+        </li>
+        <li class="p-menu__item" data-sr>
+          <a href="#order" class="p-menu__link">
+            <div class="p-menu__thumb" style="background:#905028"><img src="bio/sign-orange.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="p-menu__label">
+              <span class="p-menu__en">DRINK</span>
+              <span class="p-menu__ja">さんぴん茶・コーヒー</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <div class="p-menu__btn u-sp" data-sr>
+        <a href="#order" class="c-more">ORDER</a>
+      </div>
+    </div>
+
+    <!-- ティッカー -->
+    <div class="c-ticker">
+      <div class="c-ticker__inner">
+        <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+        <span class="c-ticker__item">できたて・片手のごちそう</span>
+        <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+        <span class="c-ticker__item">できたて・片手のごちそう</span>
+        <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+        <span class="c-ticker__item">できたて・片手のごちそう</span>
+        <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+        <span class="c-ticker__item">できたて・片手のごちそう</span>
+        <!-- duplicate for seamless loop -->
+        <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+        <span class="c-ticker__item">できたて・片手のごちそう</span>
+        <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+        <span class="c-ticker__item">できたて・片手のごちそう</span>
+        <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+        <span class="c-ticker__item">できたて・片手のごちそう</span>
+        <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+        <span class="c-ticker__item">できたて・片手のごちそう</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    SCENE（M: Memory）
+    フォトギャラリーでブランドイメージを印象づける
+    ============================================================ -->
+  <section class="p-scene">
+    <div class="p-scene__head">
+      <h2 class="c-title c-title--white" data-sr>scene</h2>
+    </div>
+    <div class="p-scene__gallery" data-sr>
+      <figure class="p-scene__photo" style="background:#7a5028"><img src="bio/menu-inari.jpg" alt="" onerror="this.style.display='none'"></figure>
+      <figure class="p-scene__photo p-scene__photo--wide" style="background:#5c3a18"><img src="bio/menu-chicken.jpg" alt="" onerror="this.style.display='none'"></figure>
+      <figure class="p-scene__photo" style="background:#8c6030"><img src="bio/menu-inari-chicken.jpg" alt="" onerror="this.style.display='none'"></figure>
+      <figure class="p-scene__photo p-scene__photo--wide" style="background:#3a4a28"><img src="bio/sign-orange.jpg" alt="" onerror="this.style.display='none'"></figure>
+      <figure class="p-scene__photo" style="background:#6a4820"><img src="bio/open-sign.jpg" alt="" onerror="this.style.display='none'"></figure>
+      <figure class="p-scene__photo" style="background:#905030"><img src="bio/menu-set.jpg" alt="" onerror="this.style.display='none'"></figure>
+      <figure class="p-scene__photo p-scene__photo--wide" style="background:#5a4030"><img src="bio/menu-inari.jpg" alt="" onerror="this.style.display='none'"></figure>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    ORDER（A: Action①）
+    テイクアウト注文・電話番号を大きく表示
+    ============================================================ -->
+  <section class="p-order" id="order">
+    <div class="p-order__inner">
+      <div class="p-order__texts">
+        <div data-sr><h2 class="c-title c-title--orange">ORDER</h2></div>
+        <p class="p-order__lead" data-sr>
+          全メニュー、ご注文を受けてからお作りします。<br>
+          お電話でのご注文・お問い合わせはこちら。
+        </p>
+        <div class="p-order__tel-wrap" data-sr>
+          <p class="p-order__tel-label">TEL</p>
+          <a href="tel:0989444191" class="p-order__tel">098-944-4191</a>
+        </div>
+        <div class="p-order__hours" data-sr>
+          <p><strong>営業時間</strong> 火〜日 10:00〜18:00</p>
+          <p><strong>定休日</strong> 月曜日</p>
+          <p><strong>お支払い</strong> 現金のみ</p>
+        </div>
+      </div>
+      <div class="p-order__photo" data-sr>
+        <img src="bio/menu-chicken.jpg" alt="やみつきガーリックチキン" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    ACCESS（A: Action②）
+    住所・地図で来店を後押し
+    ============================================================ -->
+  <section class="p-access" id="access">
+    <div class="p-access__inner">
+      <div class="p-access__heading">
+        <h2 class="c-title" data-sr>ACCESS</h2>
+      </div>
+      <div class="p-access__layout">
+        <div class="p-access__info">
+          <div data-sr>
+            <p class="p-access__block-label">STORE NAME</p>
+            <p class="p-access__block-text"><strong>稲荷&amp;チキン Bio（ビオ）</strong></p>
+          </div>
+          <div data-sr>
+            <p class="p-access__block-label">ADDRESS</p>
+            <p class="p-access__block-text">
+              〒901-1303<br>
+              沖縄県南城市大里字仲間1155<br>
+              アトール敷地内
+            </p>
+          </div>
+          <div data-sr>
+            <p class="p-access__block-label">TEL</p>
+            <p class="p-access__block-text"><a href="tel:0989444191"><strong>098-944-4191</strong></a></p>
+          </div>
+          <div data-sr>
+            <p class="p-access__block-label">HOURS</p>
+            <p class="p-access__block-text">
+              <strong>火〜日</strong> 10:00〜18:00<br>
+              定休日：月曜日
+            </p>
+          </div>
+          <div data-sr>
+            <p class="p-access__block-label">PAYMENT</p>
+            <p class="p-access__block-text">現金のみ</p>
+          </div>
+          <div class="p-access__sns" data-sr>
+            <a href="https://www.instagram.com/" target="_blank">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              Instagram
+            </a>
+          </div>
+        </div>
+
+        <div class="p-access__map" data-sr>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.5!2d127.79!3d26.15!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z5re35Z2C5biC5Y2X5Yy65aSn6Zmk!5e0!3m2!1sja!2sjp!4v1"
+            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            title="稲荷&チキン Bio（ビオ）の地図">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    NEWS（M: Memory）
+    最新情報・SNSでリピート誘導
+    ============================================================ -->
+  <section class="p-news" id="news">
+    <div class="p-news__inner">
+      <div class="p-news__head">
+        <h2 class="c-title" data-sr>NEWS</h2>
+        <div class="u-pc" data-sr><a href="#" class="c-more c-more--orange">MORE</a></div>
+      </div>
+
+      <ul class="p-news__list">
+        <li class="p-news__item" data-sr>
+          <a href="#" class="p-news__link">
+            <div class="p-news__meta">
+              <time class="p-news__date">2026.04.01</time>
+              <span class="p-news__cat">お知らせ</span>
+            </div>
+            <p class="p-news__title">春の新メニュー「さくらいなり」が期間限定登場！</p>
+          </a>
+        </li>
+        <li class="p-news__item" data-sr>
+          <a href="#" class="p-news__link">
+            <div class="p-news__meta">
+              <time class="p-news__date">2026.03.15</time>
+              <span class="p-news__cat">お知らせ</span>
+            </div>
+            <p class="p-news__title">おかげさまで3周年！感謝キャンペーン実施中（〜4/30）</p>
+          </a>
+        </li>
+        <li class="p-news__item" data-sr>
+          <a href="#" class="p-news__link">
+            <div class="p-news__meta">
+              <time class="p-news__date">2026.03.01</time>
+              <span class="p-news__cat">重要</span>
+            </div>
+            <p class="p-news__title">営業時間・定休日変更のご案内（3月1日より）</p>
+          </a>
+        </li>
+      </ul>
+
+      <div class="p-news__sns" data-sr>
+        <a href="https://www.instagram.com/" target="_blank" class="p-news__sns" aria-label="Instagram">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+      <div class="p-news__btn u-sp" data-sr>
+        <a href="#" class="c-more c-more--orange">MORE</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ティッカー（下部） -->
+  <div class="c-ticker" style="margin-top:48px">
+    <div class="c-ticker__inner">
+      <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+      <span class="c-ticker__item">できたて・片手のごちそう</span>
+      <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+      <span class="c-ticker__item">できたて・片手のごちそう</span>
+      <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+      <span class="c-ticker__item">できたて・片手のごちそう</span>
+      <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+      <span class="c-ticker__item">できたて・片手のごちそう</span>
+      <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+      <span class="c-ticker__item">できたて・片手のごちそう</span>
+      <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+      <span class="c-ticker__item">できたて・片手のごちそう</span>
+      <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+      <span class="c-ticker__item">できたて・片手のごちそう</span>
+      <span class="c-ticker__item">Inari &amp; Chicken Bio</span>
+      <span class="c-ticker__item">できたて・片手のごちそう</span>
+    </div>
+  </div>
+</main>
+
+<!-- ============================================================
+  FOOTER
+  ============================================================ -->
+<footer class="l-footer">
+  <div class="l-footer__inner">
+    <div class="l-footer__logo">
+      <a href="#top">
+        <span class="l-footer__logo-en">Inari &amp; Chicken Bio</span>
+        <span class="l-footer__logo-sub">takeout specialty store</span>
+      </a>
+    </div>
+
+    <div class="l-footer__body">
+      <nav class="l-footer__nav">
+        <ul class="l-footer__nav-main">
+          <li><a href="#news">NEWS</a></li>
+          <li><a href="#story">ABOUT</a></li>
+          <li><a href="#menu">MENU</a></li>
+          <li><a href="#access">SHOP</a></li>
+          <li><a href="#order">ORDER</a></li>
+        </ul>
+        <ul class="l-footer__nav-sub">
+          <li class="l-footer__nav-sub-head"><a href="#menu">MENU</a></li>
+          <li><a href="#menu">さっぱりいなり寿司</a></li>
+          <li><a href="#menu">やみつきガーリックチキン</a></li>
+          <li><a href="#menu">いなり＋チキンセット</a></li>
+          <li><a href="#menu">いなりボックス</a></li>
+          <li><a href="#menu">日替わりいなり</a></li>
+        </ul>
+      </nav>
+
+      <div class="l-footer__info">
+        <ul class="l-footer__info-links">
+          <li><a href="#">プライバシーポリシー</a></li>
+        </ul>
+        <ul class="l-footer__sns">
+          <li><a href="https://www.instagram.com/" target="_blank" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="l-footer__copy"><small>&copy; 2024 稲荷&amp;チキン Bio（ビオ）All rights reserved.</small></p>
+  </div>
+</footer>
+
+<button class="totop js-totop" aria-label="ページトップへ">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ① ヒーロースライダー */
+  var slides  = document.querySelectorAll('.js-slides .p-hero__slide');
+  var current = 0;
+  if(slides.length > 1){
+    setInterval(function(){
+      slides[current].classList.remove('is-active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('is-active');
+    }, 4500);
+  }
+
+  /* ② ハンバーガーメニュー */
+  var ham    = document.querySelector('.js-ham');
+  var drawer = document.querySelector('.js-drawer');
+  if(ham && drawer){
+    ham.addEventListener('click', function(){
+      var open = ham.classList.toggle('is-open');
+      drawer.classList.toggle('is-open', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+    drawer.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        ham.classList.remove('is-open');
+        drawer.classList.remove('is-open');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+
+  /* ③ ヘッダースクロール検知 */
+  var header = document.querySelector('.js-header');
+  window.addEventListener('scroll', function(){
+    if(!header) return;
+    header.classList.toggle('is-scrolled', window.scrollY > 60);
+  }, {passive:true});
+
+  /* ④ スクロールフェードイン */
+  var targets = document.querySelectorAll('[data-sr]');
+  if('IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('is-visible'); obs.unobserve(e.target); }
+      });
+    }, {threshold:0.08, rootMargin:'0px 0px -40px 0px'});
+    targets.forEach(function(el){ obs.observe(el); });
+  } else {
+    targets.forEach(function(el){ el.classList.add('is-visible'); });
+  }
+
+  /* ⑤ ページトップ */
+  var totop = document.querySelector('.js-totop');
+  if(totop){
+    window.addEventListener('scroll', function(){
+      totop.classList.toggle('is-visible', window.scrollY > 400);
+    }, {passive:true});
+    totop.addEventListener('click', function(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  }
+
+  /* ⑥ Sceneドラッグスクロール */
+  var gallery = document.querySelector('.p-scene__gallery');
+  if(gallery){
+    var isDrag = false, startX, scrollLeft;
+    gallery.addEventListener('mousedown', function(e){
+      isDrag = true; startX = e.pageX - gallery.offsetLeft;
+      scrollLeft = gallery.scrollLeft; gallery.style.userSelect = 'none';
+    });
+    document.addEventListener('mouseup', function(){ isDrag = false; gallery.style.userSelect = ''; });
+    gallery.addEventListener('mousemove', function(e){
+      if(!isDrag) return;
+      e.preventDefault();
+      gallery.scrollLeft = scrollLeft - (e.pageX - gallery.offsetLeft - startX) * 1.2;
+    });
+  }
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>稲荷&amp;チキン Bio（ビオ） | テイクアウト専門 沖縄・南城市</title>
+<meta name="description" content="沖縄・南城市のテイクアウト専門店。やさしいいなり寿司とやみつきガーリックチキンの「稲荷&チキン Bio（ビオ）」。南城市アトール敷地内。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Caveat:wght@400;600;700&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:62.5%;scroll-behavior:smooth}
+body{
+  font-family:'Klee One','Noto Sans JP',sans-serif;
+  background:#faf5e4;color:#1a1a1a;
+  overflow-x:hidden;line-height:1.8;
+}
+img{max-width:100%;height:auto;display:block}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --cream:#faf5e4;
+  --cream2:#f2ebd6;
+  --orange:#FF6B2B;
+  --yellow:#FFD900;
+  --olive:#3d3828;      /* ORDER section — deep, premium */
+  --dark:#1a1a1a;
+  --brown:#5c3d2e;
+  --white:#ffffff;
+  --inner:1100px;
+  --pad:clamp(24px,5vw,72px);
+}
+
+/* ============================================================
+   COMMON: Section Heading
+   ============================================================ */
+.c-head{text-align:center;margin-bottom:72px}
+.c-head__en{
+  display:inline-block;
+  font-family:'Caveat',cursive;font-size:1.9rem;font-weight:700;
+  color:var(--dark);background:var(--yellow);
+  padding:5px 22px;border-radius:100px;
+  border:2.5px solid var(--dark);
+  margin-bottom:16px;letter-spacing:.06em;
+}
+.c-head__ja{
+  font-family:'Caveat',cursive;
+  font-size:clamp(5.2rem,8.5vw,9.6rem);font-weight:700;
+  color:var(--dark);line-height:1.0;
+  letter-spacing:.02em;
+  margin-bottom:14px;
+  /* チョーク感：SVGフィルター＋ラフなテキストシャドウ */
+  filter:url(#chalk);
+  text-shadow:2px 2px 0 rgba(0,0,0,.12),-1px -1px 0 rgba(255,255,255,.25);
+}
+.c-head__sub{font-size:1.6rem;color:#888;letter-spacing:.04em}
+
+/* Scroll reveal */
+[data-sr]{
+  opacity:0;transform:translateY(36px);
+  transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1);
+}
+[data-sr].in{opacity:1;transform:none}
+[data-sr][data-delay="1"]{transition-delay:.1s}
+[data-sr][data-delay="2"]{transition-delay:.2s}
+[data-sr][data-delay="3"]{transition-delay:.3s}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.l-header{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:72px;padding:0 var(--pad);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(250,245,228,.94);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  transition:box-shadow .3s;
+}
+.l-header.is-scrolled{box-shadow:0 2px 24px rgba(0,0,0,.08)}
+.l-header__logo{
+  font-family:'Caveat',cursive;
+  font-size:3rem;font-weight:700;
+  color:var(--orange);letter-spacing:.04em;
+}
+.l-header__nav{
+  display:flex;gap:36px;align-items:center;
+  font-family:'Caveat',cursive;font-size:2rem;font-weight:700;
+  color:var(--dark);
+}
+.l-header__nav a{
+  position:relative;transition:color .2s;
+  padding-bottom:2px;
+}
+.l-header__nav a::after{
+  content:'';position:absolute;left:0;bottom:0;
+  width:0;height:2px;background:var(--orange);
+  transition:width .25s;
+}
+.l-header__nav a:hover{color:var(--orange)}
+.l-header__nav a:hover::after{width:100%}
+.l-header__ham{
+  display:none;width:44px;height:44px;border-radius:50%;
+  border:2.5px solid var(--dark);
+  flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  transition:background .2s,border-color .2s;
+}
+.l-header__ham:hover{background:var(--yellow)}
+.l-header__ham span{
+  display:block;width:18px;height:2px;
+  background:var(--dark);border-radius:2px;
+  transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .2s;
+}
+.l-header__ham.is-open span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.l-header__ham.is-open span:nth-child(2){opacity:0}
+.l-header__ham.is-open span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+
+/* ============================================================
+   MOBILE NAV
+   ============================================================ */
+.l-nav{
+  position:fixed;inset:0;z-index:199;
+  background:var(--cream);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:44px;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s;
+}
+.l-nav.is-open{opacity:1;pointer-events:all}
+.l-nav__link{
+  font-family:'Caveat',cursive;font-size:5.6rem;font-weight:700;
+  color:var(--dark);transition:color .2s,transform .2s;
+}
+.l-nav__link:hover{color:var(--orange);transform:translateX(8px)}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.p-hero{
+  min-height:100vh;padding-top:72px;
+  position:relative;overflow:hidden;
+  background:var(--cream);
+  display:flex;align-items:center;
+}
+/* Background decorative circles */
+.p-hero__bg-circle-1{
+  position:absolute;
+  width:640px;height:640px;border-radius:50%;
+  background:var(--yellow);opacity:.38;
+  top:-240px;right:-240px;pointer-events:none;
+}
+.p-hero__bg-circle-2{
+  position:absolute;
+  width:320px;height:320px;border-radius:50%;
+  background:var(--orange);opacity:.12;
+  bottom:-120px;left:-80px;pointer-events:none;
+}
+
+.p-hero__inner{
+  position:relative;z-index:1;
+  max-width:var(--inner);margin:0 auto;width:100%;
+  padding:80px var(--pad) 100px;
+  display:grid;grid-template-columns:55% 45%;
+  gap:64px;align-items:center;
+}
+
+/* LEFT: Text */
+.p-hero__eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Caveat',cursive;font-size:1.9rem;font-weight:700;
+  color:var(--orange);background:var(--white);
+  padding:7px 22px;border-radius:100px;
+  border:2.5px solid var(--orange);
+  margin-bottom:28px;
+}
+.p-hero__eyebrow::before{
+  content:'';display:block;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--orange);
+}
+.p-hero__title{
+  font-family:'Caveat',cursive;
+  font-size:clamp(6.4rem,11vw,12rem);
+  font-weight:700;line-height:1.0;
+  color:var(--dark);letter-spacing:.02em;
+  margin-bottom:10px;
+  /* チョーク感：ざらついた手書き感 */
+  filter:url(#chalk);
+  text-shadow:3px 3px 0 rgba(0,0,0,.1),-1px -1px 0 rgba(255,255,255,.2);
+}
+.p-hero__title .hi{color:var(--orange)}
+.p-hero__subtitle{
+  font-size:clamp(1.9rem,2.8vw,2.6rem);font-weight:700;
+  color:var(--brown);margin-bottom:36px;
+  font-family:'Noto Sans JP',sans-serif;
+}
+.p-hero__tags{
+  display:flex;flex-wrap:wrap;gap:10px;
+  margin-bottom:44px;
+}
+.p-hero__tag{
+  font-family:'Caveat',cursive;font-size:1.8rem;font-weight:700;
+  padding:8px 22px;border-radius:100px;
+  border:2.5px solid var(--dark);
+  background:var(--white);color:var(--dark);
+  transition:background .2s;
+}
+.p-hero__tag:first-child{background:var(--orange);color:#fff;border-color:var(--dark)}
+.p-hero__tag:nth-child(2){background:var(--yellow)}
+.p-hero__cta{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Caveat',cursive;font-size:2.4rem;font-weight:700;
+  color:#fff;background:var(--orange);
+  padding:18px 52px;border-radius:100px;
+  border:3px solid var(--dark);
+  box-shadow:6px 6px 0 var(--dark);
+  transition:transform .2s,box-shadow .2s;
+}
+.p-hero__cta:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--dark)}
+
+/* RIGHT: Visual */
+.p-hero__visual{position:relative;height:520px}
+.p-hero__photo-main{
+  position:absolute;
+  top:0;right:20px;
+  width:72%;aspect-ratio:3/4;
+  border-radius:28px;overflow:hidden;
+  border:4px solid var(--dark);
+  box-shadow:10px 10px 0 var(--dark);
+  transform:rotate(2deg);
+  z-index:2;
+}
+.p-hero__photo-main img{width:100%;height:100%;object-fit:cover}
+.p-hero__photo-sub{
+  position:absolute;
+  bottom:-20px;left:0;
+  width:48%;aspect-ratio:1/1;
+  border-radius:20px;overflow:hidden;
+  border:4px solid var(--dark);
+  box-shadow:6px 6px 0 var(--dark);
+  transform:rotate(-3.5deg);
+  z-index:3;
+}
+.p-hero__photo-sub img{width:100%;height:100%;object-fit:cover}
+/* Yellow badge */
+.p-hero__badge{
+  position:absolute;
+  top:-16px;right:-16px;z-index:4;
+  width:88px;height:88px;border-radius:50%;
+  background:var(--yellow);
+  border:3px solid var(--dark);box-shadow:3px 3px 0 var(--dark);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Caveat',cursive;font-size:1.4rem;font-weight:700;
+  text-align:center;line-height:1.3;
+  transform:rotate(14deg);
+  color:var(--dark);
+}
+
+/* ============================================================
+   INFOBAR (ticker)
+   ============================================================ */
+.p-infobar{
+  background:var(--orange);
+  overflow:hidden;padding:16px 0;
+  border-top:3px solid var(--dark);
+  border-bottom:3px solid var(--dark);
+}
+.p-infobar__track{
+  display:flex;width:max-content;
+  animation:ticker 26s linear infinite;
+}
+.p-infobar__item{
+  font-family:'Caveat',cursive;
+  font-size:2.2rem;font-weight:700;
+  color:#fff;white-space:nowrap;
+  padding:0 28px;
+}
+.p-infobar__dot{opacity:.5;margin:0 4px}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============================================================
+   ABOUT（3カード）
+   ============================================================ */
+.p-about{
+  padding:112px var(--pad);
+  background:var(--white);
+  border-bottom:3px solid var(--dark);
+}
+.p-about__inner{max-width:var(--inner);margin:0 auto}
+.p-about__grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:28px;
+}
+.p-about__card{
+  border:3px solid var(--dark);border-radius:28px;
+  padding:44px 32px;text-align:center;
+  box-shadow:7px 7px 0 var(--dark);
+  transition:transform .22s,box-shadow .22s;
+  position:relative;overflow:hidden;
+}
+.p-about__card:nth-child(1){background:var(--cream)}
+.p-about__card:nth-child(2){background:#fff8e1}
+.p-about__card:nth-child(3){background:#fff1ea}
+.p-about__card:hover{transform:translate(-4px,-4px);box-shadow:11px 11px 0 var(--dark)}
+.p-about__num{
+  font-family:'Caveat',cursive;
+  font-size:7.2rem;font-weight:700;
+  color:var(--orange);
+  line-height:1;
+  margin-bottom:16px;
+  opacity:.9;
+}
+.p-about__en{
+  font-family:'Caveat',cursive;font-size:2.8rem;font-weight:700;
+  color:var(--dark);margin-bottom:6px;position:relative;z-index:1;
+}
+.p-about__ja{font-family:'Klee One',sans-serif;font-weight:600;font-size:2.2rem;margin-bottom:14px;position:relative;z-index:1}
+.p-about__desc{font-size:1.5rem;color:#666;line-height:1.75;position:relative;z-index:1}
+
+/* ============================================================
+   MENU（Photo Cards 2×2）
+   ============================================================ */
+.p-menu{
+  padding:112px var(--pad);
+  background:var(--cream);
+  border-bottom:3px solid var(--dark);
+  position:relative;overflow:hidden;
+}
+.p-menu::before{
+  content:'';position:absolute;
+  width:480px;height:480px;border-radius:50%;
+  background:var(--yellow);
+  top:-180px;right:-160px;opacity:.28;
+  pointer-events:none;
+}
+.p-menu__inner{max-width:var(--inner);margin:0 auto;position:relative;z-index:1}
+.p-menu__grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:36px;
+}
+.p-menu__card{
+  border:3px solid var(--dark);border-radius:24px;
+  overflow:hidden;
+  box-shadow:7px 7px 0 var(--dark);
+  background:var(--white);
+  transition:transform .22s,box-shadow .22s;
+}
+.p-menu__card:hover{transform:translate(-4px,-4px);box-shadow:11px 11px 0 var(--dark)}
+.p-menu__card-img{
+  position:relative;aspect-ratio:4/3;overflow:hidden;
+}
+.p-menu__card-img img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s cubic-bezier(.22,1,.36,1);
+}
+.p-menu__card:hover .p-menu__card-img img{transform:scale(1.06)}
+.p-menu__card-cat{
+  position:absolute;bottom:14px;left:14px;
+  background:var(--orange);color:#fff;
+  font-family:'Caveat',cursive;font-size:1.8rem;font-weight:700;
+  padding:5px 18px;border-radius:100px;
+  border:2px solid var(--dark);
+}
+.p-menu__card-badge{
+  position:absolute;top:14px;right:14px;
+  background:var(--yellow);
+  font-family:'Caveat',cursive;font-size:1.5rem;font-weight:700;
+  padding:4px 14px;border-radius:100px;
+  border:2px solid var(--dark);color:var(--dark);
+}
+.p-menu__card-body{padding:26px 30px}
+.p-menu__card-name{
+  font-family:'Klee One',sans-serif;
+  font-size:2.4rem;font-weight:600;
+  margin-bottom:7px;color:var(--dark);
+}
+.p-menu__card-note{
+  font-size:1.4rem;color:#999;
+  margin-bottom:18px;line-height:1.5;
+}
+.p-menu__card-price{
+  font-family:'Caveat',cursive;
+  font-size:3.8rem;font-weight:700;
+  color:var(--orange);line-height:1;
+}
+.p-menu__card-price small{font-size:1.9rem;color:#aaa}
+.p-menu__note{
+  text-align:center;margin-top:40px;
+  font-size:1.4rem;color:#aaa;letter-spacing:.03em;
+}
+
+/* ============================================================
+   PHOTO STRIP（無限スクロール）
+   ============================================================ */
+.p-photos{
+  overflow:hidden;
+  border-top:3px solid var(--dark);
+  border-bottom:3px solid var(--dark);
+}
+.p-photos__track{
+  display:flex;width:max-content;
+  animation:photoRoll 32s linear infinite;
+}
+.p-photos__pic{
+  width:320px;height:240px;
+  flex-shrink:0;overflow:hidden;
+  border-right:3px solid var(--dark);
+}
+.p-photos__pic img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s;
+}
+.p-photos__pic:hover img{transform:scale(1.08)}
+@keyframes photoRoll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============================================================
+   ORDER（ご注文 — deep olive / 01twinscafe式 剥き出し写真）
+   ============================================================ */
+.p-order{
+  background:var(--olive);
+  overflow:hidden;
+  position:relative;
+  border-top:3px solid var(--dark);
+  border-bottom:3px solid var(--dark);
+}
+.p-order__grid{
+  max-width:1400px;margin:0 auto;
+  display:grid;grid-template-columns:42% 58%;
+  min-height:720px;
+}
+/* 左列：食品写真 剥き出し（上下100pxはみ出し → 飛び出し感MAX） */
+.p-order__photo{
+  position:relative;overflow:hidden;
+}
+.p-order__photo img{
+  position:absolute;
+  inset:-100px 0 -100px 0;
+  width:100%;height:calc(100% + 200px);
+  object-fit:cover;
+  transform:scale(1.04);
+  /* No border, no radius — raw & exposed */
+}
+/* 右列：コンテンツ */
+.p-order__content{
+  padding:80px 80px 80px 64px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.p-order__label{
+  display:inline-block;
+  font-family:'Caveat',cursive;font-size:1.9rem;font-weight:700;
+  color:var(--olive);background:var(--yellow);
+  padding:5px 22px;border-radius:100px;
+  border:2px solid var(--yellow);
+  margin-bottom:18px;width:fit-content;
+}
+.p-order__title{
+  font-family:'Caveat',cursive;
+  font-size:clamp(8rem,13vw,14rem);font-weight:700;
+  color:#fff;letter-spacing:.03em;line-height:1.0;
+  margin-bottom:10px;
+  filter:url(#chalk);
+  text-shadow:0 0 32px rgba(255,255,255,.18),3px 3px 0 rgba(0,0,0,.4),-1px -1px 0 rgba(255,255,255,.08);
+}
+.p-order__sub{
+  font-size:1.9rem;
+  color:rgba(255,255,255,.65);
+  margin-bottom:44px;
+}
+.p-order__tel{
+  display:inline-block;
+  font-family:'Caveat',cursive;
+  font-size:clamp(4.2rem,5.5vw,5.8rem);font-weight:700;
+  color:var(--dark);background:var(--white);
+  padding:18px 56px;border-radius:18px;
+  border:3px solid rgba(255,255,255,.5);
+  box-shadow:7px 7px 0 rgba(0,0,0,.35);
+  width:fit-content;
+  transition:transform .2s,box-shadow .2s;
+}
+.p-order__tel:hover{transform:translate(-3px,-3px);box-shadow:10px 10px 0 rgba(0,0,0,.45)}
+.p-order__tel-note{
+  font-size:1.5rem;color:rgba(255,255,255,.45);
+  margin-top:16px;
+}
+
+/* ============================================================
+   SHOP（店舗情報 — yellow / 01twinscafe式 剥き出し写真）
+   ============================================================ */
+.p-shop{
+  background:var(--yellow);
+  overflow:hidden;
+  border-bottom:3px solid var(--dark);
+}
+.p-shop__grid{
+  max-width:1400px;margin:0 auto;
+  display:grid;grid-template-columns:58% 42%;
+  min-height:700px;align-items:stretch;
+}
+/* 左列：コンテンツ */
+.p-shop__content{
+  padding:80px 64px 80px 80px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.p-shop__head{
+  font-family:'Caveat',cursive;
+  font-size:clamp(8rem,13vw,14rem);font-weight:700;
+  color:var(--dark);letter-spacing:.03em;line-height:1.0;
+  margin-bottom:40px;
+  filter:url(#chalk);
+  text-shadow:3px 3px 0 rgba(0,0,0,.12),-1px -1px 0 rgba(255,255,255,.3);
+}
+.p-shop__logo{
+  font-family:'Caveat',cursive;
+  font-size:3.4rem;font-weight:700;color:var(--dark);
+  margin-bottom:28px;
+  display:flex;align-items:center;gap:14px;
+}
+.p-shop__logo-dot{
+  width:46px;height:46px;border-radius:50%;
+  background:var(--orange);border:2.5px solid var(--dark);
+  flex-shrink:0;
+}
+.p-shop__rows{
+  display:flex;flex-direction:column;gap:16px;
+  margin-bottom:40px;
+}
+.p-shop__row{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.p-shop__row-key{
+  font-family:'Caveat',cursive;font-size:1.7rem;font-weight:700;
+  color:#fff;background:var(--dark);
+  padding:3px 16px;border-radius:100px;
+  white-space:nowrap;flex-shrink:0;
+}
+.p-shop__row-val{font-size:1.8rem;font-weight:700;color:var(--dark)}
+.p-shop__tel{
+  display:inline-block;
+  font-family:'Caveat',cursive;
+  font-size:4.2rem;font-weight:700;
+  color:var(--dark);background:var(--white);
+  padding:15px 44px;border-radius:100px;
+  border:3px solid var(--dark);
+  box-shadow:6px 6px 0 var(--dark);
+  margin-bottom:32px;width:fit-content;
+  transition:transform .2s,box-shadow .2s;
+}
+.p-shop__tel:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--dark)}
+.p-shop__sns{display:flex;gap:16px}
+.p-shop__sns-btn{
+  width:56px;height:56px;border-radius:50%;
+  border:3px solid var(--dark);
+  box-shadow:4px 4px 0 var(--dark);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.4rem;
+  transition:transform .2s,box-shadow .2s;
+}
+.p-shop__sns-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--dark)}
+.p-shop__sns-btn--ig{background:var(--white)}
+.p-shop__sns-btn--line{background:#06c755;color:#fff;font-family:'Caveat',cursive;font-size:2.2rem;font-weight:700;color:#fff}
+/* 右列：剥き出し写真（上下100pxはみ出し → 飛び出し感MAX） */
+.p-shop__photo{
+  position:relative;overflow:hidden;
+}
+.p-shop__photo img{
+  position:absolute;
+  inset:-100px 0 -100px 0;
+  width:100%;height:calc(100% + 200px);
+  object-fit:cover;
+  transform:scale(1.04);
+  /* No border, no radius — raw & exposed */
+}
+
+/* MAP */
+.p-shop__map-wrap{
+  max-width:var(--inner);margin:0 auto;
+  padding:0 var(--pad) 80px;
+}
+.p-shop__map{
+  border-radius:22px;overflow:hidden;
+  border:4px solid var(--dark);
+  box-shadow:8px 8px 0 var(--dark);
+}
+.p-shop__map iframe{width:100%;height:360px;display:block}
+
+/* ============================================================
+   VIDEO
+   ============================================================ */
+.p-video{
+  padding:112px var(--pad);
+  background:var(--cream2);
+  border-bottom:3px solid var(--dark);
+  text-align:center;
+}
+.p-video__inner{max-width:880px;margin:0 auto}
+.p-video__ratio{
+  position:relative;padding-bottom:56.25%;
+  border-radius:22px;overflow:hidden;
+  border:4px solid var(--dark);
+  box-shadow:10px 10px 0 var(--dark);
+  margin-top:44px;
+}
+.p-video__ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.l-footer{
+  background:var(--dark);
+  padding:64px var(--pad) 40px;
+}
+.l-footer__inner{
+  max-width:var(--inner);margin:0 auto;
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:36px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  margin-bottom:28px;
+}
+.l-footer__logo{
+  font-family:'Caveat',cursive;
+  font-size:3.6rem;font-weight:700;color:var(--yellow);
+}
+.l-footer__nav{
+  display:flex;gap:32px;
+  font-family:'Caveat',cursive;font-size:1.9rem;font-weight:700;
+  color:rgba(255,255,255,.38);
+}
+.l-footer__nav a:hover{color:var(--yellow)}
+.l-footer__copy{
+  text-align:center;font-size:1.3rem;
+  color:rgba(255,255,255,.2);letter-spacing:.04em;
+}
+
+/* Back to top */
+.c-totop{
+  position:fixed;bottom:28px;right:28px;z-index:100;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--orange);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;font-weight:900;
+  border:3px solid var(--dark);box-shadow:4px 4px 0 var(--dark);
+  opacity:0;transform:translateY(16px);
+  transition:opacity .3s,transform .3s;
+  pointer-events:none;
+}
+.c-totop.show{opacity:1;transform:translateY(0);pointer-events:all}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:1023px){
+  /* Hero */
+  .p-hero__inner{grid-template-columns:1fr;gap:48px;padding-bottom:80px}
+  .p-hero__visual{order:-1;height:340px}
+  .p-hero__photo-main{width:66%;right:60px;top:0}
+  .p-hero__photo-sub{width:44%;left:10px;bottom:-10px}
+  .p-hero__eyebrow,.p-hero__title,.p-hero__subtitle,.p-hero__tags,.p-hero__cta{
+    text-align:center;
+  }
+  .p-hero__tags{justify-content:center}
+  /* About */
+  .p-about__grid{grid-template-columns:1fr}
+  /* Menu */
+  .p-menu__grid{grid-template-columns:1fr}
+  /* Order */
+  .p-order__grid{grid-template-columns:1fr;min-height:auto}
+  .p-order__photo{height:340px}
+  .p-order__photo img{position:static;height:340px;width:100%;object-fit:cover}
+  .p-order__content{padding:64px var(--pad)}
+  /* Shop */
+  .p-shop__grid{grid-template-columns:1fr;min-height:auto}
+  .p-shop__content{padding:64px var(--pad)}
+  .p-shop__photo{height:340px}
+  .p-shop__photo img{position:static;height:340px;width:100%;object-fit:cover}
+  /* Footer */
+  .l-footer__inner{flex-direction:column;gap:24px;text-align:center}
+}
+@media(max-width:767px){
+  /* Header */
+  .l-header__nav{display:none}
+  .l-header__ham{display:flex}
+  /* Hero */
+  .p-hero__inner{padding:60px var(--pad) 80px}
+  .p-hero__visual{height:300px}
+  .p-hero__photo-sub{display:none}
+  .p-hero__badge{display:none}
+  .p-hero__title{font-size:clamp(3.4rem,11vw,7rem)}
+  .p-hero__cta{font-size:2rem;padding:14px 36px}
+  /* About */
+  .p-about{padding:64px var(--pad)}
+  /* Menu */
+  .p-menu{padding:64px var(--pad)}
+  .p-menu__card-body{padding:20px 22px}
+  .p-menu__card-name{font-size:2rem}
+  /* ORDER */
+  .p-order__content{padding:44px var(--pad)}
+  .p-order__title{font-size:clamp(4rem,13vw,8rem)}
+  .p-order__tel{font-size:3.4rem;padding:14px 28px}
+  /* SHOP */
+  .p-shop__content{padding:44px var(--pad)}
+  .p-shop__head{font-size:clamp(4rem,13vw,8rem)}
+  .p-shop__tel{font-size:3.2rem;padding:12px 32px}
+  .p-shop__map iframe{height:220px}
+  /* Video */
+  .p-video{padding:64px var(--pad)}
+  /* Footer */
+  .l-footer__nav{gap:20px;font-size:1.6rem}
+  /* Back to top */
+  .c-totop{bottom:24px;right:16px;width:44px;height:44px}
+}
+</style>
+</head>
+<body>
+
+<!-- SVGチョークフィルター（bodyの直後に置かないと機能しない） -->
+<svg style="display:none" aria-hidden="true">
+  <defs>
+    <filter id="chalk" x="-4%" y="-4%" width="108%" height="108%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="5" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="l-header js-header">
+  <a href="#hero" class="l-header__logo">Bio（ビオ）</a>
+  <nav class="l-header__nav">
+    <a href="#about">About</a>
+    <a href="#menu">Menu</a>
+    <a href="#order">Order</a>
+    <a href="#shop">Shop</a>
+  </nav>
+  <button class="l-header__ham js-ham" aria-label="メニューを開く">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- MOBILE NAV -->
+<nav class="l-nav js-nav" aria-hidden="true">
+  <a href="#about" class="l-nav__link js-nav-link">About</a>
+  <a href="#menu" class="l-nav__link js-nav-link">Menu</a>
+  <a href="#order" class="l-nav__link js-nav-link">Order</a>
+  <a href="#shop" class="l-nav__link js-nav-link">Shop</a>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="p-hero" id="hero">
+  <div class="p-hero__bg-circle-1"></div>
+  <div class="p-hero__bg-circle-2"></div>
+
+  <div class="p-hero__inner">
+    <!-- LEFT: Text -->
+    <div class="p-hero__text">
+      <span class="p-hero__eyebrow">Takeout Only — 南城市アトール内</span>
+      <h1 class="p-hero__title">
+        INARI<br>
+        &amp; <span class="hi">CHICKEN</span>
+      </h1>
+      <p class="p-hero__subtitle">手のひらに、沖縄の手作りを。</p>
+      <div class="p-hero__tags">
+        <span class="p-hero__tag">出来立て提供</span>
+        <span class="p-hero__tag">¥140〜</span>
+        <span class="p-hero__tag">1個から注文OK</span>
+      </div>
+      <a href="#menu" class="p-hero__cta">
+        メニューを見る →
+      </a>
+    </div>
+
+    <!-- RIGHT: Visual -->
+    <div class="p-hero__visual">
+      <div class="p-hero__photo-main">
+        <img src="bio/menu-inari-chicken.jpg" alt="いなり寿司とガーリックチキン"
+             onerror="this.src='https://placehold.co/420x560/ffd900/1a1a1a?text=Bio'">
+        <div class="p-hero__badge">テイク<br>アウト<br>専門</div>
+      </div>
+      <div class="p-hero__photo-sub">
+        <img src="bio/menu-chicken.jpg" alt="ガーリックチキン"
+             onerror="this.src='https://placehold.co/240x240/ff6b2b/fff?text=Chicken'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     INFOBAR
+     ============================================================ -->
+<div class="p-infobar" aria-hidden="true">
+  <div class="p-infobar__track">
+    <span class="p-infobar__item">Open <span class="p-infobar__dot">◆</span> 10:00〜18:00</span>
+    <span class="p-infobar__item">Close <span class="p-infobar__dot">◆</span> 月曜定休</span>
+    <span class="p-infobar__item">Location <span class="p-infobar__dot">◆</span> 南城市 アトール内</span>
+    <span class="p-infobar__item">Payment <span class="p-infobar__dot">◆</span> 現金のみ</span>
+    <span class="p-infobar__item">Takeout Only <span class="p-infobar__dot">◆</span> Bio（ビオ）</span>
+    <span class="p-infobar__item">Open <span class="p-infobar__dot">◆</span> 10:00〜18:00</span>
+    <span class="p-infobar__item">Close <span class="p-infobar__dot">◆</span> 月曜定休</span>
+    <span class="p-infobar__item">Location <span class="p-infobar__dot">◆</span> 南城市 アトール内</span>
+    <span class="p-infobar__item">Payment <span class="p-infobar__dot">◆</span> 現金のみ</span>
+    <span class="p-infobar__item">Takeout Only <span class="p-infobar__dot">◆</span> Bio（ビオ）</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     ABOUT
+     ============================================================ -->
+<section class="p-about" id="about">
+  <div class="p-about__inner">
+    <div class="c-head" data-sr>
+      <span class="c-head__en">Why Bio？</span>
+      <h2 class="c-head__ja">BIOの<br>こだわり</h2>
+    </div>
+    <ul class="p-about__grid">
+      <li class="p-about__card" data-sr data-delay="1">
+        <div class="p-about__num">01</div>
+        <p class="p-about__en">Inari Sushi</p>
+        <h3 class="p-about__ja">やさしいいなり寿司</h3>
+        <p class="p-about__desc">毎朝炊きたてのご飯と、丁寧に仕込んだ油揚げ。甘すぎない、懐かしい優しい味。</p>
+      </li>
+      <li class="p-about__card" data-sr data-delay="2">
+        <div class="p-about__num">02</div>
+        <p class="p-about__en">Garlic Chicken</p>
+        <h3 class="p-about__ja">やみつきガーリックチキン</h3>
+        <p class="p-about__desc">外はカリッと、中はジューシー。ガーリックの香りが食欲をそそる、一番人気のメニュー。</p>
+      </li>
+      <li class="p-about__card" data-sr data-delay="3">
+        <div class="p-about__num">03</div>
+        <p class="p-about__en">Takeout Only</p>
+        <h3 class="p-about__ja">テイクアウト専門店</h3>
+        <p class="p-about__desc">作りたてをすぐお渡し。1個から気軽にどうぞ。南城市の絶景へ持って行って！</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     MENU（Photo Cards 2×2）
+     ============================================================ -->
+<section class="p-menu" id="menu">
+  <div class="p-menu__inner">
+    <div class="c-head" data-sr>
+      <span class="c-head__en">Our Menu</span>
+      <h2 class="c-head__ja">メニュー</h2>
+      <p class="c-head__sub">いなり寿司・ガーリックチキン・お得なセット</p>
+    </div>
+
+    <div class="p-menu__grid">
+      <!-- Card 1: いなり寿司 -->
+      <div class="p-menu__card" data-sr data-delay="1">
+        <div class="p-menu__card-img">
+          <img src="bio/menu-inari.jpg" alt="さっぱりいなり寿司"
+               onerror="this.src='https://placehold.co/400x300/ffd900/1a1a1a?text=Inari'">
+          <span class="p-menu__card-cat">いなり寿司</span>
+        </div>
+        <div class="p-menu__card-body">
+          <h3 class="p-menu__card-name">さっぱりいなり寿司</h3>
+          <p class="p-menu__card-note">甘すぎない、やさしい味わい。1個から気軽にどうぞ。</p>
+          <div class="p-menu__card-price">¥140 <small>〜（1個）</small></div>
+        </div>
+      </div>
+
+      <!-- Card 2: ガーリックチキン -->
+      <div class="p-menu__card" data-sr data-delay="2">
+        <div class="p-menu__card-img">
+          <img src="bio/menu-chicken.jpg" alt="カリカリガーリックチキン"
+               onerror="this.src='https://placehold.co/400x300/ff6b2b/fff?text=Chicken'">
+          <span class="p-menu__card-cat">ガーリックチキン</span>
+          <span class="p-menu__card-badge">人気 No.1</span>
+        </div>
+        <div class="p-menu__card-body">
+          <h3 class="p-menu__card-name">カリカリガーリックチキン</h3>
+          <p class="p-menu__card-note">外カリ、中ジューシー。ガーリックの香りがたまらない！</p>
+          <div class="p-menu__card-price">¥240 <small>〜（1本）</small></div>
+        </div>
+      </div>
+
+      <!-- Card 3: セット -->
+      <div class="p-menu__card" data-sr data-delay="1">
+        <div class="p-menu__card-img">
+          <img src="bio/menu-inari-chicken.jpg" alt="いなり&チキンセット"
+               onerror="this.src='https://placehold.co/400x300/faf5e4/1a1a1a?text=Set'">
+          <span class="p-menu__card-cat">セットメニュー</span>
+          <span class="p-menu__card-badge">おすすめ</span>
+        </div>
+        <div class="p-menu__card-body">
+          <h3 class="p-menu__card-name">いなり＆チキン セット</h3>
+          <p class="p-menu__card-note">いなり×2・チキン×1のお得なコンビセット。</p>
+          <div class="p-menu__card-price">¥360 <small>〜</small></div>
+        </div>
+      </div>
+
+      <!-- Card 4: お弁当 -->
+      <div class="p-menu__card" data-sr data-delay="2">
+        <div class="p-menu__card-img">
+          <img src="bio/menu-set.jpg" alt="お弁当セット"
+               onerror="this.src='https://placehold.co/400x300/5c3d2e/fff?text=Bento'">
+          <span class="p-menu__card-cat">お弁当</span>
+        </div>
+        <div class="p-menu__card-body">
+          <h3 class="p-menu__card-name">お弁当セット</h3>
+          <p class="p-menu__card-note">いなりとチキンの盛り合わせ。差し入れやランチに。</p>
+          <div class="p-menu__card-price">¥680 <small>〜</small></div>
+        </div>
+      </div>
+    </div>
+    <p class="p-menu__note">※ 価格・内容は変更になる場合があります。詳しくはお電話にてご確認ください。</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     PHOTO STRIP
+     ============================================================ -->
+<div class="p-photos" aria-hidden="true">
+  <div class="p-photos__track">
+    <div class="p-photos__pic"><img src="bio/sign-orange.jpg" alt="Bio"></div>
+    <div class="p-photos__pic"><img src="bio/menu-inari-chicken.jpg" alt="いなり＆チキン"></div>
+    <div class="p-photos__pic"><img src="bio/menu-inari.jpg" alt="いなり寿司"></div>
+    <div class="p-photos__pic"><img src="bio/open-sign.jpg" alt="OPEN"></div>
+    <div class="p-photos__pic"><img src="bio/menu-chicken.jpg" alt="ガーリックチキン"></div>
+    <div class="p-photos__pic"><img src="bio/menu-set.jpg" alt="セット"></div>
+    <!-- duplicate for infinite loop -->
+    <div class="p-photos__pic"><img src="bio/sign-orange.jpg" alt="Bio"></div>
+    <div class="p-photos__pic"><img src="bio/menu-inari-chicken.jpg" alt="いなり＆チキン"></div>
+    <div class="p-photos__pic"><img src="bio/menu-inari.jpg" alt="いなり寿司"></div>
+    <div class="p-photos__pic"><img src="bio/open-sign.jpg" alt="OPEN"></div>
+    <div class="p-photos__pic"><img src="bio/menu-chicken.jpg" alt="ガーリックチキン"></div>
+    <div class="p-photos__pic"><img src="bio/menu-set.jpg" alt="セット"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ORDER（deep olive — 剥き出し写真）
+     ============================================================ -->
+<section class="p-order" id="order">
+  <div class="p-order__grid">
+    <!-- 左列: 食品写真（剥き出し） -->
+    <div class="p-order__photo">
+      <img src="bio/menu-inari-chicken.jpg" alt="いなり＆チキン"
+           onerror="this.src='https://placehold.co/500x700/3d3828/fff?text=Bio'">
+    </div>
+    <!-- 右列: 注文情報 -->
+    <div class="p-order__content" data-sr>
+      <span class="p-order__label">ご注文は以下より</span>
+      <h2 class="p-order__title">ORDER</h2>
+      <p class="p-order__sub">お電話でのご注文をお気軽に</p>
+      <a href="tel:0989444191" class="p-order__tel">
+        Tel.098-944-4191
+      </a>
+      <p class="p-order__tel-note">営業時間 火〜日 10:00〜18:00　月曜定休</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SHOP（yellow — 剥き出し写真）
+     ============================================================ -->
+<section class="p-shop" id="shop">
+  <div class="p-shop__grid">
+    <!-- 左列: 店舗情報 -->
+    <div class="p-shop__content" data-sr>
+      <h2 class="p-shop__head">SHOP</h2>
+      <p class="p-shop__logo">
+        <span class="p-shop__logo-dot"></span>
+        Bio（ビオ）
+      </p>
+      <div class="p-shop__rows">
+        <div class="p-shop__row">
+          <span class="p-shop__row-key">住所</span>
+          <span class="p-shop__row-val">沖縄県南城市大里字仲間1155<br>（アトール敷地内）</span>
+        </div>
+        <div class="p-shop__row">
+          <span class="p-shop__row-key">営業時間</span>
+          <span class="p-shop__row-val">火〜日 10:00〜18:00</span>
+        </div>
+        <div class="p-shop__row">
+          <span class="p-shop__row-key">定休日</span>
+          <span class="p-shop__row-val">月曜日</span>
+        </div>
+        <div class="p-shop__row">
+          <span class="p-shop__row-key">お支払い</span>
+          <span class="p-shop__row-val">現金のみ</span>
+        </div>
+      </div>
+      <a href="tel:0989444191" class="p-shop__tel">
+        📞 098-944-4191
+      </a>
+      <div class="p-shop__sns">
+        <a href="#" class="p-shop__sns-btn p-shop__sns-btn--ig" aria-label="Instagram">📷</a>
+        <a href="#" class="p-shop__sns-btn p-shop__sns-btn--line" aria-label="LINE">L</a>
+      </div>
+    </div>
+    <!-- 右列: 剥き出し写真 -->
+    <div class="p-shop__photo">
+      <img src="bio/sign-orange.jpg" alt="Bio（ビオ）外観"
+           onerror="this.src='https://placehold.co/500x700/ffd900/1a1a1a?text=Shop'">
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="p-shop__map-wrap">
+    <div class="p-shop__map">
+      <iframe
+        src="https://maps.google.com/maps?q=%E6%B2%96%E7%B8%84%E7%9C%8C%E5%8D%97%E5%9F%8E%E5%B8%82%E5%A4%A7%E9%87%8C%E4%BB%B2%E9%96%931155&output=embed&hl=ja&z=16"
+        allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="稲荷&チキン Bio（ビオ）アクセスマップ">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     VIDEO
+     ============================================================ -->
+<section class="p-video">
+  <div class="p-video__inner">
+    <div class="c-head" data-sr>
+      <span class="c-head__en">Movie</span>
+      <h2 class="c-head__ja">ABOUT<br>BIO</h2>
+      <p class="c-head__sub">Bio（ビオ）の魅力をご覧ください</p>
+    </div>
+    <div class="p-video__ratio">
+      <iframe
+        src="https://www.loom.com/embed/f4e6e53f6130417fa7362dff938c1ee2"
+        allow="autoplay; fullscreen"
+        allowfullscreen loading="lazy">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="l-footer">
+  <div class="l-footer__inner">
+    <p class="l-footer__logo">Bio（ビオ）</p>
+    <nav class="l-footer__nav">
+      <a href="#about">About</a>
+      <a href="#menu">Menu</a>
+      <a href="#order">Order</a>
+      <a href="#shop">Shop</a>
+    </nav>
+  </div>
+  <p class="l-footer__copy">© 2026 稲荷&amp;チキン Bio（ビオ） All rights reserved.</p>
+</footer>
+
+<!-- Back to top -->
+<a href="#hero" class="c-totop js-totop" aria-label="ページトップへ">↑</a>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+'use strict';
+
+/* --- HAMBURGER -------------------------------------------- */
+const ham = document.querySelector('.js-ham');
+const nav = document.querySelector('.js-nav');
+
+if (ham && nav) {
+  ham.addEventListener('click', () => {
+    const open = ham.classList.toggle('is-open');
+    nav.classList.toggle('is-open', open);
+    nav.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  document.querySelectorAll('.js-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      ham.classList.remove('is-open');
+      nav.classList.remove('is-open');
+      nav.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    });
+  });
+}
+
+/* --- HEADER SCROLL ---------------------------------------- */
+const header = document.querySelector('.js-header');
+const totop  = document.querySelector('.js-totop');
+
+window.addEventListener('scroll', () => {
+  if (header) header.classList.toggle('is-scrolled', window.scrollY > 60);
+  if (totop)  totop.classList.toggle('show', window.scrollY > 500);
+}, { passive: true });
+
+/* --- SCROLL REVEAL ---------------------------------------- */
+const srTargets = document.querySelectorAll('[data-sr]');
+if (srTargets.length) {
+  const srObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        srObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' });
+  srTargets.forEach(el => srObs.observe(el));
+}
+</script>
+</body>
+</html>
