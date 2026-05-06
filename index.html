@@ -975,31 +975,36 @@ button { font-family: inherit; cursor: pointer; }
   transition: opacity 0.35s ease, transform 0.4s cubic-bezier(.34,1.56,.64,1);
 }
 
-/* スマホ：4つのアイコンが被らないよう縦に綺麗に並べる */
+/* スマホ：4つのアイコンが被らないよう縦に綺麗に並べる（!importantで既存アニメーション上書き） */
 @media (max-width: 767px) {
   .float-stack {
-    bottom: 12%;
-    right: 10px;
-    gap: 16px;
+    bottom: 8% !important;
+    right: 8px !important;
+    gap: 18px !important;
   }
+  /* アニメーション停止 + scale強制適用（social-bobとの競合回避） */
   .float-stack .social-btn,
   .float-stack #chatbot-launcher {
-    transform: scale(0.88);
-    transform-origin: right center;
+    animation: none !important;
+    transform: scale(0.78) !important;
+    transform-origin: right center !important;
   }
-  .float-stack .social-btn:hover,
-  .float-stack #chatbot-launcher:hover {
-    transform: scale(0.88) translateY(-2px);
+  /* 各アイコンの最大幅を制限してはみ出し防止 */
+  .float-stack .social-btn {
+    max-width: 180px !important;
   }
 }
 @media (max-width: 375px) {
   .float-stack {
-    bottom: 10%;
-    gap: 14px;
+    bottom: 6% !important;
+    gap: 16px !important;
   }
   .float-stack .social-btn,
   .float-stack #chatbot-launcher {
-    transform: scale(0.82);
+    transform: scale(0.7) !important;
+  }
+  .float-stack .social-btn {
+    max-width: 160px !important;
   }
 }
 .float-stack > * { pointer-events: auto; transition: opacity 0.3s ease, transform 0.4s cubic-bezier(.34,1.56,.64,1); }
