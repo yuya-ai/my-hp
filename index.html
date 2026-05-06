@@ -974,6 +974,34 @@ button { font-family: inherit; cursor: pointer; }
   pointer-events: none;
   transition: opacity 0.35s ease, transform 0.4s cubic-bezier(.34,1.56,.64,1);
 }
+
+/* スマホ：4つのアイコンが被らないよう縦に綺麗に並べる */
+@media (max-width: 767px) {
+  .float-stack {
+    bottom: 12%;
+    right: 10px;
+    gap: 16px;
+  }
+  .float-stack .social-btn,
+  .float-stack #chatbot-launcher {
+    transform: scale(0.88);
+    transform-origin: right center;
+  }
+  .float-stack .social-btn:hover,
+  .float-stack #chatbot-launcher:hover {
+    transform: scale(0.88) translateY(-2px);
+  }
+}
+@media (max-width: 375px) {
+  .float-stack {
+    bottom: 10%;
+    gap: 14px;
+  }
+  .float-stack .social-btn,
+  .float-stack #chatbot-launcher {
+    transform: scale(0.82);
+  }
+}
 .float-stack > * { pointer-events: auto; transition: opacity 0.3s ease, transform 0.4s cubic-bezier(.34,1.56,.64,1); }
 
 /* 縦1列の表示順：上から メニュー&予約 → Instagram → YouTube → ビオくん */
