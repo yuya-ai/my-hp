@@ -2445,25 +2445,18 @@ body.chat-active .yt-popup.is-open {
   /* 余ってた order プロパティ無効化（旧縦並び用） */
   .float-stack > * { order: initial; }
 
-  /* ラベルを表示・少し大きめに（Yuya 2026-05-07 0:27 リクエスト） */
+  /* ラベル完全非表示（Yuya 2026-05-07 0:43 リクエスト・アイコンだけシンプル表示） */
   .float-stack .social-btn__label,
   .float-stack .chatbot-launcher__label {
-    display: block !important;
-    font-size: 0.72rem !important;
-    text-align: center;
-    margin-top: 2px;
-    color: #fff;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
-    line-height: 1.2;
-    white-space: nowrap;
+    display: none !important;
   }
 
-  /* 全アイコンを「円バッジ」に統一（ピル → 円）・全て100%不透明・少し大きく */
+  /* 全アイコンを「円バッジ」に統一（ピル → 円）・全て100%不透明・全アイコン同じサイズ */
   .float-stack .social-btn,
   .float-stack #chatbot-launcher {
     padding: 0 !important;
-    width: 54px;
-    height: 54px;
+    width: 54px !important;
+    height: 54px !important;
     min-height: auto;
     border-radius: 50%;
     background: transparent !important;
@@ -2482,23 +2475,16 @@ body.chat-active .yt-popup.is-open {
     padding: 2px;
   }
 
-  /* メニュー&予約は VIP 扱い（他と同サイズ・光リング・「予約」バッジ） */
+  /* メニュー&予約は VIP 扱い（他と同サイズ・光リング・「予約」バッジ）
+     ※ ラベル削除に伴い width/height/top の個別調整を撤廃・他アイコンと同サイズ統一 */
   .float-stack .social-btn--menu {
-    width: 44px !important;
-    height: 44px !important;
     position: relative;
     justify-self: end;
-    top: 8px; /* 少し下にずらす */
   }
-  .float-stack .social-btn--menu .social-btn__icon {
-    width: 44px !important;
-    height: 44px !important;
-  }
-  /* 店舗に質問（ビオくん）はメニューラベルと被らないよう下にずらす
-     ※ position:relative を明示しないと top が効かない（別所で static が設定されているため） */
+  /* 店舗に質問（ビオくん）の下ずらしも撤廃
+     ※ ラベル削除でメニューラベルとの被りが解消されたため、下ずらし不要 */
   .float-stack #chatbot-launcher {
     position: relative !important;
-    top: 50px;
   }
   /* 脈打つ光リング */
   .float-stack .social-btn--menu::before {
