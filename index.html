@@ -2427,11 +2427,11 @@ body.chat-active .yt-popup.is-open {
      [   empty   ]   [YouTube]        ← Row 3 */
 @media (max-width: 767px) {
   .float-stack {
-    bottom: 60px;
+    bottom: 24px;
     right: 8px;
     display: grid;
     grid-template-columns: 60px;
-    row-gap: 38px;
+    row-gap: 50px;
     align-items: end;
     justify-items: end;
   }
@@ -2447,11 +2447,11 @@ body.chat-active .yt-popup.is-open {
   /* 余ってた order プロパティ無効化（旧縦並び用） */
   .float-stack > * { order: initial; }
 
-  /* ラベル完全非表示（Yuya 2026-05-07 0:43 リクエスト・アイコンだけシンプル表示）
-     ※ social-btn__mini が真犯人だった（黒バッジの正体）→ 一緒に消す */
+  /* ラベル（長文）は非表示・mini（黒バッジの説明文）は復活（Yuya 1:29 リクエスト）
+     - .social-btn__label / .chatbot-launcher__label は display: none（はみ出る原因）
+     - .social-btn__mini（「予約&メニュー」「Instagram」等の短いラベル）は表示維持 */
   .float-stack .social-btn__label,
-  .float-stack .chatbot-launcher__label,
-  .float-stack .social-btn__mini {
+  .float-stack .chatbot-launcher__label {
     display: none !important;
   }
 
