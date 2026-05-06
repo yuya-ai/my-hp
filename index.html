@@ -2447,9 +2447,11 @@ body.chat-active .yt-popup.is-open {
   /* 余ってた order プロパティ無効化（旧縦並び用） */
   .float-stack > * { order: initial; }
 
-  /* ラベル完全非表示（Yuya 2026-05-07 0:43 リクエスト・アイコンだけシンプル表示） */
+  /* ラベル完全非表示（Yuya 2026-05-07 0:43 リクエスト・アイコンだけシンプル表示）
+     ※ social-btn__mini が真犯人だった（黒バッジの正体）→ 一緒に消す */
   .float-stack .social-btn__label,
-  .float-stack .chatbot-launcher__label {
+  .float-stack .chatbot-launcher__label,
+  .float-stack .social-btn__mini {
     display: none !important;
   }
 
