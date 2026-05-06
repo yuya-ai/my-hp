@@ -975,38 +975,7 @@ button { font-family: inherit; cursor: pointer; }
   transition: opacity 0.35s ease, transform 0.4s cubic-bezier(.34,1.56,.64,1);
 }
 
-/* スマホ：4つのアイコンが被らないよう縦に綺麗に並べる（!importantで既存アニメーション上書き） */
-@media (max-width: 767px) {
-  .float-stack {
-    bottom: 8% !important;
-    right: 8px !important;
-    gap: 18px !important;
-  }
-  /* アニメーション停止 + scale強制適用（social-bobとの競合回避） */
-  .float-stack .social-btn,
-  .float-stack #chatbot-launcher {
-    animation: none !important;
-    transform: scale(0.78) !important;
-    transform-origin: right center !important;
-  }
-  /* 各アイコンの最大幅を制限してはみ出し防止 */
-  .float-stack .social-btn {
-    max-width: 180px !important;
-  }
-}
-@media (max-width: 375px) {
-  .float-stack {
-    bottom: 6% !important;
-    gap: 16px !important;
-  }
-  .float-stack .social-btn,
-  .float-stack #chatbot-launcher {
-    transform: scale(0.7) !important;
-  }
-  .float-stack .social-btn {
-    max-width: 160px !important;
-  }
-}
+/* （前回追加したスマホ用float-stack 修正は既存styleと競合するため削除・既存の2457行〜のスタイルを直接調整する方針に変更） */
 .float-stack > * { pointer-events: auto; transition: opacity 0.3s ease, transform 0.4s cubic-bezier(.34,1.56,.64,1); }
 
 /* 縦1列の表示順：上から メニュー&予約 → Instagram → YouTube → ビオくん */
@@ -2476,18 +2445,25 @@ body.chat-active .yt-popup.is-open {
   /* 余ってた order プロパティ無効化（旧縦並び用） */
   .float-stack > * { order: initial; }
 
-  /* ラベルを完全に隠す */
+  /* ラベルを表示・少し大きめに（Yuya 2026-05-07 0:27 リクエスト） */
   .float-stack .social-btn__label,
   .float-stack .chatbot-launcher__label {
-    display: none;
+    display: block !important;
+    font-size: 0.72rem !important;
+    text-align: center;
+    margin-top: 2px;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    line-height: 1.2;
+    white-space: nowrap;
   }
 
-  /* 全アイコンを「円バッジ」に統一（ピル → 円）・全て100%不透明 */
+  /* 全アイコンを「円バッジ」に統一（ピル → 円）・全て100%不透明・少し大きく */
   .float-stack .social-btn,
   .float-stack #chatbot-launcher {
     padding: 0 !important;
-    width: 44px;
-    height: 44px;
+    width: 54px;
+    height: 54px;
     min-height: auto;
     border-radius: 50%;
     background: transparent !important;
@@ -2501,8 +2477,8 @@ body.chat-active .yt-popup.is-open {
   }
   .float-stack .social-btn__icon,
   .float-stack .chatbot-launcher__icon {
-    width: 44px !important;
-    height: 44px !important;
+    width: 54px !important;
+    height: 54px !important;
     padding: 2px;
   }
 
