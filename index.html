@@ -2308,9 +2308,11 @@ body.chat-active .yt-popup.is-open {
   90%           { transform: translateY(-4px) rotate(0deg); }
   96%           { transform: translateY(0) rotate(0deg); }
 }
-.social-btn--line { animation: social-bob 5.2s ease-in-out infinite; animation-delay: 0.4s; }
-.social-btn--ig   { animation: social-bob 5.2s ease-in-out infinite; animation-delay: 1.6s; }
-.social-btn--menu { animation: social-bob 5.2s ease-in-out infinite; animation-delay: 0.0s; }
+/* 4アイコンの動きとタイミング統一（Yuya 1:05 リクエスト・全 animation-delay: 0s） */
+.social-btn--line { animation: social-bob 5.2s ease-in-out infinite; animation-delay: 0s; }
+.social-btn--ig   { animation: social-bob 5.2s ease-in-out infinite; animation-delay: 0s; }
+.social-btn--menu { animation: social-bob 5.2s ease-in-out infinite; animation-delay: 0s; }
+.social-btn--youtube { animation: social-bob 5.2s ease-in-out infinite; animation-delay: 0s; }
 .social-btn:hover {
   animation-play-state: paused;
   transform: translateY(-3px);
