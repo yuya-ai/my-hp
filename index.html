@@ -3846,8 +3846,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   (function setupIconTooltips(){
     var icons = document.querySelectorAll('.float-stack [data-tooltip]');
     var TOUCH_HIDE_MS   = 1500; // タップ・hover時の表示時間（短め）
-    var OPENING_HIDE_MS = 2800; // 初回ロード時の表示時間（読みやすい長さ）
-    var OPENING_STAGGER = 500;  // 順番にズラす間隔
+    var OPENING_HIDE_MS = 2000; // 初回ロード時の表示時間（2秒）
+    var OPENING_STAGGER = 2300; // 次の吹き出しまでの間隔（前の消失後0.3秒待ってから次）
     var OPENING_DELAY   = 800;  // ページロード後の待機時間
 
     icons.forEach(function(icon){
