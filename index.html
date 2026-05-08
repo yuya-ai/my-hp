@@ -3842,32 +3842,48 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     });
   })();
 
-  // ===== アイコン吹き出し：触れた瞬間表示・離してから1秒残る =====
+  // ===== アイコン吹き出し：自動で表示→1.5秒で消える =====
   (function setupIconTooltips(){
     var icons = document.querySelectorAll('.float-stack [data-tooltip]');
+    var AUTO_HIDE_MS = 1500; // 表示時間 1.5秒
+
     icons.forEach(function(icon){
       var hideTimer = null;
       function showTip(){
         icon.classList.add('show-tip');
         clearTimeout(hideTimer);
-      }
-      function hideTipDelayed(delay){
-        clearTimeout(hideTimer);
+        // 表示開始から AUTO_HIDE_MS 後に必ず消える（フェイルセーフ）
         hideTimer = setTimeout(function(){
           icon.classList.remove('show-tip');
-        }, delay || 1000);
+        }, AUTO_HIDE_MS);
       }
-      // モバイル: 触れた瞬間表示・離してから1秒間残す
+      function hideTipNow(){
+        clearTimeout(hideTimer);
+        icon.classList.remove('show-tip');
+      }
+      // モバイル: 触れた瞬間表示 → 1.5秒後に自動で消える（指離さなくてもOK）
       icon.addEventListener('touchstart', showTip, { passive: true });
-      icon.addEventListener('touchend',    function(){ hideTipDelayed(1000); });
-      icon.addEventListener('touchcancel', function(){ hideTipDelayed(200); });
-      // PC: hover中表示・離れたら少しだけ残す
+      icon.addEventListener('touchcancel', hideTipNow);
+      // PC: hover時表示 → 1.5秒後に自動で消える
       icon.addEventListener('mouseenter', showTip);
-      icon.addEventListener('mouseleave', function(){ hideTipDelayed(400); });
+      icon.addEventListener('mouseleave', hideTipNow);
       // フォーカス（キーボード操作）
       icon.addEventListener('focus', showTip);
-      icon.addEventListener('blur',  function(){ hideTipDelayed(400); });
+      icon.addEventListener('blur', hideTipNow);
     });
+
+    // ===== 初回ロード時：各アイコンの吹き出しを順番にチラ見せ =====
+    // ページ表示直後に「こんなボタンあるよ〜」とお客様にアピール
+    setTimeout(function(){
+      icons.forEach(function(icon, idx){
+        setTimeout(function(){
+          icon.classList.add('show-tip');
+          setTimeout(function(){
+            icon.classList.remove('show-tip');
+          }, AUTO_HIDE_MS);
+        }, idx * 450); // 450ms 間隔で順番に登場
+      });
+    }, 800); // ページロード後0.8秒待機
   })();
 
   // ===== スクロール検知でアイコンをさらに半透明化（スマホ用） =====
