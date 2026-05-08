@@ -4672,6 +4672,35 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         '前日にもリマインダー届きます🔔';
     }
 
+    // ===== LINE CTA に予約完了トークン（BIO_RSV:）を埋め込む =====
+    // → ユーザーが LINE で「送信」タップ → Webhook が解析して 2-A/2-B を自動返信
+    var lineCta = document.getElementById('lineModalCta');
+    if (lineCta) {
+      var savedFlag = (rememberCb && rememberCb.checked) ? 1 : 0;
+      var rsvPayload = {
+        n: name,
+        p: phone,
+        d: dateBtn.dataset.date,
+        t: timeWindow,
+        i: items.join(', '),
+        tt: totalText,
+        s: savedFlag
+      };
+      try {
+        var jsonStr = JSON.stringify(rsvPayload);
+        var bytes = new TextEncoder().encode(jsonStr);
+        var binStr = '';
+        for (var bi = 0; bi < bytes.length; bi++) binStr += String.fromCharCode(bytes[bi]);
+        var b64 = btoa(binStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        var prefilled = '予約完了通知🌸 BIO_RSV:' + b64;
+        lineCta.href = 'https://line.me/R/oaMessage/@708zxzjm/?' + encodeURIComponent(prefilled);
+      } catch (err) {
+        console.error('LINE payload encode failed:', err);
+        // フォールバック：トークンなしで友だち追加のみ
+        lineCta.href = 'https://line.me/R/ti/p/@708zxzjm';
+      }
+    }
+
     // パターン②: LINE誘導モーダルを表示
     if (lineModal) {
       lineModal.classList.add('is-open');
