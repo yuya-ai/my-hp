@@ -1786,35 +1786,22 @@ body.chat-active .yt-popup.is-open {
   color: #fff;
 }
 
-/* === 保存提案 動的吹き出し（A）+ ぽよん演出（B） === */
+/* === 保存提案 ビオくん連動チャット吹き出し（A+B：パーティクル演出付き） === */
 .rsv-save-balloon {
   position: relative;
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
   margin-top: 14px;
-  padding: 13px 16px 13px 14px;
-  background: linear-gradient(135deg, #fff7e0 0%, #ffe7c2 100%);
-  border: 2px solid var(--orange);
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(255, 140, 66, 0.22);
+  padding: 0;
+  background: transparent;
+  border: none;
   font-size: 0.93rem;
   color: var(--brown);
   font-weight: 600;
   line-height: 1.55;
-  animation: rsvBalloonPop 0.55s cubic-bezier(.34,1.56,.64,1);
-}
-.rsv-save-balloon::after {
-  content: '';
-  position: absolute;
-  bottom: -9px;
-  left: 28px;
-  width: 14px;
-  height: 14px;
-  background: linear-gradient(135deg, transparent 50%, #ffe7c2 50%);
-  border-right: 2px solid var(--orange);
-  border-bottom: 2px solid var(--orange);
-  transform: rotate(45deg);
+  animation: rsvBalloonPop 0.6s cubic-bezier(.34,1.56,.64,1);
+  overflow: visible;
 }
 @keyframes rsvBalloonPop {
   0%   { opacity: 0; transform: translateY(-10px) scale(0.7); }
@@ -1822,44 +1809,127 @@ body.chat-active .yt-popup.is-open {
   80%  { transform: translateY(-1px)              scale(0.99); }
   100% { opacity: 1; transform: translateY(0)     scale(1.0); }
 }
-.rsv-save-balloon--saved {
+
+/* ビオくんアバター（円形・グラデ・ぴょこぴょこ） */
+.rsv-save-balloon__avatar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe5b3 0%, #ffc870 60%, #e8a849 100%);
+  border: 2.5px solid #c8852e;
+  box-shadow: 0 3px 8px rgba(200, 133, 46, 0.35), inset 0 -3px 6px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rsvAvatarBob 1.8s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+@keyframes rsvAvatarBob {
+  0%, 100% { transform: translateY(0)    rotate(-3deg); }
+  50%      { transform: translateY(-2px) rotate(3deg); }
+}
+.rsv-save-balloon__face {
+  font-size: 1.85rem;
+  line-height: 1;
+  display: block;
+  transform: translateY(1px);
+  transition: transform 0.25s;
+}
+
+/* 吹き出し本体 */
+.rsv-save-balloon__bubble {
+  flex: 1;
+  position: relative;
+  padding: 12px 16px;
   background: linear-gradient(135deg, #f0ffe0 0%, #c8f0a8 100%);
-  border-color: #4caf50;
+  border: 2px solid #4caf50;
+  border-radius: 16px;
   box-shadow: 0 4px 14px rgba(76, 175, 80, 0.22);
 }
-.rsv-save-balloon--saved::after {
-  background: linear-gradient(135deg, transparent 50%, #c8f0a8 50%);
-  border-right-color: #4caf50;
-  border-bottom-color: #4caf50;
-}
-.rsv-save-balloon--unsaved {
-  background: linear-gradient(135deg, #fff0f0 0%, #ffd2cf 100%);
-  border-color: #e57373;
-  box-shadow: 0 4px 14px rgba(229, 115, 115, 0.22);
-}
-.rsv-save-balloon--unsaved::after {
-  background: linear-gradient(135deg, transparent 50%, #ffd2cf 50%);
-  border-right-color: #e57373;
-  border-bottom-color: #e57373;
-}
-.rsv-save-balloon__emoji {
-  font-size: 1.5rem;
-  line-height: 1.2;
-  flex-shrink: 0;
+.rsv-save-balloon__bubble::before {
+  content: '';
+  position: absolute;
+  left: -9px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #c8f0a8 50%, transparent 50%);
+  border-left: 2px solid #4caf50;
+  border-bottom: 2px solid #4caf50;
+  transform: translateY(-50%) rotate(45deg);
 }
 .rsv-save-balloon__text {
   margin: 0;
 }
 .rsv-save-balloon__text strong {
-  color: var(--orange);
+  color: #2e7d32;
   font-weight: 800;
 }
-.rsv-save-balloon--saved .rsv-save-balloon__text strong { color: #2e7d32; }
-.rsv-save-balloon--unsaved .rsv-save-balloon__text strong { color: #c62828; }
+
+/* === 保存ON 状態（緑系・スマイル） === */
+.rsv-save-balloon--saved .rsv-save-balloon__avatar {
+  background: linear-gradient(135deg, #ffe5b3 0%, #ffc870 60%, #e8a849 100%);
+  border-color: #c8852e;
+}
+
+/* === 保存OFF 状態（ピンク系・ション顔） === */
+.rsv-save-balloon--unsaved .rsv-save-balloon__bubble {
+  background: linear-gradient(135deg, #fff0f0 0%, #ffd2cf 100%);
+  border-color: #e57373;
+  box-shadow: 0 4px 14px rgba(229, 115, 115, 0.22);
+}
+.rsv-save-balloon--unsaved .rsv-save-balloon__bubble::before {
+  background: linear-gradient(135deg, #ffd2cf 50%, transparent 50%);
+  border-left-color: #e57373;
+  border-bottom-color: #e57373;
+}
+.rsv-save-balloon--unsaved .rsv-save-balloon__text strong {
+  color: #c62828;
+}
+.rsv-save-balloon--unsaved .rsv-save-balloon__avatar {
+  animation: rsvAvatarShake 0.7s ease-in-out;
+  background: linear-gradient(135deg, #ffe0e0 0%, #ffb3b3 60%, #d57878 100%);
+  border-color: #c25555;
+}
+@keyframes rsvAvatarShake {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  20%      { transform: translateY(0) rotate(-10deg); }
+  40%      { transform: translateY(2px) rotate(10deg); }
+  60%      { transform: translateY(0) rotate(-6deg); }
+  80%      { transform: translateY(0) rotate(4deg); }
+}
+
+/* === パーティクル（チェックON時のみ飛ぶ） === */
+.rsv-save-balloon__particle {
+  position: absolute;
+  top: 36%;
+  left: 30px;
+  font-size: 1.3rem;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+}
+.rsv-save-balloon--burst .rsv-save-balloon__particle {
+  animation: rsvParticleBurst 1.5s ease-out forwards;
+}
+.rsv-save-balloon--burst .rsv-save-balloon__particle--1 { --tx: -42px; --ty: -52px; animation-delay: 0s;    }
+.rsv-save-balloon--burst .rsv-save-balloon__particle--2 { --tx:  60px; --ty: -58px; animation-delay: 0.06s; }
+.rsv-save-balloon--burst .rsv-save-balloon__particle--3 { --tx: -68px; --ty: -22px; animation-delay: 0.14s; }
+.rsv-save-balloon--burst .rsv-save-balloon__particle--4 { --tx:  78px; --ty: -32px; animation-delay: 0.04s; }
+.rsv-save-balloon--burst .rsv-save-balloon__particle--5 { --tx:  -8px; --ty: -68px; animation-delay: 0.10s; font-size:1.1rem; }
+@keyframes rsvParticleBurst {
+  0%   { opacity: 0; transform: translate(0, 0)   scale(0)   rotate(0deg); }
+  20%  { opacity: 1; transform: translate(calc(var(--tx)*0.3), calc(var(--ty)*0.3)) scale(1.15) rotate(15deg); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.55) rotate(35deg); }
+}
 
 @media (max-width: 600px) {
-  .rsv-save-balloon { font-size: 0.88rem; padding: 12px 14px; }
-  .rsv-save-balloon__emoji { font-size: 1.35rem; }
+  .rsv-save-balloon { font-size: 0.88rem; gap: 10px; }
+  .rsv-save-balloon__avatar { width: 46px; height: 46px; }
+  .rsv-save-balloon__face { font-size: 1.65rem; }
+  .rsv-save-balloon__bubble { padding: 11px 13px; }
 }
 
 /* 当日予約は電話のみ — お客様の目に付く強調ボックス */
@@ -3153,12 +3223,21 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           <textarea id="rsvNote" rows="2" maxlength="200" placeholder="例：お子さんの誕生日プレゼント用"></textarea>
         </label>
       </div>
-      <!-- A: 動的吹き出し（お名前+電話入力時に出現・チェック状態で内容変化・ぽよんアニメ） -->
+      <!-- A+B: ビオくんアバター連動の動的吹き出し（チャット風・パーティクル演出付き） -->
       <div class="rsv-save-balloon" id="rsvSaveBalloon" hidden>
-        <span class="rsv-save-balloon__emoji" id="rsvSaveBalloonEmoji">💎</span>
-        <p class="rsv-save-balloon__text" id="rsvSaveBalloonText">
-          ✨ 保存ON！次回からは<strong>1秒で予約完了</strong>♪☺️
-        </p>
+        <div class="rsv-save-balloon__avatar" aria-hidden="true">
+          <span class="rsv-save-balloon__face" id="rsvSaveBalloonFace">🐣</span>
+        </div>
+        <div class="rsv-save-balloon__bubble">
+          <p class="rsv-save-balloon__text" id="rsvSaveBalloonText">
+            ✨ 保存ON！次回からは<strong>1秒で予約完了</strong>♪☺️
+          </p>
+        </div>
+        <span class="rsv-save-balloon__particle rsv-save-balloon__particle--1" aria-hidden="true">✨</span>
+        <span class="rsv-save-balloon__particle rsv-save-balloon__particle--2" aria-hidden="true">💚</span>
+        <span class="rsv-save-balloon__particle rsv-save-balloon__particle--3" aria-hidden="true">🌸</span>
+        <span class="rsv-save-balloon__particle rsv-save-balloon__particle--4" aria-hidden="true">⭐</span>
+        <span class="rsv-save-balloon__particle rsv-save-balloon__particle--5" aria-hidden="true">💕</span>
       </div>
 
       <label class="rsv-remember">
@@ -4633,11 +4712,22 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     window.__bioRsvSaveInfo = saveInfo;
     window.__bioRsvClearInfo = function() { localStorage.removeItem(STORAGE_KEY); if (clearBtn) clearBtn.hidden = true; };
 
-    // ===== 保存提案 動的吹き出し制御（A + B：ぽよん演出） =====
+    // ===== 保存提案 ビオくん連動チャット吹き出し制御（A + B + パーティクル） =====
     var saveBalloon = document.getElementById('rsvSaveBalloon');
     var saveBalloonText = document.getElementById('rsvSaveBalloonText');
-    var saveBalloonEmoji = document.getElementById('rsvSaveBalloonEmoji');
+    var saveBalloonFace = document.getElementById('rsvSaveBalloonFace');
     var lastBalloonState = ''; // 'hidden' | 'saved' | 'unsaved'
+
+    function triggerParticleBurst() {
+      if (!saveBalloon) return;
+      saveBalloon.classList.remove('rsv-save-balloon--burst');
+      void saveBalloon.offsetWidth; // reflow
+      saveBalloon.classList.add('rsv-save-balloon--burst');
+      // 1.6秒後にクラス除去（再発火を可能にするため）
+      setTimeout(function() {
+        if (saveBalloon) saveBalloon.classList.remove('rsv-save-balloon--burst');
+      }, 1600);
+    }
 
     function updateSaveBalloon() {
       if (!saveBalloon) return;
@@ -4650,13 +4740,14 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       else if (isChecked)             newState = 'saved';
       else                            newState = 'unsaved';
 
-      // 状態が変わっていなければ何もしない（毎キー入力での再アニメ防止）
+      // 状態が同じなら何もしない（毎キー入力での再アニメ防止）
       if (newState === lastBalloonState) return;
+      var prevState = lastBalloonState;
       lastBalloonState = newState;
 
       if (newState === 'hidden') {
         saveBalloon.hidden = true;
-        saveBalloon.classList.remove('rsv-save-balloon--saved', 'rsv-save-balloon--unsaved');
+        saveBalloon.classList.remove('rsv-save-balloon--saved', 'rsv-save-balloon--unsaved', 'rsv-save-balloon--burst');
         return;
       }
 
@@ -4664,15 +4755,17 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       saveBalloon.classList.remove('rsv-save-balloon--saved', 'rsv-save-balloon--unsaved');
       if (newState === 'saved') {
         saveBalloon.classList.add('rsv-save-balloon--saved');
-        saveBalloonEmoji.textContent = '💎';
+        saveBalloonFace.textContent = '🐣'; // スマイル
         saveBalloonText.innerHTML = '✨ 保存ON！次回からは<strong>1秒で予約完了</strong>♪☺️';
+        // hidden→saved または unsaved→saved の時にパーティクル発火
+        if (prevState !== 'saved') triggerParticleBurst();
       } else {
         saveBalloon.classList.add('rsv-save-balloon--unsaved');
-        saveBalloonEmoji.textContent = '💔';
+        saveBalloonFace.textContent = '🥺'; // ション顔
         saveBalloonText.innerHTML = '保存すれば<strong>次回予約が超簡単</strong>♪✨<br>チェックを入れてみよう☺️';
       }
 
-      // 状態が変わった時だけぽよん再生
+      // 状態が変わった時だけ吹き出し本体もぽよん再生
       saveBalloon.style.animation = 'none';
       void saveBalloon.offsetWidth; // reflow
       saveBalloon.style.animation = '';
