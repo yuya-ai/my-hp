@@ -1786,6 +1786,121 @@ body.chat-active .yt-popup.is-open {
   color: #fff;
 }
 
+/* === 保存提案 動的吹き出し（A）+ ぽよん演出（B） === */
+.rsv-save-balloon {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 13px 16px 13px 14px;
+  background: linear-gradient(135deg, #fff7e0 0%, #ffe7c2 100%);
+  border: 2px solid var(--orange);
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(255, 140, 66, 0.22);
+  font-size: 0.93rem;
+  color: var(--brown);
+  font-weight: 600;
+  line-height: 1.55;
+  animation: rsvBalloonPop 0.55s cubic-bezier(.34,1.56,.64,1);
+}
+.rsv-save-balloon::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 28px;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(135deg, transparent 50%, #ffe7c2 50%);
+  border-right: 2px solid var(--orange);
+  border-bottom: 2px solid var(--orange);
+  transform: rotate(45deg);
+}
+@keyframes rsvBalloonPop {
+  0%   { opacity: 0; transform: translateY(-10px) scale(0.7); }
+  55%  { opacity: 1; transform: translateY(3px)   scale(1.04); }
+  80%  { transform: translateY(-1px)              scale(0.99); }
+  100% { opacity: 1; transform: translateY(0)     scale(1.0); }
+}
+.rsv-save-balloon--saved {
+  background: linear-gradient(135deg, #f0ffe0 0%, #c8f0a8 100%);
+  border-color: #4caf50;
+  box-shadow: 0 4px 14px rgba(76, 175, 80, 0.22);
+}
+.rsv-save-balloon--saved::after {
+  background: linear-gradient(135deg, transparent 50%, #c8f0a8 50%);
+  border-right-color: #4caf50;
+  border-bottom-color: #4caf50;
+}
+.rsv-save-balloon--unsaved {
+  background: linear-gradient(135deg, #fff0f0 0%, #ffd2cf 100%);
+  border-color: #e57373;
+  box-shadow: 0 4px 14px rgba(229, 115, 115, 0.22);
+}
+.rsv-save-balloon--unsaved::after {
+  background: linear-gradient(135deg, transparent 50%, #ffd2cf 50%);
+  border-right-color: #e57373;
+  border-bottom-color: #e57373;
+}
+.rsv-save-balloon__emoji {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+.rsv-save-balloon__text {
+  margin: 0;
+}
+.rsv-save-balloon__text strong {
+  color: var(--orange);
+  font-weight: 800;
+}
+.rsv-save-balloon--saved .rsv-save-balloon__text strong { color: #2e7d32; }
+.rsv-save-balloon--unsaved .rsv-save-balloon__text strong { color: #c62828; }
+
+/* === 保存提案 静的バナー（C・はじめてご利用の方へ） === */
+.rsv-save-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--yellow-light) 0%, #ffd980 100%);
+  border: 2px dashed var(--orange);
+  border-radius: 14px;
+}
+.rsv-save-banner__icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(255, 140, 66, 0.3));
+}
+.rsv-save-banner__content {
+  flex: 1;
+  min-width: 0;
+}
+.rsv-save-banner__title {
+  display: block;
+  font-size: 1rem;
+  color: var(--orange);
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.rsv-save-banner__text {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--brown);
+  line-height: 1.5;
+  font-weight: 600;
+}
+@media (max-width: 600px) {
+  .rsv-save-balloon { font-size: 0.88rem; padding: 12px 14px; }
+  .rsv-save-balloon__emoji { font-size: 1.35rem; }
+  .rsv-save-banner { gap: 12px; padding: 12px 14px; }
+  .rsv-save-banner__icon { font-size: 1.7rem; }
+  .rsv-save-banner__title { font-size: 0.94rem; }
+  .rsv-save-banner__text { font-size: 0.8rem; }
+}
+
 /* 当日予約は電話のみ — お客様の目に付く強調ボックス */
 .rsv-day-of-notice {
   display: flex;
@@ -3077,11 +3192,31 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           <textarea id="rsvNote" rows="2" maxlength="200" placeholder="例：お子さんの誕生日プレゼント用"></textarea>
         </label>
       </div>
+      <!-- A: 動的吹き出し（お名前+電話入力時に出現・チェック状態で内容変化・ぽよんアニメ） -->
+      <div class="rsv-save-balloon" id="rsvSaveBalloon" hidden>
+        <span class="rsv-save-balloon__emoji" id="rsvSaveBalloonEmoji">💎</span>
+        <p class="rsv-save-balloon__text" id="rsvSaveBalloonText">
+          ✨ 保存ON！次回からは<strong>1秒で予約完了</strong>♪☺️
+        </p>
+      </div>
+
       <label class="rsv-remember">
         <input type="checkbox" id="rsvRemember" checked>
         <span>次回も同じお名前・電話番号で予約する <small>（このスマホ／PCにのみ保存。他のお客様には共有されません）</small></span>
       </label>
       <button type="button" class="rsv-clear-saved" id="rsvClearSaved" hidden>保存した情報を削除する</button>
+
+      <!-- C: 静的バナー（はじめてご利用の方へ） -->
+      <div class="rsv-save-banner">
+        <span class="rsv-save-banner__icon">🎁</span>
+        <div class="rsv-save-banner__content">
+          <strong class="rsv-save-banner__title">はじめてご利用の方へ</strong>
+          <p class="rsv-save-banner__text">
+            お名前・電話番号を保存すれば、<br>
+            次回からタップ3回で予約完了 ✨🎉
+          </p>
+        </div>
+      </div>
     </div>
 
     <div class="rsv-day-of-notice">
@@ -4539,12 +4674,60 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     loadSaved();
     if (clearBtn) {
       clearBtn.addEventListener('click', function(){
-        if (confirm('保存されたお名前・電話番号を削除しますか？')) clearInfo();
+        if (confirm('保存されたお名前・電話番号を削除しますか？')) {
+          clearInfo();
+          updateSaveBalloon();
+        }
       });
     }
     // 公開しておく（rsvSubmit から呼べるように）
     window.__bioRsvSaveInfo = saveInfo;
     window.__bioRsvClearInfo = function() { localStorage.removeItem(STORAGE_KEY); if (clearBtn) clearBtn.hidden = true; };
+
+    // ===== 保存提案 動的吹き出し制御（A + B：ぽよん演出） =====
+    var saveBalloon = document.getElementById('rsvSaveBalloon');
+    var saveBalloonText = document.getElementById('rsvSaveBalloonText');
+    var saveBalloonEmoji = document.getElementById('rsvSaveBalloonEmoji');
+
+    function updateSaveBalloon() {
+      if (!saveBalloon) return;
+      var hasName = nameInput && nameInput.value.trim().length > 0;
+      var hasPhone = phoneInput && phoneInput.value.trim().length > 0;
+
+      // どちらか空 → 隠す
+      if (!hasName || !hasPhone) {
+        saveBalloon.hidden = true;
+        saveBalloon.classList.remove('rsv-save-balloon--saved', 'rsv-save-balloon--unsaved');
+        return;
+      }
+
+      // 両方入力あり → 表示（チェック状態で文面切替）
+      var wasHidden = saveBalloon.hidden;
+      saveBalloon.hidden = false;
+      saveBalloon.classList.remove('rsv-save-balloon--saved', 'rsv-save-balloon--unsaved');
+
+      var isChecked = rememberCb && rememberCb.checked;
+      if (isChecked) {
+        saveBalloon.classList.add('rsv-save-balloon--saved');
+        saveBalloonEmoji.textContent = '💎';
+        saveBalloonText.innerHTML = '✨ 保存ON！次回からは<strong>1秒で予約完了</strong>♪☺️';
+      } else {
+        saveBalloon.classList.add('rsv-save-balloon--unsaved');
+        saveBalloonEmoji.textContent = '💔';
+        saveBalloonText.innerHTML = '保存すれば<strong>次回予約が超簡単</strong>♪✨<br>チェックを入れてみよう☺️';
+      }
+
+      // ぽよん演出をリスタート（毎回の状態変更でアニメ再生）
+      saveBalloon.style.animation = 'none';
+      void saveBalloon.offsetWidth; // reflow
+      saveBalloon.style.animation = '';
+    }
+
+    if (nameInput)   nameInput.addEventListener('input', updateSaveBalloon);
+    if (phoneInput)  phoneInput.addEventListener('input', updateSaveBalloon);
+    if (rememberCb)  rememberCb.addEventListener('change', updateSaveBalloon);
+    // 復元後の初期チェック（localStorage から自動入力された場合に吹き出し表示）
+    updateSaveBalloon();
   }
 
   window.rsvSubmit = function(e) {
