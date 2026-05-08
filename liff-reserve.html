@@ -111,6 +111,20 @@
     subEl.textContent = sub || 'お手数ですがもう一度お試しください';
   }
 
+  function autoOpenLine() {
+    var url = 'https://line.me/R/ti/p/@708zxzjm';
+    // iOS Safari は <a> タグ クリック経由が Universal Link 起動率高い
+    var link = document.createElement('a');
+    link.href = url;
+    link.target = '_top';
+    link.rel = 'noopener';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    // 100ms後にバックアップで window.location.href も実行
+    setTimeout(function(){ window.location.href = url; }, 100);
+  }
+
   function getPayloadParam() {
     var direct = new URLSearchParams(window.location.search).get('p');
     if (direct) return direct;
@@ -170,7 +184,7 @@
           if (liff.isInClient()) {
             setTimeout(function(){ liff.closeWindow(); }, 1800);
           } else {
-            setTimeout(function(){ window.location.href = 'https://line.me/R/ti/p/@708zxzjm'; }, 1500);
+            setTimeout(autoOpenLine, 600);
           }
           return;
         }
@@ -186,7 +200,7 @@
       if (liff.isInClient()) {
         setTimeout(function(){ liff.closeWindow(); }, 1800);
       } else {
-        setTimeout(function(){ window.location.href = 'https://line.me/R/ti/p/@708zxzjm'; }, 1500);
+        setTimeout(autoOpenLine, 600);
       }
       return;
     }
