@@ -4637,26 +4637,32 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var saveBalloon = document.getElementById('rsvSaveBalloon');
     var saveBalloonText = document.getElementById('rsvSaveBalloonText');
     var saveBalloonEmoji = document.getElementById('rsvSaveBalloonEmoji');
+    var lastBalloonState = ''; // 'hidden' | 'saved' | 'unsaved'
 
     function updateSaveBalloon() {
       if (!saveBalloon) return;
       var hasName = nameInput && nameInput.value.trim().length > 0;
       var hasPhone = phoneInput && phoneInput.value.trim().length > 0;
+      var isChecked = rememberCb && rememberCb.checked;
 
-      // どちらか空 → 隠す
-      if (!hasName || !hasPhone) {
+      var newState;
+      if (!hasName || !hasPhone)      newState = 'hidden';
+      else if (isChecked)             newState = 'saved';
+      else                            newState = 'unsaved';
+
+      // 状態が変わっていなければ何もしない（毎キー入力での再アニメ防止）
+      if (newState === lastBalloonState) return;
+      lastBalloonState = newState;
+
+      if (newState === 'hidden') {
         saveBalloon.hidden = true;
         saveBalloon.classList.remove('rsv-save-balloon--saved', 'rsv-save-balloon--unsaved');
         return;
       }
 
-      // 両方入力あり → 表示（チェック状態で文面切替）
-      var wasHidden = saveBalloon.hidden;
       saveBalloon.hidden = false;
       saveBalloon.classList.remove('rsv-save-balloon--saved', 'rsv-save-balloon--unsaved');
-
-      var isChecked = rememberCb && rememberCb.checked;
-      if (isChecked) {
+      if (newState === 'saved') {
         saveBalloon.classList.add('rsv-save-balloon--saved');
         saveBalloonEmoji.textContent = '💎';
         saveBalloonText.innerHTML = '✨ 保存ON！次回からは<strong>1秒で予約完了</strong>♪☺️';
@@ -4666,7 +4672,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         saveBalloonText.innerHTML = '保存すれば<strong>次回予約が超簡単</strong>♪✨<br>チェックを入れてみよう☺️';
       }
 
-      // ぽよん演出をリスタート（毎回の状態変更でアニメ再生）
+      // 状態が変わった時だけぽよん再生
       saveBalloon.style.animation = 'none';
       void saveBalloon.offsetWidth; // reflow
       saveBalloon.style.animation = '';
