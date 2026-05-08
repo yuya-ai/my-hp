@@ -172,40 +172,30 @@
       console.error('liff.getProfile failed:', e);
     }
 
+    // Push API は fire-and-forget（待たない・keepalive で navigation 後も継続送信）
     if (userId) {
       try {
-        var res = await fetch(PUSH_ENDPOINT, {
+        fetch(PUSH_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: userId, payload: payloadB64 })
-        });
-        if (res.ok) {
-          setSuccess('予約完了通知をお届けしました🌸');
-          if (liff.isInClient()) {
-            setTimeout(function(){ liff.closeWindow(); }, 1800);
-          } else {
-            setTimeout(autoOpenLine, 600);
-          }
-          return;
-        }
-        console.error('push HTTP', res.status, await res.text());
+          body: JSON.stringify({ userId: userId, payload: payloadB64 }),
+          keepalive: true
+        }).catch(function(e){ console.error('push fetch failed:', e); });
       } catch (e) {
-        console.error('push fetch failed:', e);
+        console.error('push fetch sync failed:', e);
       }
+    } else {
+      // userId 取得失敗時のみ sendMessages フォールバック
+      try { fallbackSendMessage(payloadB64); } catch (e) {}
     }
 
-    var sent = await fallbackSendMessage(payloadB64);
-    if (sent) {
-      setSuccess('予約完了通知をお届けしました🌸');
-      if (liff.isInClient()) {
-        setTimeout(function(){ liff.closeWindow(); }, 1800);
-      } else {
-        setTimeout(autoOpenLine, 600);
-      }
-      return;
+    // user activation が鮮度高いうちに即座にLINE遷移を実行
+    setSuccess('LINEを開いています…🌸');
+    if (liff.isInClient()) {
+      setTimeout(function(){ liff.closeWindow(); }, 1500);
+    } else {
+      setTimeout(autoOpenLine, 200);
     }
-
-    setError('通知の送信に失敗しました', 'LINEのトーク画面で「予約」と送信してください🙏');
   }
 
   var payloadB64 = getPayloadParam();
