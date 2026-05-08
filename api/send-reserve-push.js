@@ -1,4 +1,5 @@
 const CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+const ADMIN_USER_ID = process.env.ADMIN_USER_ID;
 
 const RESERVE_URL = 'https://my-hp-xi.vercel.app';
 const PHONE = '098-944-4191';
@@ -103,6 +104,29 @@ ${name}様、何かご質問があれば、いつでも
   return header + (saved ? middleSaved : middleUnsaved) + footer;
 }
 
+function buildAdminMessage(p) {
+  const name = p.n || 'お客様';
+  const phone = p.p || '';
+  const date = p.d || '';
+  const time = p.t || '';
+  const items = p.i || '';
+  const total = p.tt || '';
+
+  return `🔔 新しい予約が入りました！
+━━━━━━━━━━━━━━━
+
+👤 ${name} 様
+📞 ${phone}
+📅 ${date}
+⏰ ${time}
+🍱 ${items}
+💴 ${total}
+
+━━━━━━━━━━━━━━━
+✅ お客様にも予約完了通知を送信済
+⚠️ 売り切れの場合は早めに連絡を！`;
+}
+
 async function pushMessage(userId, text) {
   const res = await fetch('https://api.line.me/v2/bot/message/push', {
     method: 'POST',
@@ -160,6 +184,16 @@ module.exports = async (req, res) => {
 
     const text = buildReservationMessage(payload);
     await pushMessage(userId, text);
+
+    // 管理者にも通知（環境変数 ADMIN_USER_ID が設定されていれば）
+    if (ADMIN_USER_ID) {
+      try {
+        await pushMessage(ADMIN_USER_ID, buildAdminMessage(payload));
+      } catch (adminErr) {
+        console.error('admin push failed (customer push succeeded):', adminErr);
+      }
+    }
+
     return res.status(200).json({ ok: true });
   } catch (e) {
     console.error('send-reserve-push error:', e);

@@ -466,6 +466,14 @@ module.exports = async (req, res) => {
       if (event.type === 'message' && event.message.type === 'text') {
         const userText = event.message.text;
 
+        // userId取得コマンド（管理者通知の初期設定用）
+        if (/^(userid|uid|id教えて|アイディー)$/i.test(userText.trim())) {
+          const uid = (event.source && event.source.userId) || '取得失敗';
+          await replyMessage(event.replyToken,
+            `あなたのuserIdはこちら👇\n\n${uid}\n\nこのIDを Vercel の環境変数 ADMIN_USER_ID に設定すると、新規予約があった時に自動で通知が届くようになります🐣✨`);
+          return;
+        }
+
         // 予約完了トークン（BIO_RSV:）を最優先で検知
         if (userText.indexOf(RSV_PREFIX) !== -1) {
           const payload = parseReservationPayload(userText);
