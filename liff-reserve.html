@@ -99,7 +99,7 @@
     spinner.style.display = 'none';
     icon.textContent = '✨';
     statusEl.textContent = text;
-    subEl.textContent = 'LINEのトーク画面でご確認ください💕';
+    subEl.innerHTML = 'LINEのトーク画面でご確認ください💕<br><br><a href="https://line.me/R/ti/p/@708zxzjm" class="retry">LINEを開く →</a>';
   }
 
   function setError(text, sub) {
@@ -167,7 +167,11 @@
         });
         if (res.ok) {
           setSuccess('予約完了通知をお届けしました🌸');
-          if (liff.isInClient()) setTimeout(function(){ liff.closeWindow(); }, 1800);
+          if (liff.isInClient()) {
+            setTimeout(function(){ liff.closeWindow(); }, 1800);
+          } else {
+            setTimeout(function(){ window.location.href = 'https://line.me/R/ti/p/@708zxzjm'; }, 1500);
+          }
           return;
         }
         console.error('push HTTP', res.status, await res.text());
@@ -179,7 +183,11 @@
     var sent = await fallbackSendMessage(payloadB64);
     if (sent) {
       setSuccess('予約完了通知をお届けしました🌸');
-      if (liff.isInClient()) setTimeout(function(){ liff.closeWindow(); }, 1800);
+      if (liff.isInClient()) {
+        setTimeout(function(){ liff.closeWindow(); }, 1800);
+      } else {
+        setTimeout(function(){ window.location.href = 'https://line.me/R/ti/p/@708zxzjm'; }, 1500);
+      }
       return;
     }
 
