@@ -4756,13 +4756,13 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       if (newState === 'saved') {
         saveBalloon.classList.add('rsv-save-balloon--saved');
         saveBalloonFace.textContent = '🐣'; // スマイル
-        saveBalloonText.innerHTML = '✨ 保存ON！次回からは<strong>1秒で予約完了</strong>♪☺️';
+        saveBalloonText.innerHTML = '✨ 保存ON！<br>次回からは<strong>1秒で予約完了</strong>♪☺️';
         // hidden→saved または unsaved→saved の時にパーティクル発火
         if (prevState !== 'saved') triggerParticleBurst();
       } else {
         saveBalloon.classList.add('rsv-save-balloon--unsaved');
         saveBalloonFace.textContent = '🥺'; // ション顔
-        saveBalloonText.innerHTML = '保存すれば<strong>次回予約が超簡単</strong>♪✨<br>チェックを入れてみよう☺️';
+        saveBalloonText.innerHTML = '保存すれば<br><strong>次回予約が超簡単</strong>♪✨<br>チェックを入れてみよう☺️';
       }
 
       // 状態が変わった時だけ吹き出し本体もぽよん再生
