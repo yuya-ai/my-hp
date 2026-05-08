@@ -299,6 +299,119 @@ function matchKeyword(text) {
   return null;
 }
 
+// ===== 予約完了メッセージ（BIO_RSV: トークン経由）=====
+const RSV_PREFIX = 'BIO_RSV:';
+
+function parseReservationPayload(text) {
+  const idx = text.indexOf(RSV_PREFIX);
+  if (idx === -1) return null;
+  const m = text.slice(idx + RSV_PREFIX.length).match(/^[A-Za-z0-9_\-]+/);
+  if (!m) return null;
+  const std = m[0].replace(/-/g, '+').replace(/_/g, '/');
+  const pad = std.length % 4;
+  const padded = pad ? std + '='.repeat(4 - pad) : std;
+  try {
+    return JSON.parse(Buffer.from(padded, 'base64').toString('utf-8'));
+  } catch (e) {
+    console.error('parseReservationPayload error:', e);
+    return null;
+  }
+}
+
+function buildReservationMessage(p) {
+  // payload keys: n=name, p=phone, d=date, t=time, i=items, tt=total, s=saveInfo(1/0)
+  const name = p.n || 'お客様';
+  const phone = p.p || '';
+  const date = p.d || '';
+  const time = p.t || '';
+  const items = p.i || '';
+  const total = p.tt || '';
+  const saved = p.s === 1 || p.s === true || p.s === '1';
+
+  const header =
+`${name}様
+ご予約ありがとうございます🌸${saved ? '☺️' : '✨'}
+
+${name}様のご注文、しっかり承りました↓
+
+━━━━━━━━━━━━━━━
+📅 ご予約日時
+　${date} ${time}
+🍱 ご注文内容
+　${items}
+💴 合計金額
+　${total}
+☎ お電話
+　${phone}
+━━━━━━━━━━━━━━━
+
+📲 追加でご予約はこちら👇
+${RESERVE_URL}
+
+📍 店舗：いなりとチキン ビオ
+〒901-1206 沖縄県南城市大里字仲間1141
+（JAアトールむかい）
+☎ ${PHONE}
+
+🌺 ${name}様にお会いできるのを、お母さんとビオくん一同、心から楽しみにしております${saved ? '✨😊' : '！'}
+
+━━━━━━━━━━━━━━━
+✨ 当日のご案内
+━━━━━━━━━━━━━━━
+🚫 お支払い方法：現金のみ
+📦 テイクアウト専門店です
+⏰ 売り切れ次第終了します🙏
+🚗 駐車場：JAアトールの共用駐車場をご利用ください
+`;
+
+  const middleSaved =
+`
+━━━━━━━━━━━━━━━
+💎 次回もっと便利に
+━━━━━━━━━━━━━━━
+お名前・電話番号を保存いただいたので、
+次回からはタップのみで超簡単予約♪
+
+LINE限定のキャンペーン・割引情報も
+お届けします🎁`;
+
+  const middleUnsaved =
+`
+━━━━━━━━━━━━━━━
+💎 次回もっと便利に予約できます
+━━━━━━━━━━━━━━━
+次回のご予約時、フォーム下部の
+「次回も同じ情報で予約」にチェックいただくと、
+お名前・電話番号が保存され、
+次回からはタップのみで超簡単予約♪
+
+LINE限定のキャンペーン・割引情報も
+ぜひお見逃しなく🎁`;
+
+  const footer =
+`
+
+✨🎉 次回のご予約はこちら 🎉✨
+
+━━━━━━━━━━━━━━━
+
+👇 タップで1分予約 👇
+
+📲 ${RESERVE_URL}
+
+👆　👆　👆
+
+━━━━━━━━━━━━━━━
+
+🌸 タップひとつで予約完了 🌸
+🎁 LINE限定特典もゲット 🎁
+
+${name}様、何かご質問があれば、いつでも
+こちらにメッセージくださいね${saved ? '😊✨' : '✨😊'}`;
+
+  return header + (saved ? middleSaved : middleUnsaved) + footer;
+}
+
 function verifySignature(rawBody, signature) {
   if (!CHANNEL_SECRET || !signature) return false;
   const expected = crypto.createHmac('SHA256', CHANNEL_SECRET).update(rawBody).digest('base64');
@@ -352,6 +465,19 @@ module.exports = async (req, res) => {
     await Promise.all(events.map(async (event) => {
       if (event.type === 'message' && event.message.type === 'text') {
         const userText = event.message.text;
+
+        // 予約完了トークン（BIO_RSV:）を最優先で検知
+        if (userText.indexOf(RSV_PREFIX) !== -1) {
+          const payload = parseReservationPayload(userText);
+          if (payload) {
+            await replyMessage(event.replyToken, buildReservationMessage(payload));
+            return;
+          }
+          // パース失敗時はフォールバック
+          await replyMessage(event.replyToken, fallback);
+          return;
+        }
+
         const matchKey = matchKeyword(userText);
         const replyText = (matchKey && faqAnswers[matchKey]) ? faqAnswers[matchKey] : fallback;
         await replyMessage(event.replyToken, replyText);
