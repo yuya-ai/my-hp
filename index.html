@@ -1857,48 +1857,9 @@ body.chat-active .yt-popup.is-open {
 .rsv-save-balloon--saved .rsv-save-balloon__text strong { color: #2e7d32; }
 .rsv-save-balloon--unsaved .rsv-save-balloon__text strong { color: #c62828; }
 
-/* === 保存提案 静的バナー（C・はじめてご利用の方へ） === */
-.rsv-save-banner {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 16px;
-  padding: 14px 18px;
-  background: linear-gradient(135deg, var(--yellow-light) 0%, #ffd980 100%);
-  border: 2px dashed var(--orange);
-  border-radius: 14px;
-}
-.rsv-save-banner__icon {
-  font-size: 2rem;
-  line-height: 1;
-  flex-shrink: 0;
-  filter: drop-shadow(0 2px 4px rgba(255, 140, 66, 0.3));
-}
-.rsv-save-banner__content {
-  flex: 1;
-  min-width: 0;
-}
-.rsv-save-banner__title {
-  display: block;
-  font-size: 1rem;
-  color: var(--orange);
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-.rsv-save-banner__text {
-  margin: 0;
-  font-size: 0.86rem;
-  color: var(--brown);
-  line-height: 1.5;
-  font-weight: 600;
-}
 @media (max-width: 600px) {
   .rsv-save-balloon { font-size: 0.88rem; padding: 12px 14px; }
   .rsv-save-balloon__emoji { font-size: 1.35rem; }
-  .rsv-save-banner { gap: 12px; padding: 12px 14px; }
-  .rsv-save-banner__icon { font-size: 1.7rem; }
-  .rsv-save-banner__title { font-size: 0.94rem; }
-  .rsv-save-banner__text { font-size: 0.8rem; }
 }
 
 /* 当日予約は電話のみ — お客様の目に付く強調ボックス */
@@ -3205,18 +3166,6 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         <span>次回も同じお名前・電話番号で予約する <small>（このスマホ／PCにのみ保存。他のお客様には共有されません）</small></span>
       </label>
       <button type="button" class="rsv-clear-saved" id="rsvClearSaved" hidden>保存した情報を削除する</button>
-
-      <!-- C: 静的バナー（はじめてご利用の方へ） -->
-      <div class="rsv-save-banner">
-        <span class="rsv-save-banner__icon">🎁</span>
-        <div class="rsv-save-banner__content">
-          <strong class="rsv-save-banner__title">はじめてご利用の方へ</strong>
-          <p class="rsv-save-banner__text">
-            お名前・電話番号を保存すれば、<br>
-            次回からタップ3回で予約完了 ✨🎉
-          </p>
-        </div>
-      </div>
     </div>
 
     <div class="rsv-day-of-notice">
