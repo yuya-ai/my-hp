@@ -3462,8 +3462,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     <!-- LINEくんは LINE公式アカウント連携完成まで一時削除（2026-05-02）
          復活手順: /Users/apple/.claude/commands/hp-bio-line-restore.md 参照 -->
 
-    <!-- Instagramくん -->
-    <a href="https://www.instagram.com/inari_to_chicken_bio/" target="_blank" class="social-btn social-btn--ig" data-tooltip="ビオの裏側をチラ見せ❤️" aria-label="Instagramでビオをフォローする" rel="noopener noreferrer">
+    <!-- Instagramくん（モバイルはアプリ直接起動・PCは web） -->
+    <a href="https://www.instagram.com/inari_to_chicken_bio/" onclick="return tryOpenInstagram(event)" target="_blank" class="social-btn social-btn--ig" data-tooltip="ビオの裏側をチラ見せ❤️" aria-label="Instagramでビオをフォローする" rel="noopener noreferrer">
       <span class="social-btn__icon" aria-hidden="true">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -4937,6 +4937,23 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       lineModal.classList.add('is-open');
       lineModal.setAttribute('aria-hidden','false');
     }
+    return false;
+  };
+
+  // ===== Instagram ディープリンク（モバイルはアプリ直接起動） =====
+  window.tryOpenInstagram = function(e) {
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) return true; // PC: 通常通り新タブで web を開く
+    e.preventDefault();
+    var username = 'inari_to_chicken_bio';
+    var deepLink = 'instagram://user?username=' + username;
+    var webFallback = 'https://www.instagram.com/' + username + '/';
+    // アプリを起動
+    window.location.href = deepLink;
+    // 1.5秒後にまだこのページにいる = アプリ未インストール → web へフォールバック
+    setTimeout(function() {
+      if (!document.hidden) window.location.href = webFallback;
+    }, 1500);
     return false;
   };
 
