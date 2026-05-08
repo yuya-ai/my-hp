@@ -172,6 +172,11 @@
       console.error('liff.getProfile failed:', e);
     }
 
+    // userIdをlocalStorageにキャッシュ → 次回以降のLP訪問時にLIFFをスキップ可能
+    if (userId) {
+      try { localStorage.setItem('bio_line_user_id', userId); } catch (e) {}
+    }
+
     // Push API は fire-and-forget（待たない・keepalive で navigation 後も継続送信）
     if (userId) {
       try {
