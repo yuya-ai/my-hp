@@ -282,8 +282,8 @@ function matchKeyword(text) {
   if (/(法人|企業.*取引|卸|仕入|wholesale|b2b|業務用|お店.*向け)/i.test(text)) return 'corporate';
   if (/(取材|メディア|TV取材|テレビ取材|新聞取材|ラジオ.*取材|interview|press|youtuber.*取材|youtube.*取材|インタビュー)/i.test(text)) return 'media';
 
-  // Lv0: welcome 再表示コマンド（テスト・案内用）
-  if (/(welcome|ウェルカム|あいさつ|挨拶|もう一度|もういちど|案内|ガイド|スタート|^start$|リセット|reset)/i.test(text)) return 'welcome';
+  // Lv0: welcome 再表示コマンド + 予約意図（welcome 内に予約URL含むため CV up）
+  if (/(welcome|ウェルカム|あいさつ|挨拶|もう一度|もういちど|案内|ガイド|スタート|^start$|リセット|reset|予約したい|予約お願い|^予約$|^ご予約$|予約.*方法|どうやって.*予約|予約.*仕方)/i.test(text)) return 'welcome';
 
   // Lv1: 挨拶
   if (/(こんにちは|こんばんは|おはよう|^hello|^hi$|もしもし|やあ|^やっほ)/i.test(text)) return 'greeting';
