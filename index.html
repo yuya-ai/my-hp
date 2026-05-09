@@ -1550,16 +1550,18 @@ body.chat-active .yt-popup.is-open {
   font-family: inherit;
 }
 .rsv-total {
-  text-align: right;
+  text-align: left;
   margin-top: 14px;
   font-size: 1rem;
   font-weight: 700;
-  padding: 12px 16px;
+  padding: 10px 18px;
   background: var(--bg-warm);
-  border-radius: 8px;
+  border-radius: 12px;
   position: sticky;
   bottom: 8px;
   z-index: 50;
+  width: fit-content;
+  max-width: 100%;
   overflow: visible;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
   transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
@@ -1692,6 +1694,237 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   50% { transform: scale(1.08); }
 }
 .rsv-qty.is-mini-bounce { animation: rsv-mini-bounce 0.5s ease-out; }
+
+/* ===== Phase D: 多彩ミニ演出（パチンコ風 徐々に派手化） ===== */
+
+/* 桜花びら：横スライド + 回転 */
+@keyframes rsv-fx-petal {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0); }
+  30% { opacity: 1; transform: translate(var(--sx), var(--sy)) rotate(180deg); }
+  100% { opacity: 0; transform: translate(calc(var(--sx) * 1.8), calc(var(--sy) * 1.5)) rotate(540deg); }
+}
+.rsv-fx-petal {
+  position: absolute;
+  font-size: 1.3rem;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  animation: rsv-fx-petal 1.5s ease-out forwards;
+}
+
+/* 円形広がる（💫スター系） */
+@keyframes rsv-fx-radial {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+  40% { opacity: 1; transform: translate(var(--sx), var(--sy)) scale(1.4); }
+  100% { opacity: 0; transform: translate(calc(var(--sx) * 1.6), calc(var(--sy) * 1.6)) scale(0.8); }
+}
+.rsv-fx-radial {
+  position: absolute;
+  font-size: 1.4rem;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  animation: rsv-fx-radial 1.4s ease-out forwards;
+}
+
+/* 弾ける（⭐バースト） */
+@keyframes rsv-fx-burst {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.2) rotate(0); }
+  20% { opacity: 1; transform: translate(0, 0) scale(1.5) rotate(45deg); }
+  100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(0.6) rotate(180deg); }
+}
+.rsv-fx-burst {
+  position: absolute;
+  font-size: 1.5rem;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  animation: rsv-fx-burst 1.4s ease-out forwards;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
+}
+
+/* ハート浮上（💖） */
+@keyframes rsv-fx-heart {
+  0% { opacity: 0; transform: translate(0, 10px) scale(0.5); }
+  20% { opacity: 1; transform: translate(var(--sx), -10px) scale(1.1); }
+  100% { opacity: 0; transform: translate(var(--sx), -55px) scale(0.85); }
+}
+.rsv-fx-heart {
+  position: absolute;
+  font-size: 1.3rem;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  animation: rsv-fx-heart 1.5s ease-out forwards;
+  text-shadow: 0 0 8px rgba(255, 100, 150, 0.6);
+}
+
+/* 音符上昇（🎵リーチ感） */
+@keyframes rsv-fx-music {
+  0% { opacity: 0; transform: translate(0, 5px) rotate(-15deg) scale(0.5); }
+  20% { opacity: 1; transform: translate(var(--sx), -15px) rotate(0) scale(1.1); }
+  100% { opacity: 0; transform: translate(calc(var(--sx) * 1.3), -65px) rotate(15deg) scale(0.9); }
+}
+.rsv-fx-music {
+  position: absolute;
+  font-size: 1.4rem;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  animation: rsv-fx-music 1.6s ease-out forwards;
+  color: #ff6699;
+  text-shadow: 0 0 8px rgba(255, 100, 150, 0.5);
+}
+
+/* 食品上昇（🍱🍴 個数演出用） */
+@keyframes rsv-fx-food {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+  25% { opacity: 1; transform: translate(var(--sx), -25px) scale(1.2); }
+  100% { opacity: 0; transform: translate(var(--sx), -70px) scale(0.9); }
+}
+.rsv-fx-food {
+  position: absolute;
+  font-size: 1.5rem;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  animation: rsv-fx-food 1.5s ease-out forwards;
+}
+
+/* 王冠ポップ（👑 15個達成） */
+@keyframes rsv-fx-crown {
+  0% { opacity: 0; transform: translate(0, 30px) scale(0.3) rotate(-15deg); }
+  20% { opacity: 1; transform: translate(0, -15px) scale(1.4) rotate(8deg); }
+  40% { transform: translate(0, -10px) scale(1) rotate(-3deg); }
+  60% { transform: translate(0, -12px) scale(1.05) rotate(2deg); }
+  85% { opacity: 1; transform: translate(0, -10px) scale(1) rotate(0); }
+  100% { opacity: 0; transform: translate(0, -30px) scale(0.9); }
+}
+.rsv-fx-crown {
+  position: absolute;
+  font-size: 2.5rem;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  animation: rsv-fx-crown 1.8s ease-out forwards;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
+}
+
+/* トロフィー（🏆 20個達成・派手） */
+@keyframes rsv-fx-trophy {
+  0% { opacity: 0; transform: translate(0, 40px) scale(0.2) rotate(-30deg); }
+  15% { opacity: 1; transform: translate(0, -20px) scale(1.5) rotate(10deg); }
+  30% { transform: translate(0, -15px) scale(1.1) rotate(-5deg); }
+  50% { transform: translate(0, -18px) scale(1.15) rotate(3deg); }
+  85% { opacity: 1; transform: translate(0, -15px) scale(1) rotate(0); }
+  100% { opacity: 0; transform: translate(0, -40px) scale(0.95); }
+}
+.rsv-fx-trophy {
+  position: absolute;
+  font-size: 3rem;
+  pointer-events: none;
+  z-index: 7;
+  opacity: 0;
+  animation: rsv-fx-trophy 2.2s ease-out forwards;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.9));
+}
+
+/* 商品アイテム金色グロー（15個・20個達成時） */
+@keyframes rsv-item-golden {
+  0%, 100% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); background-color: transparent; }
+  50% { box-shadow: 0 0 24px 4px rgba(255, 215, 0, 0.4); background-color: rgba(255, 215, 0, 0.08); }
+}
+.rsv-item.is-golden { animation: rsv-item-golden 1.5s ease-in-out; }
+
+/* 商品アイテム七色グロー（20個達成時） */
+@keyframes rsv-item-rainbow {
+  0%, 100% { box-shadow: 0 0 0 rgba(255, 0, 128, 0); }
+  20% { box-shadow: 0 0 24px 4px rgba(255, 0, 128, 0.5); }
+  40% { box-shadow: 0 0 24px 4px rgba(255, 215, 0, 0.5); }
+  60% { box-shadow: 0 0 24px 4px rgba(0, 200, 255, 0.5); }
+  80% { box-shadow: 0 0 24px 4px rgba(140, 0, 255, 0.5); }
+}
+.rsv-item.is-rainbow-glow { animation: rsv-item-rainbow 2s ease-in-out; }
+
+/* 商品アイテム紫プレミアムグロー（18-19個達成時・金色とトロフィーの中間） */
+@keyframes rsv-item-premium {
+  0%, 100% { box-shadow: 0 0 0 rgba(186, 85, 211, 0); background-color: transparent; }
+  50% { box-shadow: 0 0 28px 6px rgba(186, 85, 211, 0.5); background-color: rgba(186, 85, 211, 0.06); }
+}
+.rsv-item.is-premium { animation: rsv-item-premium 1.5s ease-in-out; }
+
+/* L1 ¥1000: 黄色グローリング拡張（emojiなし） */
+@keyframes rsv-fx-golden-ring {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); border-width: 4px; }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); border-width: 3px; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.2); border-width: 1px; }
+}
+.rsv-fx-golden-ring {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid #ffd700;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  animation: rsv-fx-golden-ring 1.4s ease-out forwards;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+/* 画面端フラッシュ（¥2k+大当たり感） */
+@keyframes rsv-fx-edge-flash {
+  0%, 100% { opacity: 0; }
+  20% { opacity: 1; }
+  60% { opacity: 0.6; }
+}
+.rsv-fx-edge-flash {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0;
+  animation: rsv-fx-edge-flash 1.2s ease-out forwards;
+  background: radial-gradient(circle at center, transparent 50%, var(--flash-color, rgba(255, 215, 0, 0.4)) 100%);
+}
+
+/* リーチ感パルスグロー（¥900） */
+@keyframes rsv-fx-pulse-ring {
+  0%, 100% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 0.7; transform: scale(1.3); }
+}
+.rsv-fx-pulse-ring {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #ff6699;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  animation: rsv-fx-pulse-ring 1.5s ease-in-out;
+  box-shadow: 0 0 12px rgba(255, 100, 150, 0.5);
+}
+
+/* 個数毎+クリックの「+1」フィードバック（1個〜20個まで統一） */
+@keyframes rsv-fx-plus-one {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.5); }
+  20% { opacity: 1; transform: translate(-50%, -10px) scale(1.25); }
+  100% { opacity: 0; transform: translate(-50%, -34px) scale(1); }
+}
+.rsv-fx-plus-one {
+  position: absolute;
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #ff6b2b;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  white-space: nowrap;
+  animation: rsv-fx-plus-one 0.85s ease-out forwards;
+}
 .rsv-sparkle {
   position: absolute;
   font-size: 1.4rem;
@@ -5078,9 +5311,12 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         rsvFireMilestone(newMilestone, totalContainer);
         _rsvLastMilestone = newMilestone;
       }
-      // ミニマイルストーン：¥100/¥300/¥500（+ボタン押下時のみ・¥1000未満で発火）
+      // ミニマイルストーン：¥100/¥200/¥300/¥500/¥700/¥900（+ボタン押下時のみ・¥1000未満で発火）
       if (sourceBtn && sourceBtn.dataset && sourceBtn.dataset.act === '+' && total < 1000) {
-        var newMini = total >= 500 ? 3 : (total >= 300 ? 2 : (total >= 100 ? 1 : 0));
+        var newMini = 0;
+        for (var mi = MINI_DEFS.length - 1; mi >= 0; mi--) {
+          if (total >= MINI_DEFS[mi].threshold) { newMini = mi + 1; break; }
+        }
         if (newMini > _rsvLastMiniMilestone) {
           rsvFireMiniMilestone(newMini, sourceBtn);
           _rsvLastMiniMilestone = newMini;
@@ -5121,7 +5357,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
   function rsvSpawnConfetti(totalContainer) {
     if (!totalContainer) return;
-    var emojis = ['🎉', '✨', '🌸', '🐣', '🎊', '🌟', '🎉', '✨'];
+    // ¥2k 専用 emoji（他の演出と完全分離・🎉のみ）
+    var emojis = ['🎉', '🎉', '🎉', '🎉', '🎉', '🎉', '🎉', '🎉'];
     for (var i = 0; i < 8; i++) {
       var c = document.createElement('span');
       c.className = 'rsv-confetti';
@@ -5136,38 +5373,284 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     }
   }
 
-  // ===== Phase D: ミニマイルストーン（¥100/¥300/¥500・+ボタン横で発火） =====
+  // ===== Phase D: 多彩ミニマイルストーン（パチンコ風 徐々に派手化） =====
+  // 6段階・全部別演出・序章→リーチ感
+  var MINI_DEFS = [
+    { threshold: 100, fx: 'sparkle', emoji: '✨', count: 1, dist: 32 },          // ベーシック上昇
+    { threshold: 200, fx: 'petal',   emoji: '🌸', count: 2, dist: 36 },          // 横スライド回転
+    { threshold: 300, fx: 'radial',  emoji: '💫', count: 3, dist: 38 },          // 円形広がる
+    { threshold: 500, fx: 'burst',   emoji: '⭐', count: 4, dist: 44, bounce: true }, // 弾ける+バウンス
+    { threshold: 700, fx: 'heart',   emoji: '💖', count: 4, dist: 28 },          // ふわっと浮上
+    { threshold: 900, fx: 'music',   emoji: '🎵', count: 5, dist: 30, pulseRing: true }, // リーチ感
+  ];
+
   function rsvFireMiniMilestone(level, btn) {
+    var def = MINI_DEFS[level - 1];
+    if (!def || !btn) return;
     var rsvItemEl = btn.closest('.rsv-item') || btn.parentElement;
     if (!rsvItemEl) return;
     var btnRect = btn.getBoundingClientRect();
     var pRect = rsvItemEl.getBoundingClientRect();
     var cx = btnRect.left - pRect.left + btnRect.width / 2 - 10;
     var cy = btnRect.top - pRect.top - 4;
-    // ¥100→1粒 / ¥300→3粒 / ¥500→4粒
-    var count = level === 3 ? 4 : (level === 2 ? 3 : 1);
-    for (var i = 0; i < count; i++) {
+
+    for (var i = 0; i < def.count; i++) {
       var s = document.createElement('span');
-      s.className = 'rsv-sparkle';
-      s.textContent = '✨';
+      s.className = 'rsv-fx-' + def.fx;
+      s.textContent = def.emoji;
       s.style.left = cx + 'px';
       s.style.top = cy + 'px';
-      var angle = count === 1 ? -Math.PI / 2 : (i / count) * Math.PI - Math.PI / 2;
-      var dist = 28 + (level * 4);
-      s.style.setProperty('--sx', (Math.cos(angle) * dist) + 'px');
-      s.style.setProperty('--sy', (Math.sin(angle) * dist - 8) + 'px');
+      // 配置パターン（fx毎に最適化）
+      var sx, sy;
+      if (def.fx === 'heart' || def.fx === 'music') {
+        // 上方向に広がる
+        sx = (i - (def.count - 1) / 2) * 18;
+        sy = -10;
+      } else if (def.fx === 'petal') {
+        // 左右に分かれる
+        sx = (i % 2 === 0 ? -1 : 1) * (def.dist * 0.7);
+        sy = -def.dist * 0.4;
+      } else if (def.fx === 'radial' || def.fx === 'burst') {
+        // 円形 / バースト
+        var angle = (i / def.count) * Math.PI - Math.PI / 2;
+        sx = Math.cos(angle) * def.dist;
+        sy = Math.sin(angle) * def.dist;
+      } else {
+        // sparkle: 上方向
+        var ang = def.count === 1 ? -Math.PI / 2 : (i / def.count) * Math.PI - Math.PI / 2;
+        sx = Math.cos(ang) * def.dist;
+        sy = Math.sin(ang) * def.dist - 6;
+      }
+      s.style.setProperty('--sx', sx + 'px');
+      s.style.setProperty('--sy', sy + 'px');
       s.style.animationDelay = (i * 0.05) + 's';
       rsvItemEl.appendChild(s);
-      (function(e){ setTimeout(function(){ e.remove(); }, 1300 + i * 50); })(s);
+      (function(e, dur){ setTimeout(function(){ e.remove(); }, dur); })(s, 1700 + i * 50);
     }
-    // ¥500レベルだけ追加バウンス
-    if (level === 3) {
+
+    // 追加演出
+    if (def.bounce) {
       var qtyEl = rsvItemEl.querySelector('.rsv-qty');
       if (qtyEl) {
         qtyEl.classList.remove('is-mini-bounce');
         void qtyEl.offsetWidth;
         qtyEl.classList.add('is-mini-bounce');
         setTimeout(function(){ qtyEl.classList.remove('is-mini-bounce'); }, 600);
+      }
+    }
+    if (def.pulseRing) {
+      // ¥900 リーチ感: ピンクのパルスリング
+      var ring = document.createElement('span');
+      ring.className = 'rsv-fx-pulse-ring';
+      ring.style.left = (cx - 15) + 'px';
+      ring.style.top = (cy - 15) + 'px';
+      rsvItemEl.appendChild(ring);
+      setTimeout(function(){ ring.remove(); }, 1600);
+    }
+  }
+
+  // ===== 個数演出 統一システム（1〜20個まで全レベル発火） =====
+  function rsvShowQtyTick(rsvItemEl) {
+    if (!rsvItemEl) return;
+    var input = rsvItemEl.querySelector('.rsv-qty__input');
+    if (!input) return;
+    var iRect = input.getBoundingClientRect();
+    var pRect = rsvItemEl.getBoundingClientRect();
+    var tick = document.createElement('span');
+    tick.className = 'rsv-fx-plus-one';
+    tick.textContent = '+1';
+    tick.style.left = (iRect.left - pRect.left + iRect.width / 2) + 'px';
+    tick.style.top = (iRect.top - pRect.top - 6) + 'px';
+    rsvItemEl.appendChild(tick);
+    setTimeout(function(){ tick.remove(); }, 900);
+  }
+
+  function rsvSpawnQtyParticles(rsvItemEl, emoji, count, fxType) {
+    if (!rsvItemEl) return;
+    var qtyEl = rsvItemEl.querySelector('.rsv-qty');
+    if (!qtyEl) return;
+    var qtyRect = qtyEl.getBoundingClientRect();
+    var itemRect = rsvItemEl.getBoundingClientRect();
+    var baseX = qtyRect.left - itemRect.left + qtyRect.width / 2 - 12;
+    var baseY = qtyRect.top - itemRect.top - 8;
+    var fxClass = 'rsv-fx-' + (fxType || 'sparkle');
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement('span');
+      p.className = fxClass;
+      p.textContent = emoji;
+      p.style.left = baseX + 'px';
+      p.style.top = baseY + 'px';
+      var sx, sy;
+      if (fxType === 'food') {
+        sx = (i - (count - 1) / 2) * 14;
+        sy = -10;
+      } else if (fxType === 'burst') {
+        var ang = (i / count) * Math.PI * 2;
+        sx = Math.cos(ang) * 42;
+        sy = Math.sin(ang) * 42;
+      } else if (fxType === 'radial') {
+        // 円形（上半球寄り）
+        var ang3 = (i / count) * Math.PI - Math.PI / 2;
+        sx = Math.cos(ang3) * 38;
+        sy = Math.sin(ang3) * 38 - 8;
+      } else if (fxType === 'petal') {
+        // 左右に分かれて回転スライド
+        sx = (i % 2 === 0 ? -1 : 1) * (28 + i * 4);
+        sy = -16 - (i * 2);
+      } else {
+        // sparkle: 上方向に扇状
+        var ang2 = count === 1 ? -Math.PI / 2 : (i / (count - 1)) * Math.PI - Math.PI / 2;
+        sx = Math.cos(ang2) * 30;
+        sy = Math.sin(ang2) * 30 - 6;
+      }
+      p.style.setProperty('--sx', sx + 'px');
+      p.style.setProperty('--sy', sy + 'px');
+      p.style.animationDelay = (i * 0.05) + 's';
+      rsvItemEl.appendChild(p);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(p);
+    }
+  }
+
+  function rsvAddQtyBounce(rsvItemEl) {
+    var qtyEl = rsvItemEl.querySelector('.rsv-qty');
+    if (!qtyEl) return;
+    qtyEl.classList.remove('is-mini-bounce');
+    void qtyEl.offsetWidth;
+    qtyEl.classList.add('is-mini-bounce');
+    setTimeout(function(){ qtyEl.classList.remove('is-mini-bounce'); }, 600);
+  }
+
+  // 統一個数演出ディスパッチャー：1〜20個まで全レベル別emoji・徐々グレードアップ
+  // グレードアップポイント：3/5/8/10/13/15/18/20個
+  // [emoji, count, fxType, bounce, glow]
+  var QTY_LEVELS = [
+    null,                                    // 0
+    ['🌟', 1, 'sparkle', false, null],      // 1   Tier0
+    ['⚡', 2, 'sparkle', false, null],      // 2   Tier0
+    ['💥', 3, 'burst',   true,  null],      // 3   ⬆Grade1
+    ['🔥', 3, 'sparkle', false, null],      // 4   T1
+    ['🍱', 2, 'food',    true,  null],      // 5   ⬆Grade2
+    ['🍙', 3, 'food',    false, null],      // 6   T2
+    ['🍡', 3, 'food',    false, null],      // 7   T2
+    ['🍪', 3, 'radial',  false, null],      // 8   ⬆Grade3
+    ['🍩', 4, 'radial',  false, null],      // 9   T3
+    ['🍴', 3, 'food',    true,  null],      // 10  ⬆Grade4
+    ['🥢', 4, 'food',    true,  null],      // 11  T4
+    ['🥡', 4, 'food',    true,  null],      // 12  T4
+    ['🍳', 4, 'petal',   false, null],      // 13  ⬆Grade5
+    ['🍲', 5, 'petal',   false, null],      // 14  T5
+    ['👑', 1, 'crown',   false, 'gold'],    // 15  ⬆Grade6
+    ['🎖', 1, 'crown',   false, 'gold'],    // 16  T6
+    ['🏵', 1, 'crown',   false, 'gold'],    // 17  T6
+    ['🪄', 4, 'burst',   true,  'premium'], // 18  ⬆Grade7
+    ['💝', 4, 'food',    true,  'premium'], // 19  T7
+  ];
+
+  function rsvShowQuantityEffect(v, rsvItemEl) {
+    if (!rsvItemEl || v <= 0) return;
+    rsvShowQtyTick(rsvItemEl); // 毎回「+1」浮上
+    if (v >= 20) {
+      // ⬆Grade8 ULTIMATE: 🏆 + 七色グロー + 🌠×6
+      rsvShowQuantityMilestone(4, rsvItemEl);
+      return;
+    }
+    var def = QTY_LEVELS[v];
+    if (!def) return;
+    var emoji = def[0], count = def[1], fxType = def[2], bounce = def[3], glow = def[4];
+    rsvSpawnQtyParticles(rsvItemEl, emoji, count, fxType);
+    if (bounce) rsvAddQtyBounce(rsvItemEl);
+    if (glow === 'gold') {
+      rsvItemEl.classList.remove('is-golden');
+      void rsvItemEl.offsetWidth;
+      rsvItemEl.classList.add('is-golden');
+      setTimeout(function(){ rsvItemEl.classList.remove('is-golden'); }, 1500);
+    } else if (glow === 'premium') {
+      rsvItemEl.classList.remove('is-premium');
+      void rsvItemEl.offsetWidth;
+      rsvItemEl.classList.add('is-premium');
+      setTimeout(function(){ rsvItemEl.classList.remove('is-premium'); }, 1500);
+    }
+  }
+
+  // ===== 個数節目演出（5/10/15/20個・ディスパッチャーから呼ばれる） =====
+  function rsvShowQuantityMilestone(level, rsvItemEl) {
+    if (!rsvItemEl) return;
+    var qtyEl = rsvItemEl.querySelector('.rsv-qty');
+    if (!qtyEl) return;
+    var qtyRect = qtyEl.getBoundingClientRect();
+    var itemRect = rsvItemEl.getBoundingClientRect();
+    var baseX = qtyRect.left - itemRect.left + qtyRect.width / 2 - 12;
+    var baseY = qtyRect.top - itemRect.top - 10;
+
+    if (level === 1) {
+      // 5個: 🍱×2 上昇
+      for (var i = 0; i < 2; i++) {
+        var f = document.createElement('span');
+        f.className = 'rsv-fx-food';
+        f.textContent = '🍱';
+        f.style.left = (baseX + (i === 0 ? -16 : 16)) + 'px';
+        f.style.top = baseY + 'px';
+        f.style.setProperty('--sx', (i === 0 ? -10 : 10) + 'px');
+        f.style.animationDelay = (i * 0.08) + 's';
+        rsvItemEl.appendChild(f);
+        (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(f);
+      }
+    } else if (level === 2) {
+      // 10個: 🍴×3 上昇 + 軽くバウンス
+      for (var i = 0; i < 3; i++) {
+        var f2 = document.createElement('span');
+        f2.className = 'rsv-fx-food';
+        f2.textContent = '🍴';
+        f2.style.left = (baseX + (i - 1) * 18) + 'px';
+        f2.style.top = baseY + 'px';
+        f2.style.setProperty('--sx', (i - 1) * 8 + 'px');
+        f2.style.animationDelay = (i * 0.08) + 's';
+        rsvItemEl.appendChild(f2);
+        (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(f2);
+      }
+      qtyEl.classList.remove('is-mini-bounce');
+      void qtyEl.offsetWidth;
+      qtyEl.classList.add('is-mini-bounce');
+      setTimeout(function(){ qtyEl.classList.remove('is-mini-bounce'); }, 600);
+    } else if (level === 3) {
+      // 15個: 👑×1 + 金色グロー
+      var crown = document.createElement('span');
+      crown.className = 'rsv-fx-crown';
+      crown.textContent = '👑';
+      crown.style.left = baseX + 'px';
+      crown.style.top = baseY + 'px';
+      rsvItemEl.appendChild(crown);
+      setTimeout(function(){ crown.remove(); }, 2000);
+      rsvItemEl.classList.remove('is-golden');
+      void rsvItemEl.offsetWidth;
+      rsvItemEl.classList.add('is-golden');
+      setTimeout(function(){ rsvItemEl.classList.remove('is-golden'); }, 1600);
+    } else if (level >= 4) {
+      // 20個+: 🏆×1 + 七色グロー + 周囲キラキラ
+      var trophy = document.createElement('span');
+      trophy.className = 'rsv-fx-trophy';
+      trophy.textContent = '🏆';
+      trophy.style.left = (baseX - 6) + 'px';
+      trophy.style.top = baseY + 'px';
+      rsvItemEl.appendChild(trophy);
+      setTimeout(function(){ trophy.remove(); }, 2400);
+      rsvItemEl.classList.remove('is-rainbow-glow');
+      void rsvItemEl.offsetWidth;
+      rsvItemEl.classList.add('is-rainbow-glow');
+      setTimeout(function(){ rsvItemEl.classList.remove('is-rainbow-glow'); }, 2100);
+      // 周囲キラキラ（🌠流れ星・他演出と完全分離）
+      for (var k = 0; k < 6; k++) {
+        var spark = document.createElement('span');
+        spark.className = 'rsv-fx-burst';
+        spark.textContent = '🌠';
+        spark.style.left = baseX + 'px';
+        spark.style.top = baseY + 'px';
+        var ang = (k / 6) * Math.PI * 2;
+        spark.style.setProperty('--sx', (Math.cos(ang) * 60) + 'px');
+        spark.style.setProperty('--sy', (Math.sin(ang) * 60) + 'px');
+        spark.style.animationDelay = (k * 0.06) + 's';
+        rsvItemEl.appendChild(spark);
+        (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(spark);
       }
     }
   }
@@ -5182,50 +5665,60 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL1(container) {
-    // バウンス
+    // ¥1000 確変突入感：バウンス + 黄色グローリング拡張（emoji無しでミニ演出と完全差別化）
     container.classList.remove('is-bounce');
     void container.offsetWidth;
     container.classList.add('is-bounce');
     setTimeout(function(){ container.classList.remove('is-bounce'); }, 700);
-    // ✨×3 が広がる
+    // 金色リングが合計額中心から外側へ拡張
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
-    var cx = rect.left - cRect.left + rect.width / 2 - 10;
-    var cy = rect.top - cRect.top + rect.height / 2 - 10;
-    var positions = [{x: -45, y: -25}, {x: 0, y: -45}, {x: 45, y: -25}];
-    positions.forEach(function(pos, i) {
-      var s = document.createElement('span');
-      s.className = 'rsv-sparkle';
-      s.textContent = '✨';
-      s.style.left = cx + 'px';
-      s.style.top = cy + 'px';
-      s.style.setProperty('--sx', pos.x + 'px');
-      s.style.setProperty('--sy', pos.y + 'px');
-      s.style.animationDelay = (i * 0.06) + 's';
-      container.appendChild(s);
-      (function(e){ setTimeout(function(){ e.remove(); }, 1300 + i * 60); })(s);
+    var cx = rect.left - cRect.left + rect.width / 2;
+    var cy = rect.top - cRect.top + rect.height / 2;
+    // リング3重発射（時間差で確変感）
+    [0, 200, 400].forEach(function(delay) {
+      setTimeout(function(){
+        var ring = document.createElement('span');
+        ring.className = 'rsv-fx-golden-ring';
+        ring.style.left = cx + 'px';
+        ring.style.top = cy + 'px';
+        container.appendChild(ring);
+        setTimeout(function(){ ring.remove(); }, 1500);
+      }, delay);
     });
   }
 
   function rsvMilestoneL2(container) {
     // 紙吹雪（既存ロジック再利用）
     rsvSpawnConfetti(container);
-    // 「太っ腹！」スタンプ：合計額の上中央に配置（モバイル見切れ防止）
+    // 画面端フラッシュ（黄色・パチンコ大当たり感）
+    rsvSpawnEdgeFlash('rgba(255, 215, 0, 0.45)');
+    // 「太っ腹！」スタンプ：合計額の上中央に配置
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
     stamp.textContent = '太っ腹！';
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
-    // 合計額の中央 X 座標（CSS の translateX(-50%) で水平中央寄せ）
     stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
     stamp.style.top = (rect.top - cRect.top - 38) + 'px';
     container.appendChild(stamp);
     setTimeout(function(){ stamp.remove(); }, 2000);
   }
 
+  // 画面端フラッシュ（パチンコ風 大当たり演出）
+  function rsvSpawnEdgeFlash(color) {
+    var flash = document.createElement('div');
+    flash.className = 'rsv-fx-edge-flash';
+    flash.style.setProperty('--flash-color', color);
+    document.body.appendChild(flash);
+    setTimeout(function(){ flash.remove(); }, 1300);
+  }
+
   function rsvMilestoneL3(container) {
+    // 画面端フラッシュ（オレンジ・スーパーリーチ感）
+    rsvSpawnEdgeFlash('rgba(255, 140, 0, 0.5)');
     // 回転 + 虹色
     container.classList.remove('is-rainbow');
     void container.offsetWidth;
@@ -5246,6 +5739,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL4(container) {
+    // 画面端フラッシュ（赤ピンク・大当たり感）
+    rsvSpawnEdgeFlash('rgba(255, 0, 100, 0.55)');
     // 大きな花火
     var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66'];
     var totalEl = container.querySelector('strong');
@@ -5285,8 +5780,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     god.className = 'rsv-god-text';
     god.textContent = '🎊🎊 神様クラス！🎊🎊';
     overlay.appendChild(god);
-    // 紙吹雪 大量
-    var emojis = ['🎉', '✨', '🌸', '🎊', '🌟', '💖', '🎁', '🌟'];
+    // ¥5k 専用 emoji（他の演出と完全分離・宝物テーマ）
+    var emojis = ['🎁', '🥇', '💎', '🌈', '🎀', '🪅', '🎁', '🥇'];
     for (var i = 0; i < 50; i++) {
       var c = document.createElement('span');
       c.className = 'rsv-celebration-confetti';
@@ -5511,12 +6006,10 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         var v = btn.dataset.act === '+' ? Math.min(99, oldV + 1) : Math.max(0, oldV - 1);
         input.value = v;
         rsvUpdateTotal(btn);
-        // 演出: 5個以上で太っ腹吹き出し（ビオくんピョンは2026-05-09に削除）
+        // 個数演出 統一システム：1〜20個まで全レベル発火（各メニュー独立）
         if (v > oldV) {
           var rsvItemEl = btn.closest('.rsv-item');
-          if (v === 5 || (v > 5 && v % 5 === 0)) {
-            rsvShowPraise(rsvItemEl);
-          }
+          rsvShowQuantityEffect(v, rsvItemEl);
         }
       });
     });
