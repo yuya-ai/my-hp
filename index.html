@@ -1977,6 +1977,38 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   box-shadow: 0 0 12px rgba(255, 100, 150, 0.5);
 }
 
+/* 演出中の画面固定（スマホでカクカク・スクロールで画面ズレ防止） */
+body.rsv-fx-locked {
+  overflow: hidden !important;
+  touch-action: none;
+  -webkit-overflow-scrolling: auto;
+}
+html.rsv-fx-locked {
+  overflow: hidden !important;
+}
+
+/* GPU加速：演出粒のレンダリングを GPU レイヤーに分離してカクカク防止 */
+.rsv-fx-real-fw,
+.rsv-fx-real-fw__streak,
+.rsv-fx-burst-flash,
+.rsv-fx-paper-confetti,
+.rsv-fx-css-spark,
+.rsv-fx-mini-banner,
+.rsv-fx-item-ring,
+.rsv-fx-rainbow-burst,
+.rsv-rocket,
+.rsv-firework,
+.rsv-celebration-confetti,
+.rsv-god-text,
+.rsv-bio-kun,
+.rsv-stamp,
+.rsv-sparkle,
+.rsv-confetti {
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
 /* 大マイルストーン用 viewportミニバナー（10個/15個・神様textのlite版） */
 @keyframes rsv-fx-mini-banner {
   0%   { opacity: 0; transform: translateX(-50%) scale(0.4) rotate(-8deg); }
@@ -5930,6 +5962,16 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ flash.remove(); }, 1300);
   }
 
+  // 演出中スクロール固定（スマホでカクカク防止＋画面が動かないようにする）
+  function rsvLockScrollFor(durationMs) {
+    document.body.classList.add('rsv-fx-locked');
+    document.documentElement.classList.add('rsv-fx-locked');
+    setTimeout(function(){
+      document.body.classList.remove('rsv-fx-locked');
+      document.documentElement.classList.remove('rsv-fx-locked');
+    }, durationMs || 2500);
+  }
+
   function rsvSpawnScreenShake() {
     document.body.classList.remove('rsv-screen-shake');
     void document.body.offsetWidth;
@@ -5956,6 +5998,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     else if (v >= 5)  newLevel = 1;   // 太っ腹
     var lastLevel = parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10);
     if (newLevel > lastLevel) {
+      // 大マイルストーン発火時はスクロール固定（カクカク防止＋画面が動かないように）
+      var lockDuration = newLevel >= 4 ? 5500 : 2500; // 20個=神様クラスは5.5秒
+      rsvLockScrollFor(lockDuration);
       rsvShowQuantityMilestone(newLevel, rsvItemEl);
       rsvItemEl.dataset.lastQtyLevel = newLevel;
     }
@@ -6094,6 +6139,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 
   // ===== Phase C: 1000円毎マイルストーン演出 =====
   function rsvFireMilestone(level, container) {
+    // 演出中スクロール固定（スマホカクカク防止＋画面が動かないように）
+    var lockDuration = level >= 5 ? 5500 : 2500; // ¥5k=神様クラスは5.5秒
+    rsvLockScrollFor(lockDuration);
     if (level === 1) rsvMilestoneL1(container);
     else if (level === 2) rsvMilestoneL2(container);
     else if (level === 3) rsvMilestoneL3(container);
