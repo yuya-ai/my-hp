@@ -162,7 +162,7 @@ module.exports = async (req, res) => {
             reservedAt: new Date().toISOString(),
             name: payload.n || '',
             phone: payload.p || '',
-            pickupDate: payload.d || '',
+            pickupDate: payload.dIso || payload.d || '',
             pickupTime: payload.t || '',
             items: payload.i || '',
             total: payload.tt || '',
