@@ -1566,6 +1566,102 @@ body.chat-active .yt-popup.is-open {
   border-radius: 14px;
   padding: 20px 12px 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  position: relative;
+  overflow: visible;
+}
+
+/* ===== 日付選択時の演出（跳ねる + 花びら + 吹き出し） ===== */
+@keyframes rsv-date-bounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.3); }
+  55% { transform: scale(0.92); }
+  80% { transform: scale(1.12); }
+  100% { transform: scale(1.08); }
+}
+.rsv-date.is-just-selected {
+  animation: rsv-date-bounce 0.5s ease-out;
+}
+
+/* 花びら/きらめき/ビオくんパーティクル */
+.rsv-date-petal {
+  position: absolute;
+  font-size: 1.3rem;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 5;
+  animation: rsv-petal-fly 1.6s ease-out forwards;
+  will-change: transform, opacity;
+}
+@keyframes rsv-petal-fly {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0.4);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(calc(var(--tx) * 0.4), calc(var(--ty) * 0.4)) rotate(140deg) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) rotate(360deg) scale(0.7);
+  }
+}
+
+/* 感謝吹き出し */
+.rsv-date-celebration {
+  margin: 14px 4px 0;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #fff5e6 0%, #fff8d4 100%);
+  border-radius: 18px;
+  border: 2px solid var(--orange, #FF6B2B);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  transform: translateY(-12px) scale(0.96);
+  transition: opacity 0.35s, transform 0.35s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(255,107,43,0.18);
+}
+.rsv-date-celebration.is-show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.rsv-date-celebration__icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.rsv-date-celebration.is-show .rsv-date-celebration__icon {
+  animation: rsv-icon-pop 0.6s ease-out;
+}
+@keyframes rsv-icon-pop {
+  0% { transform: scale(0.3) rotate(-25deg); }
+  60% { transform: scale(1.25) rotate(12deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.rsv-date-celebration__text {
+  flex: 1;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--brown);
+}
+.rsv-date-celebration__title {
+  display: block;
+  font-weight: 800;
+  color: var(--orange, #FF6B2B);
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+.rsv-date-celebration__sub {
+  display: block;
+  font-size: 0.85rem;
+}
+@media (max-width: 767px) {
+  .rsv-date-celebration { padding: 12px 14px; gap: 10px; }
+  .rsv-date-celebration__icon { font-size: 1.7rem; }
+  .rsv-date-celebration__title { font-size: 0.95rem; }
+  .rsv-date-celebration__sub { font-size: 0.8rem; }
 }
 .rsv-cal-title {
   font-size: 1.7rem;
@@ -3239,6 +3335,13 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         <h3 class="rsv-step__title">受取日をお選びください</h3>
       </div>
       <div class="rsv-dates" id="rsvDates" role="radiogroup" aria-label="受取日"></div>
+      <div class="rsv-date-celebration" id="rsvDateCelebration" aria-live="polite" hidden>
+        <div class="rsv-date-celebration__icon">🐣</div>
+        <div class="rsv-date-celebration__text">
+          <span class="rsv-date-celebration__title" id="rsvCelebrationTitle"></span>
+          <span class="rsv-date-celebration__sub" id="rsvCelebrationSub"></span>
+        </div>
+      </div>
       <p style="margin:8px 0 0; font-size:0.78rem; color:var(--gray-2);">※ 月曜日・第4水曜日は定休日のため選べません</p>
     </div>
 
@@ -4689,9 +4792,15 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       btn.dataset.day = dom;
       if (!disabled) {
         btn.addEventListener('click', function(){
-          document.querySelectorAll('.rsv-date').forEach(function(b){ b.classList.remove('is-selected'); b.setAttribute('aria-checked','false'); });
-          this.classList.add('is-selected');
+          document.querySelectorAll('.rsv-date').forEach(function(b){
+            b.classList.remove('is-selected', 'is-just-selected');
+            b.setAttribute('aria-checked','false');
+          });
+          this.classList.add('is-selected', 'is-just-selected');
           this.setAttribute('aria-checked','true');
+          // 演出：跳ねる + 花びら + 吹き出し
+          spawnDatePetals(this);
+          showDateCelebration(this);
         });
       }
       grid.appendChild(btn);
@@ -4845,6 +4954,55 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (rememberCb)  rememberCb.addEventListener('change', updateSaveBalloon);
     // 復元後の初期チェック（localStorage から自動入力された場合に吹き出し表示）
     updateSaveBalloon();
+  }
+
+  // ===== 日付選択時の演出（花びら + 吹き出し） =====
+  function spawnDatePetals(dateBtn) {
+    var datesEl = document.getElementById('rsvDates');
+    if (!datesEl) return;
+    var btnRect = dateBtn.getBoundingClientRect();
+    var parentRect = datesEl.getBoundingClientRect();
+    var centerX = btnRect.left - parentRect.left + btnRect.width / 2;
+    var centerY = btnRect.top - parentRect.top + btnRect.height / 2;
+    var emojis = ['🌸', '✨', '🐣', '🌸', '✨', '🌸', '🐣', '✨'];
+    var count = 7;
+    for (var i = 0; i < count; i++) {
+      var petal = document.createElement('span');
+      petal.className = 'rsv-date-petal';
+      petal.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      var angle = (Math.PI * 2 * i / count) - Math.PI / 2 + (Math.random() - 0.5) * 0.6;
+      var distance = 55 + Math.random() * 35;
+      var tx = Math.cos(angle) * distance;
+      var ty = Math.sin(angle) * distance - 20; // 上方向にバイアス
+      petal.style.left = (centerX - 10) + 'px';
+      petal.style.top = (centerY - 10) + 'px';
+      petal.style.setProperty('--tx', tx + 'px');
+      petal.style.setProperty('--ty', ty + 'px');
+      petal.style.animationDelay = (i * 0.04) + 's';
+      datesEl.appendChild(petal);
+      (function(p){ setTimeout(function(){ p.remove(); }, 1800); })(petal);
+    }
+  }
+
+  var _rsvCelebTimer = null;
+  function showDateCelebration(dateBtn) {
+    var celebEl = document.getElementById('rsvDateCelebration');
+    var titleEl = document.getElementById('rsvCelebrationTitle');
+    var subEl = document.getElementById('rsvCelebrationSub');
+    if (!celebEl || !titleEl || !subEl) return;
+
+    titleEl.textContent = dateBtn.dataset.date + ' お選びありがとう🌸';
+    subEl.textContent = 'お会いできる日を楽しみに♪';
+
+    celebEl.hidden = false;
+    // reflow して show クラス適用 → トランジション発火
+    void celebEl.offsetWidth;
+    celebEl.classList.add('is-show');
+
+    if (_rsvCelebTimer) clearTimeout(_rsvCelebTimer);
+    _rsvCelebTimer = setTimeout(function(){
+      celebEl.classList.remove('is-show');
+    }, 3500);
   }
 
   window.rsvSubmit = function(e) {
