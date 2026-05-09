@@ -6023,30 +6023,29 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL1(container) {
-    // ¥1k: バウンス + ✨×3粒 + 「太っ腹！」スタンプ
-    container.classList.remove('is-bounce');
-    void container.offsetWidth;
-    container.classList.add('is-bounce');
-    setTimeout(function(){ container.classList.remove('is-bounce'); }, 700);
+    // ¥1k: 個数5個と完全同一演出（CSS本物紙吹雪×20枚 + 「太っ腹！」スタンプ）
+    var confettiColors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b', '#ff9bb0'];
+    var containerW = container.offsetWidth;
+    var containerH = container.offsetHeight;
+    for (var ci = 0; ci < 20; ci++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-fx-paper-confetti';
+      c.style.background = confettiColors[ci % confettiColors.length];
+      c.style.left = (Math.random() * (containerW - 12)) + 'px';
+      c.style.top = '-12px';
+      var endX = (Math.random() - 0.5) * 80;
+      var endY = containerH * 0.85 + Math.random() * 30;
+      c.style.setProperty('--cx', endX + 'px');
+      c.style.setProperty('--cy', endY + 'px');
+      c.style.setProperty('--cr', (Math.random() * 720 + 360) + 'deg');
+      c.style.animationDelay = (ci * 0.04) + 's';
+      container.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 2000); })(c);
+    }
+    // 「太っ腹！」スタンプ
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
-    var cx = rect.left - cRect.left + rect.width / 2 - 10;
-    var cy = rect.top - cRect.top + rect.height / 2 - 10;
-    var positions = [{x: -45, y: -25}, {x: 0, y: -45}, {x: 45, y: -25}];
-    positions.forEach(function(pos, i) {
-      var s = document.createElement('span');
-      s.className = 'rsv-sparkle';
-      s.textContent = '✨';
-      s.style.left = cx + 'px';
-      s.style.top = cy + 'px';
-      s.style.setProperty('--sx', pos.x + 'px');
-      s.style.setProperty('--sy', pos.y + 'px');
-      s.style.animationDelay = (i * 0.06) + 's';
-      container.appendChild(s);
-      (function(e){ setTimeout(function(){ e.remove(); }, 1300 + i * 60); })(s);
-    });
-    // 「太っ腹！」スタンプ
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
     stamp.textContent = '太っ腹！';
