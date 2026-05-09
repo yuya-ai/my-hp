@@ -5826,12 +5826,18 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   function rsvShowQuantityEffect(v, rsvItemEl) {
     if (!rsvItemEl || v <= 0) return;
     rsvShowQtyTick(rsvItemEl); // 毎クリック ➕付近キラキラ+紙吹雪
-    // 5個刻み大マイルストーン4段階
-    if (v === 5)  { rsvShowQuantityMilestone(1, rsvItemEl); return; } // 太っ腹
-    if (v === 10) { rsvShowQuantityMilestone(2, rsvItemEl); return; } // 大感激🎉
-    if (v === 15) { rsvShowQuantityMilestone(3, rsvItemEl); return; } // ビオくん大感激🐣
-    if (v >= 20)  { rsvShowQuantityMilestone(4, rsvItemEl); return; } // 神様クラス
-    // 1〜4, 6〜9, 11〜14, 16〜19 = ➕付近キラキラ+紙吹雪のみ
+    // 5個刻み大マイルストーン4段階：各レベル初到達時のみ発火（再発火防止）
+    // 21,22,23...で神様が連続発火しないよう、アイテムごとに既到達レベルを記録
+    var newLevel = 0;
+    if (v >= 20) newLevel = 4;        // 神様クラス
+    else if (v >= 15) newLevel = 3;   // ビオくん大感激🐣
+    else if (v >= 10) newLevel = 2;   // 大感激🎉
+    else if (v >= 5)  newLevel = 1;   // 太っ腹
+    var lastLevel = parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10);
+    if (newLevel > lastLevel) {
+      rsvShowQuantityMilestone(newLevel, rsvItemEl);
+      rsvItemEl.dataset.lastQtyLevel = newLevel;
+    }
   }
 
   function rsvSpawnItemStamp(rsvItemEl, text) {
