@@ -1871,6 +1871,59 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   box-shadow: 0 0 24px var(--ring-color, #ffd700);
 }
 
+/* 虹色リング（L18+ 神演出 確変中） */
+@keyframes rsv-fx-rainbow-ring {
+  0% { opacity: 0; transform: scale(0.5); border-color: #ff0080; }
+  20% { opacity: 0.95; transform: scale(1); border-color: #ff8c00; }
+  40% { transform: scale(1.15); border-color: #ffd700; }
+  60% { transform: scale(1.3); border-color: #00cc66; }
+  80% { transform: scale(1.4); border-color: #00b0ff; }
+  100% { opacity: 0; transform: scale(1.6); border-color: #8c00ff; }
+}
+.rsv-fx-item-ring.is-rainbow {
+  animation: rsv-fx-rainbow-ring 1.6s ease-out forwards;
+  border-color: #ff0080;
+  box-shadow: 0 0 28px currentColor, 0 0 48px rgba(255, 0, 128, 0.5);
+}
+
+/* 虹色端フラッシュ（L18+ 大当たり） */
+.rsv-fx-edge-flash.is-rainbow {
+  background: radial-gradient(circle at center, transparent 45%,
+    rgba(255, 0, 128, 0.35) 70%, rgba(255, 215, 0, 0.35) 80%,
+    rgba(0, 150, 255, 0.35) 90%, rgba(140, 0, 255, 0.4) 100%);
+}
+
+/* 画面振動（パチンコ大当たり感・L10+グレードアップ） */
+@keyframes rsv-fx-screen-shake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-3px, 1px); }
+  20% { transform: translate(3px, -2px); }
+  30% { transform: translate(-2px, -1px); }
+  40% { transform: translate(2px, 2px); }
+  50% { transform: translate(-3px, 1px); }
+  60% { transform: translate(2px, -1px); }
+  70% { transform: translate(-1px, 2px); }
+  80% { transform: translate(1px, -2px); }
+  90% { transform: translate(-1px, 1px); }
+}
+.rsv-screen-shake { animation: rsv-fx-screen-shake 0.55s ease-in-out; }
+
+/* 真っ白フラッシュ（L18+ パチンコ大当たり一瞬白光） */
+@keyframes rsv-fx-white-flash {
+  0%, 100% { opacity: 0; }
+  20% { opacity: 0.85; }
+  50% { opacity: 0.4; }
+}
+.rsv-fx-white-flash {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: white;
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0;
+  animation: rsv-fx-white-flash 0.7s ease-out forwards;
+}
+
 /* L1 ¥1000: 黄色グローリング拡張（emojiなし） */
 @keyframes rsv-fx-golden-ring {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); border-width: 4px; }
@@ -5538,70 +5591,102 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ qtyEl.classList.remove('is-mini-bounce'); }, 600);
   }
 
-  // 統一個数演出ディスパッチャー：1〜20個まで全レベル別emoji・徐々グレードアップ
-  // 「お宝レベルアップ系」エネルギー→お宝→ジャックポット→メダル→名誉→神秘→王族→究極
-  // 各レベルに extras（リング色・edgeFlash色）を追加して濃度UP
-  // [emoji, count, fxType, bounce, glow, ringColor, edgeFlashColor]
+  // パチンコ式・徐々escalation：色階段（白→青→緑→黄→橙→赤→金→虹）+ 効果積層
+  // 各レベル object 形式：{ e: emoji, n: count, fx: animType, b: bounce, g: glow, ring: color|rainbow, flash: color|rainbow, sh: screenShake, wf: whiteFlash }
   var QTY_LEVELS = [
-    null,                                                                                    // 0
-    ['🌟', 4, 'sparkle', true,  null,      '#ffd700', null],                                // 1   T0 ようこそ！金色ウェルカムリング+バウンス
-    ['⚡', 4, 'burst',   true,  null,      null,      null],                                // 2   T0 稲妻4連バースト+バウンス
-    ['💥', 3, 'burst',   true,  null,      null,      'rgba(255,215,0,0.4)'],               // 3   ⬆G1: 爆発+黄色フラッシュ
-    ['🔥', 4, 'sparkle', false, null,      null,      null],                                // 4   T1: 燃え上がり
-    ['🪙', 3, 'food',    true,  null,      null,      'rgba(255,200,0,0.45)'],              // 5   ⬆G2: コイン+金色フラッシュ
-    ['💰', 2, 'heart',   false, null,      null,      null],                                // 6   T2: お金袋（重く浮上）
-    ['💵', 4, 'petal',   false, null,      null,      null],                                // 7   T2: 札束（横ひらひら）
-    ['🎰', 3, 'radial',  true,  null,      null,      'rgba(255,140,0,0.45)'],              // 8   ⬆G3: ジャックポット+オレンジフラッシュ
-    ['🎲', 4, 'radial',  false, null,      null,      null],                                // 9   T3: サイコロ
-    ['🥉', 1, 'crown',   true,  null,      '#cd7f32', null],                                // 10  ⬆G4: ブロンズメダル+ブロンズリング
-    ['🥈', 2, 'crown',   true,  null,      null,      null],                                // 11  T4: シルバー（2粒）
-    ['🏅', 3, 'crown',   true,  null,      null,      null],                                // 12  T4: 競技メダル（3粒）
-    ['🎖', 1, 'crown',   false, 'gold',    null,      'rgba(255,215,0,0.5)'],               // 13  ⬆G5: 軍事メダル+金色グロー+金色フラッシュ
-    ['🏵', 2, 'radial',  false, 'gold',    null,      null],                                // 14  T5: ロゼット（2粒・拡散）
-    ['🪄', 4, 'burst',   false, 'gold',    '#ffd700', null],                                // 15  ⬆G6: 魔法+金色グロー+金色リング
-    ['🔮', 1, 'crown',   false, 'gold',    '#ffd700', null],                                // 16  T6: 水晶玉+金色リング
-    ['💍', 3, 'heart',   false, 'gold',    null,      null],                                // 17  T6: 指輪（浮上）
-    ['👑', 1, 'crown',   true,  'premium', '#ba55d3', 'rgba(186,85,211,0.5)'],              // 18  ⬆G7: 王冠+紫プレ+紫リング+紫フラッシュ
-    ['💝', 4, 'burst',   true,  'premium', '#ba55d3', null],                                // 19  T7: 特別ギフト+紫プレ+紫リング
+    null,                                                                                                                              // 0
+    { e:'🌟', n:1, fx:'sparkle' },                                                                                                     // 1  白・序章
+    { e:'⚡', n:2, fx:'sparkle', b:true, ring:'#a0c4ff' },                                                                            // 2  白青・bounce
+    { e:'💥', n:2, fx:'burst',   b:true, ring:'#4a90e2' },                                                                            // 3  青⬆G1
+    { e:'🔥', n:3, fx:'sparkle', b:true, ring:'#5fbf8c' },                                                                            // 4  青緑
+    { e:'🪙', n:2, fx:'food',    b:true, flash:'rgba(0,200,100,0.45)' },                                                              // 5  緑flash⬆G2
+    { e:'💰', n:3, fx:'heart',   b:true, ring:'#3eb371' },                                                                            // 6  緑
+    { e:'💵', n:3, fx:'petal',   b:true, ring:'#ffd966' },                                                                            // 7  黄
+    { e:'🎰', n:3, fx:'radial',  b:true, flash:'rgba(255,200,0,0.5)' },                                                               // 8  黄flash⬆G3
+    { e:'🎲', n:4, fx:'radial',  b:true, ring:'#ffc107' },                                                                            // 9  黄ring
+    { e:'🥉', n:1, fx:'crown',   b:true, ring:'#ff8c00', flash:'rgba(255,140,0,0.5)', sh:true },                                      // 10 橙ring+flash+SHAKE⬆G4
+    { e:'🥈', n:2, fx:'crown',   b:true, ring:'#ff7733', sh:true },                                                                   // 11 橙
+    { e:'🏅', n:3, fx:'crown',   b:true, ring:'#ff5533', sh:true },                                                                   // 12 橙赤
+    { e:'🎖', n:1, fx:'crown',   b:true, g:'gold', ring:'#dc143c', flash:'rgba(220,20,60,0.5)', sh:true },                            // 13 赤flash+金グロー⬆G5
+    { e:'🏵', n:2, fx:'radial',  b:true, g:'gold', ring:'#ff1744', sh:true },                                                         // 14 赤
+    { e:'🪄', n:3, fx:'burst',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.55)', sh:true },                           // 15 金ring+金flash⬆G6
+    { e:'🔮', n:1, fx:'crown',   b:true, g:'gold', ring:'#ffd700', sh:true },                                                         // 16 金
+    { e:'💍', n:3, fx:'heart',   b:true, g:'gold', ring:'#ffd700', sh:true },                                                         // 17 金
+    { e:'👑', n:1, fx:'crown',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                            // 18 虹+WHITE⬆G7神演出
+    { e:'💝', n:4, fx:'burst',   b:true, g:'premium', ring:'rainbow', sh:true, wf:true },                                             // 19 虹+WHITE
   ];
 
   function rsvSpawnItemRing(rsvItemEl, color) {
     if (!rsvItemEl) return;
     var ring = document.createElement('div');
     ring.className = 'rsv-fx-item-ring';
-    if (color) ring.style.setProperty('--ring-color', color);
+    if (color === 'rainbow') {
+      ring.classList.add('is-rainbow');
+    } else if (color) {
+      ring.style.setProperty('--ring-color', color);
+    }
     rsvItemEl.appendChild(ring);
-    setTimeout(function(){ ring.remove(); }, 1500);
+    setTimeout(function(){ ring.remove(); }, 1700);
+  }
+
+  function rsvSpawnEdgeFlash2(color) {
+    var flash = document.createElement('div');
+    flash.className = 'rsv-fx-edge-flash';
+    if (color === 'rainbow') {
+      flash.classList.add('is-rainbow');
+    } else if (color) {
+      flash.style.setProperty('--flash-color', color);
+    }
+    document.body.appendChild(flash);
+    setTimeout(function(){ flash.remove(); }, 1300);
+  }
+
+  function rsvSpawnScreenShake() {
+    document.body.classList.remove('rsv-screen-shake');
+    void document.body.offsetWidth;
+    document.body.classList.add('rsv-screen-shake');
+    setTimeout(function(){ document.body.classList.remove('rsv-screen-shake'); }, 600);
+  }
+
+  function rsvSpawnWhiteFlash() {
+    var flash = document.createElement('div');
+    flash.className = 'rsv-fx-white-flash';
+    document.body.appendChild(flash);
+    setTimeout(function(){ flash.remove(); }, 750);
   }
 
   function rsvShowQuantityEffect(v, rsvItemEl) {
     if (!rsvItemEl || v <= 0) return;
     rsvShowQtyTick(rsvItemEl); // 毎回「+1」浮上
     if (v >= 20) {
-      // ⬆Grade8 ULTIMATE: 🏆 + 七色グロー + 🌠×6 + ピンクリング + 金色フラッシュ
+      // ⬆G8 ULTIMATE: 🏆 + 七色 + 🌠×6 + 虹リング + 虹+金フラッシュ + WHITE FLASH + SHAKE
       rsvShowQuantityMilestone(4, rsvItemEl);
-      rsvSpawnItemRing(rsvItemEl, '#ff0080');
-      rsvSpawnEdgeFlash('rgba(255, 215, 0, 0.5)');
+      rsvSpawnItemRing(rsvItemEl, 'rainbow');
+      rsvSpawnEdgeFlash2('rainbow');
+      rsvSpawnEdgeFlash('rgba(255, 215, 0, 0.5)'); // 金もダブルで
+      rsvSpawnScreenShake();
+      rsvSpawnWhiteFlash();
       return;
     }
-    var def = QTY_LEVELS[v];
-    if (!def) return;
-    var emoji = def[0], count = def[1], fxType = def[2], bounce = def[3], glow = def[4], ringColor = def[5], flashColor = def[6];
-    rsvSpawnQtyParticles(rsvItemEl, emoji, count, fxType);
-    if (bounce) rsvAddQtyBounce(rsvItemEl);
-    if (glow === 'gold') {
+    var d = QTY_LEVELS[v];
+    if (!d) return;
+    rsvSpawnQtyParticles(rsvItemEl, d.e, d.n, d.fx);
+    if (d.b) rsvAddQtyBounce(rsvItemEl);
+    if (d.g === 'gold') {
       rsvItemEl.classList.remove('is-golden');
       void rsvItemEl.offsetWidth;
       rsvItemEl.classList.add('is-golden');
       setTimeout(function(){ rsvItemEl.classList.remove('is-golden'); }, 1500);
-    } else if (glow === 'premium') {
+    } else if (d.g === 'premium') {
       rsvItemEl.classList.remove('is-premium');
       void rsvItemEl.offsetWidth;
       rsvItemEl.classList.add('is-premium');
       setTimeout(function(){ rsvItemEl.classList.remove('is-premium'); }, 1500);
     }
-    if (ringColor) rsvSpawnItemRing(rsvItemEl, ringColor);
-    if (flashColor) rsvSpawnEdgeFlash(flashColor);
+    if (d.ring) rsvSpawnItemRing(rsvItemEl, d.ring);
+    if (d.flash) rsvSpawnEdgeFlash2(d.flash);
+    if (d.sh) rsvSpawnScreenShake();
+    if (d.wf) rsvSpawnWhiteFlash();
   }
 
   // ===== 個数節目演出（5/10/15/20個・ディスパッチャーから呼ばれる） =====
