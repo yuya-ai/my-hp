@@ -1566,6 +1566,88 @@ body.chat-active .yt-popup.is-open {
 /* ===== Phase A: 数量・合計演出 ===== */
 .rsv-item { position: relative; }
 
+/* ===== Phase B: 時間帯・季節・行事演出 ===== */
+/* 時間帯テーマ（body クラスで切替） */
+body.rsv-theme-morning .rsv-modal__inner { background: linear-gradient(180deg, #fff8e6 0%, #fffaf0 100%); }
+body.rsv-theme-noon .rsv-modal__inner { background: linear-gradient(180deg, #fffceb 0%, #fff5d4 100%); }
+body.rsv-theme-evening .rsv-modal__inner { background: linear-gradient(180deg, #ffece1 0%, #fff5e6 100%); }
+body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3eef5 0%, #faf5e4 100%); }
+
+/* 季節パーティクル（背景にゆっくり漂う） */
+.rsv-season-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.rsv-season-bg__particle {
+  position: absolute;
+  font-size: 1.4rem;
+  opacity: 0.5;
+  animation: rsv-season-drift linear infinite;
+  user-select: none;
+}
+@keyframes rsv-season-drift {
+  0% { transform: translateY(-40px) translateX(0) rotate(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(105vh) translateX(40px) rotate(360deg); opacity: 0; }
+}
+
+/* 行事バナー */
+.rsv-event-banner {
+  margin: 0 0 16px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #ffd1d1, #ffe0c4);
+  border-radius: 16px;
+  border: 2px solid #c93838;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #7a2020;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(201,56,56,0.2);
+  animation: rsv-event-pulse 2.4s ease-in-out infinite;
+}
+@keyframes rsv-event-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 14px rgba(201,56,56,0.2); }
+  50% { transform: scale(1.015); box-shadow: 0 6px 22px rgba(201,56,56,0.35); }
+}
+
+/* 時間選択：時間帯絵文字 */
+.rsv-time__icon {
+  display: inline-block;
+  margin-right: 3px;
+  font-size: 0.9em;
+}
+
+/* 時間選択 連続バブル「えらべて嬉しい」 */
+.rsv-time-cheer {
+  position: absolute;
+  background: linear-gradient(135deg, #FFD900, #ffe055);
+  color: #7a4f00;
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 6;
+  animation: rsv-praise-show 1.8s ease-out forwards;
+  box-shadow: 0 4px 14px rgba(255,217,0,0.5);
+}
+.rsv-time-cheer::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #FFD900;
+  border-bottom: 0;
+}
+
 /* 合計表示エリアがふわっと光る */
 @keyframes rsv-total-glow {
   0% { background: var(--bg-warm); transform: scale(1); box-shadow: none; }
@@ -1903,6 +1985,7 @@ body.chat-active .yt-popup.is-open {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
   gap: 8px;
+  position: relative;
 }
 .rsv-time {
   padding: 12px 0;
@@ -3362,6 +3445,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     <p class="rsv-heading__lead">いつでもどこからでも、ビオの予約ができるよ〜🌸</p>
   </div>
 
+  <div class="rsv-event-banner" id="rsvEventBanner" hidden></div>
   <form class="rsv-form" id="rsvForm" onsubmit="return rsvSubmit(event)">
 
     <!-- Step 1: 商品選択 -->
@@ -4857,6 +4941,99 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     }
   }
 
+  // ===== Phase B: 時間選択の連続選択バブル =====
+  function rsvShowTimeCheer(timeBtn) {
+    var timesEl = timeBtn.parentElement;
+    if (!timesEl) return;
+    var cheer = document.createElement('span');
+    cheer.className = 'rsv-time-cheer';
+    cheer.textContent = 'えらべて嬉しい〜🐣';
+    var btnRect = timeBtn.getBoundingClientRect();
+    var parentRect = timesEl.getBoundingClientRect();
+    cheer.style.left = (btnRect.left - parentRect.left + btnRect.width / 2 - 70) + 'px';
+    cheer.style.top = (btnRect.top - parentRect.top - 32) + 'px';
+    timesEl.appendChild(cheer);
+    setTimeout(function(){ cheer.remove(); }, 1900);
+  }
+
+  // ===== Phase B: 時間帯テーマ + 季節パーティクル + 行事バナー =====
+  // 行事カレンダー（10年分・概算・要検証）
+  var BIO_EVENTS = [
+    { name: 'シーミー', emoji: '🌺', start: '2026-04-05', end: '2026-04-19', message: 'シーミー特別予約受付中🌺 重箱（最大15個まで）人気です' },
+    { name: '旧盆', emoji: '🪔', start: '2026-08-24', end: '2026-08-26', message: '旧盆のご注文承ります🪔 お早めの予約推奨' },
+    { name: 'シーミー', emoji: '🌺', start: '2027-04-04', end: '2027-04-18', message: 'シーミー特別予約受付中🌺 重箱（最大15個まで）人気です' },
+    { name: '旧盆', emoji: '🪔', start: '2027-09-13', end: '2027-09-15', message: '旧盆のご注文承ります🪔 お早めの予約推奨' },
+    { name: 'シーミー', emoji: '🌺', start: '2028-04-09', end: '2028-04-23', message: 'シーミー特別予約受付中🌺 重箱（最大15個まで）人気です' },
+    { name: '旧盆', emoji: '🪔', start: '2028-09-01', end: '2028-09-03', message: '旧盆のご注文承ります🪔 お早めの予約推奨' },
+    { name: 'シーミー', emoji: '🌺', start: '2029-04-08', end: '2029-04-22', message: 'シーミー特別予約受付中🌺 重箱（最大15個まで）人気です' },
+    { name: '旧盆', emoji: '🪔', start: '2029-08-21', end: '2029-08-23', message: '旧盆のご注文承ります🪔 お早めの予約推奨' },
+    { name: 'シーミー', emoji: '🌺', start: '2030-04-07', end: '2030-04-21', message: 'シーミー特別予約受付中🌺 重箱（最大15個まで）人気です' },
+    { name: '旧盆', emoji: '🪔', start: '2030-09-09', end: '2030-09-11', message: '旧盆のご注文承ります🪔 お早めの予約推奨' }
+  ];
+
+  function rsvInitTheme() {
+    var now = new Date();
+    var hour = now.getHours();
+    var month = now.getMonth() + 1;
+
+    // 時間帯テーマ
+    var themeClass = 'rsv-theme-noon';
+    if (hour < 10) themeClass = 'rsv-theme-morning';
+    else if (hour < 16) themeClass = 'rsv-theme-noon';
+    else if (hour < 19) themeClass = 'rsv-theme-evening';
+    else themeClass = 'rsv-theme-night';
+    document.body.classList.remove('rsv-theme-morning','rsv-theme-noon','rsv-theme-evening','rsv-theme-night');
+    document.body.classList.add(themeClass);
+
+    // 季節パーティクル
+    var seasonEmojis;
+    if (month >= 3 && month <= 5) seasonEmojis = ['🌸', '🌸', '🌸', '🌷'];
+    else if (month >= 6 && month <= 8) seasonEmojis = ['🌻', '🍉', '🌴', '☀️'];
+    else if (month >= 9 && month <= 11) seasonEmojis = ['🍁', '🍂', '🌾', '🍁'];
+    else seasonEmojis = ['❄️', '⛄', '❄️', '✨'];
+
+    var oldBg = document.querySelector('.rsv-season-bg');
+    if (oldBg) oldBg.remove();
+    var seasonBg = document.createElement('div');
+    seasonBg.className = 'rsv-season-bg';
+    document.body.appendChild(seasonBg);
+    for (var i = 0; i < 12; i++) {
+      var p = document.createElement('span');
+      p.className = 'rsv-season-bg__particle';
+      p.textContent = seasonEmojis[Math.floor(Math.random() * seasonEmojis.length)];
+      p.style.left = (Math.random() * 100) + 'vw';
+      p.style.fontSize = (1 + Math.random() * 1.4) + 'rem';
+      p.style.animationDuration = (15 + Math.random() * 20) + 's';
+      p.style.animationDelay = (Math.random() * 25) + 's';
+      seasonBg.appendChild(p);
+    }
+
+    // 行事バナー
+    var todayStr = now.getFullYear() + '-' + String(month).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    var activeEvent = null;
+    for (var j = 0; j < BIO_EVENTS.length; j++) {
+      if (BIO_EVENTS[j].start <= todayStr && todayStr <= BIO_EVENTS[j].end) {
+        activeEvent = BIO_EVENTS[j];
+        break;
+      }
+    }
+    var bannerEl = document.getElementById('rsvEventBanner');
+    if (bannerEl) {
+      if (activeEvent) {
+        bannerEl.textContent = activeEvent.emoji + ' ' + activeEvent.message;
+        bannerEl.hidden = false;
+      } else {
+        bannerEl.hidden = true;
+      }
+    }
+  }
+  // ページ読込時に発火
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', rsvInitTheme);
+  } else {
+    rsvInitTheme();
+  }
+
   function rsvInit() {
     var datesEl = document.getElementById('rsvDates');
     if (!datesEl) return;
@@ -4976,21 +5153,29 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 
     // 時間生成（受取は10:00〜16:00、30分刻み）
     var timesEl = document.getElementById('rsvTimes');
+    var timeSelectCount = 0;
     for (var h = 10; h <= 16; h++) {
       for (var m = 0; m < 60; m += 30) {
         if (h === 16 && m > 0) continue; // 16:00 で終了
         var hh = (h < 10 ? '0' : '') + h;
         var mm = (m < 10 ? '0' : '') + m;
+        // 時間帯絵文字（朝🌅 / 昼☀️ / 夕🌇）
+        var icon = h < 11 ? '🌅' : (h < 15 ? '☀️' : '🌇');
         var tBtn = document.createElement('button');
         tBtn.type = 'button';
         tBtn.className = 'rsv-time';
-        tBtn.textContent = hh + ':' + mm;
+        tBtn.innerHTML = '<span class="rsv-time__icon">' + icon + '</span>' + hh + ':' + mm;
         tBtn.setAttribute('role','radio');
         tBtn.setAttribute('aria-checked','false');
         tBtn.addEventListener('click', function(){
           document.querySelectorAll('.rsv-time').forEach(function(b){ b.classList.remove('is-selected'); b.setAttribute('aria-checked','false'); });
           this.classList.add('is-selected');
           this.setAttribute('aria-checked','true');
+          // 連続選択演出（2回目以降の時間変更で「えらべて嬉しい〜🐣」）
+          timeSelectCount++;
+          if (timeSelectCount >= 2) {
+            rsvShowTimeCheer(this);
+          }
         });
         timesEl.appendChild(tBtn);
       }
