@@ -1,5 +1,6 @@
 const CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID;
+const GAS_WEBHOOK_URL = process.env.GAS_WEBHOOK_URL;
 
 const RESERVE_URL = 'https://my-hp-xi.vercel.app';
 const PHONE = '098-944-4191';
@@ -146,6 +147,29 @@ module.exports = async (req, res) => {
         await pushMessage(ADMIN_USER_ID, buildAdminMessage(payload));
       } catch (adminErr) {
         console.error('admin push failed (customer push succeeded):', adminErr);
+      }
+    }
+
+    // GAS Webhook へ予約データ転送（Sheets保存＋リマインダー予約用）
+    // Vercel サーバレスは return 後に非同期処理が中断されるため await 必須
+    if (GAS_WEBHOOK_URL) {
+      try {
+        await fetch(GAS_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            reservedAt: new Date().toISOString(),
+            name: payload.n || '',
+            phone: payload.p || '',
+            pickupDate: payload.d || '',
+            pickupTime: payload.t || '',
+            items: payload.i || '',
+            total: payload.tt || '',
+          }),
+        });
+      } catch (gasErr) {
+        console.error('GAS webhook failed:', gasErr);
       }
     }
 
