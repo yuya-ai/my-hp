@@ -2136,6 +2136,42 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   box-shadow: 0 1px 2px rgba(0,0,0,0.15);
 }
 
+/* リアル花火粒（ストリーク尾＋重力＋グラデ）— ¥4k/15個/10個用 */
+@keyframes rsv-fx-real-fw {
+  0%   { opacity: 0; transform: translate(0, 0); }
+  10%  { opacity: 1; transform: translate(calc(var(--fx, 0px) * 0.22), calc(var(--fy, 0px) * 0.22 - 5px)); }
+  55%  { opacity: 1; transform: translate(calc(var(--fx, 0px) * 0.88), calc(var(--fy, 0px) * 0.88 - 3px)); }
+  100% { opacity: 0; transform: translate(var(--fx, 0px), calc(var(--fy, 0px) + 55px)); }
+}
+.rsv-fx-real-fw {
+  position: absolute;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  animation: rsv-fx-real-fw 1.7s cubic-bezier(0.2, 0.55, 0.4, 1) forwards;
+}
+.rsv-fx-real-fw__streak {
+  display: block;
+  width: 16px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(to right,
+    rgba(255, 255, 255, 0) 0%,
+    var(--fw-color, #ffd700) 30%,
+    #ffffff 75%,
+    #ffffff 100%);
+  transform-origin: 0 50%;
+  filter:
+    drop-shadow(0 0 3px var(--fw-color, #ffd700))
+    drop-shadow(0 0 7px var(--fw-color, #ffd700))
+    drop-shadow(0 0 12px rgba(255, 255, 255, 0.5));
+  position: relative;
+  margin-left: -2px;
+  margin-top: -2.5px;
+}
+
 /* 打ち上げ花火 ロケット軌跡（rocket trail → 頂点で爆発） */
 @keyframes rsv-fx-rocket {
   0% { opacity: 0; transform: translateY(0) scaleY(0.4); }
@@ -5929,12 +5965,12 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     } else if (level === 2) {
       // 10個: 打ち上げ花火 + viewport中央バナー「大感激🎉」 + 🐣ビオくん + 虹リング1重
       var fwColors10 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff'];
-      // 打ち上げ花火（ロケット+21粒）
-      rsvLaunchFirework(rsvItemEl, cx, cy, fwColors10, 21);
+      // リアル打ち上げ花火（ロケット+40粒・ストリーク尾＋重力）
+      rsvLaunchFireworkRealistic(rsvItemEl, cx, cy, fwColors10, 40);
       // viewport中央ミニバナー（神様textのlite版・即発火）
       var banner10 = document.createElement('div');
       banner10.className = 'rsv-fx-mini-banner';
-      banner10.textContent = '大感謝！';
+      banner10.textContent = '大感謝🎉';
       document.body.appendChild(banner10);
       setTimeout(function(){ banner10.remove(); }, 1800);
       // 🐣標準ビオくん + 虹リング1重（花火爆発と同期）
@@ -5954,8 +5990,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     } else if (level === 3) {
       // 15個: 大打ち上げ花火 + viewport虹バナー「ビオくん大感激！🐣」 + 🐣大ビオくん + 虹リング2重
       var fwColors15 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff'];
-      // 大打ち上げ花火（ロケット+28粒）
-      rsvLaunchFirework(rsvItemEl, cx, cy, fwColors15, 28);
+      // リアル大打ち上げ花火（ロケット+55粒・ストリーク尾＋重力）
+      rsvLaunchFireworkRealistic(rsvItemEl, cx, cy, fwColors15, 55);
       // viewport中央 虹色ミニバナー（lite神様text・rainbow shift）
       var banner15 = document.createElement('div');
       banner15.className = 'rsv-fx-mini-banner is-rainbow';
@@ -6135,13 +6171,13 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var cy = rect.top - cRect.top + rect.height / 2;
     // 3発打ち上げ：中央→左→右の順（時間差で連続感）
     var launches = [
-      { x: containerW * 0.5,  dy: 0,   count: 32, delay: 0   }, // 中央大（メイン）
-      { x: containerW * 0.22, dy: 35,  count: 24, delay: 200 }, // 左
-      { x: containerW * 0.78, dy: 35,  count: 24, delay: 400 }  // 右
+      { x: containerW * 0.5,  dy: 0,   count: 55, delay: 0   }, // 中央大（メイン・リアル55粒）
+      { x: containerW * 0.22, dy: 35,  count: 35, delay: 200 }, // 左（リアル35粒）
+      { x: containerW * 0.78, dy: 35,  count: 35, delay: 400 }  // 右（リアル35粒）
     ];
     launches.forEach(function(l) {
       setTimeout(function() {
-        rsvLaunchFirework(container, l.x, cy + l.dy, colors, l.count);
+        rsvLaunchFireworkRealistic(container, l.x, cy + l.dy, colors, l.count);
       }, l.delay);
     });
     // 「あっぱれ！」スタンプ
@@ -6241,6 +6277,45 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(fw);
       }
     }, 650);
+  }
+
+  // リアル花火（B案：ストリーク尾＋重力＋グラデ・¥4k/15個/10個用）
+  function rsvLaunchFireworkRealistic(container, apexX, apexY, colors, particleCount) {
+    var startY = apexY + 200;
+    // ロケット軌跡（既存使い回し）
+    var rocket = document.createElement('span');
+    rocket.className = 'rsv-rocket';
+    rocket.style.left = (apexX - 2) + 'px';
+    rocket.style.top = startY + 'px';
+    rocket.style.setProperty('--ry', '-200px');
+    container.appendChild(rocket);
+    setTimeout(function(){ rocket.remove(); }, 600);
+    // 頂点で爆発（リアル粒：ストリーク尾＋重力＋グラデ）
+    setTimeout(function(){
+      for (var i = 0; i < particleCount; i++) {
+        var color = colors[i % colors.length];
+        var ang = (i / particleCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.15;
+        var distance = 75 + Math.random() * 60; // 距離にばらつき＝自然な散らばり
+        var fx = Math.cos(ang) * distance;
+        var fy = Math.sin(ang) * distance;
+        // 外側wrapper（位置アニメ・重力含む）
+        var fw = document.createElement('span');
+        fw.className = 'rsv-fx-real-fw';
+        fw.style.left = apexX + 'px';
+        fw.style.top = apexY + 'px';
+        fw.style.setProperty('--fx', fx + 'px');
+        fw.style.setProperty('--fy', fy + 'px');
+        fw.style.animationDelay = (Math.random() * 0.08) + 's';
+        // 内側streak（運動方向に向けた光線）
+        var streak = document.createElement('span');
+        streak.className = 'rsv-fx-real-fw__streak';
+        streak.style.transform = 'rotate(' + (ang * 180 / Math.PI) + 'deg)';
+        streak.style.setProperty('--fw-color', color);
+        fw.appendChild(streak);
+        container.appendChild(fw);
+        (function(e){ setTimeout(function(){ e.remove(); }, 1900); })(fw);
+      }
+    }, 550);
   }
 
   // ===== Phase B: 時間帯テーマ + 行事バナー =====
