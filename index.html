@@ -5591,29 +5591,30 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ qtyEl.classList.remove('is-mini-bounce'); }, 600);
   }
 
-  // パチンコ式・徐々escalation：色階段（白→青→緑→黄→橙→赤→金→虹）+ 効果積層
-  // 各レベル object 形式：{ e: emoji, n: count, fx: animType, b: bounce, g: glow, ring: color|rainbow, flash: color|rainbow, sh: screenShake, wf: whiteFlash }
+  // パチンコ式・徐々escalation：全レベル派手モード（L18-20 を基準に下位も強化）
+  // 全レベル最低 4要素同時発動：particles + bounce + ring + flash
+  // L10+で shake追加 / L13+で金グロー / L18+で WHITE FLASH + 虹
   var QTY_LEVELS = [
-    null,                                                                                                                              // 0
-    { e:'🌟', n:1, fx:'sparkle' },                                                                                                     // 1  白・序章
-    { e:'⚡', n:2, fx:'sparkle', b:true, ring:'#a0c4ff' },                                                                            // 2  白青・bounce
-    { e:'💥', n:2, fx:'burst',   b:true, ring:'#4a90e2' },                                                                            // 3  青⬆G1
-    { e:'🔥', n:3, fx:'sparkle', b:true, ring:'#5fbf8c' },                                                                            // 4  青緑
-    { e:'🪙', n:2, fx:'food',    b:true, flash:'rgba(0,200,100,0.45)' },                                                              // 5  緑flash⬆G2
-    { e:'💰', n:3, fx:'heart',   b:true, ring:'#3eb371' },                                                                            // 6  緑
-    { e:'💵', n:3, fx:'petal',   b:true, ring:'#ffd966' },                                                                            // 7  黄
-    { e:'🎰', n:3, fx:'radial',  b:true, flash:'rgba(255,200,0,0.5)' },                                                               // 8  黄flash⬆G3
-    { e:'🎲', n:4, fx:'radial',  b:true, ring:'#ffc107' },                                                                            // 9  黄ring
-    { e:'🥉', n:1, fx:'crown',   b:true, ring:'#ff8c00', flash:'rgba(255,140,0,0.5)', sh:true },                                      // 10 橙ring+flash+SHAKE⬆G4
-    { e:'🥈', n:2, fx:'crown',   b:true, ring:'#ff7733', sh:true },                                                                   // 11 橙
-    { e:'🏅', n:3, fx:'crown',   b:true, ring:'#ff5533', sh:true },                                                                   // 12 橙赤
-    { e:'🎖', n:1, fx:'crown',   b:true, g:'gold', ring:'#dc143c', flash:'rgba(220,20,60,0.5)', sh:true },                            // 13 赤flash+金グロー⬆G5
-    { e:'🏵', n:2, fx:'radial',  b:true, g:'gold', ring:'#ff1744', sh:true },                                                         // 14 赤
-    { e:'🪄', n:3, fx:'burst',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.55)', sh:true },                           // 15 金ring+金flash⬆G6
-    { e:'🔮', n:1, fx:'crown',   b:true, g:'gold', ring:'#ffd700', sh:true },                                                         // 16 金
-    { e:'💍', n:3, fx:'heart',   b:true, g:'gold', ring:'#ffd700', sh:true },                                                         // 17 金
-    { e:'👑', n:1, fx:'crown',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                            // 18 虹+WHITE⬆G7神演出
-    { e:'💝', n:4, fx:'burst',   b:true, g:'premium', ring:'rainbow', sh:true, wf:true },                                             // 19 虹+WHITE
+    null,
+    { e:'🌟', n:3, fx:'sparkle', b:true, ring:'#ffffff', flash:'rgba(255,255,255,0.4)' },                                        // 1  白派手
+    { e:'⚡', n:3, fx:'burst',   b:true, ring:'#a0c4ff', flash:'rgba(160,196,255,0.5)' },                                        // 2  白青派手
+    { e:'💥', n:4, fx:'burst',   b:true, ring:'#4a90e2', flash:'rgba(74,144,226,0.55)', sh:true },                               // 3  青+SHAKE ⬆G1
+    { e:'🔥', n:4, fx:'sparkle', b:true, ring:'#5fbf8c', flash:'rgba(95,191,140,0.55)', sh:true },                               // 4  青緑+SHAKE
+    { e:'🪙', n:4, fx:'food',    b:true, ring:'#3eb371', flash:'rgba(0,200,100,0.55)', sh:true },                                // 5  緑+SHAKE ⬆G2
+    { e:'💰', n:3, fx:'heart',   b:true, ring:'#3eb371', flash:'rgba(62,179,113,0.55)', sh:true },                               // 6  緑+SHAKE
+    { e:'💵', n:4, fx:'petal',   b:true, ring:'#ffd966', flash:'rgba(255,217,102,0.55)', sh:true },                              // 7  黄+SHAKE
+    { e:'🎰', n:4, fx:'radial',  b:true, ring:'#ffc107', flash:'rgba(255,200,0,0.6)', sh:true },                                 // 8  黄強+SHAKE ⬆G3
+    { e:'🎲', n:4, fx:'radial',  b:true, ring:'#ffc107', flash:'rgba(255,193,7,0.6)', sh:true },                                 // 9  黄+SHAKE
+    { e:'🥉', n:1, fx:'crown',   b:true, ring:'#ff8c00', flash:'rgba(255,140,0,0.6)', sh:true, wf:true },                        // 10 橙+SHAKE+miniWHITE ⬆G4
+    { e:'🥈', n:2, fx:'crown',   b:true, ring:'#ff7733', flash:'rgba(255,119,51,0.6)', sh:true, wf:true },                       // 11 橙+SHAKE+WHITE
+    { e:'🏅', n:3, fx:'crown',   b:true, ring:'#ff5533', flash:'rgba(255,85,51,0.6)', sh:true, wf:true },                        // 12 橙赤+SHAKE+WHITE
+    { e:'🎖', n:1, fx:'crown',   b:true, g:'gold', ring:'#dc143c', flash:'rgba(220,20,60,0.6)', sh:true, wf:true },              // 13 赤+金グロー+SHAKE+WHITE ⬆G5
+    { e:'🏵', n:2, fx:'radial',  b:true, g:'gold', ring:'#ff1744', flash:'rgba(255,23,68,0.6)', sh:true, wf:true },              // 14 赤+金+SHAKE+WHITE
+    { e:'🪄', n:4, fx:'burst',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.65)', sh:true, wf:true },             // 15 金+SHAKE+WHITE ⬆G6
+    { e:'🔮', n:1, fx:'crown',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 16 金+SHAKE+WHITE
+    { e:'💍', n:3, fx:'heart',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 17 金+SHAKE+WHITE
+    { e:'👑', n:1, fx:'crown',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 18 虹+SHAKE+WHITE ⬆G7神演出
+    { e:'💝', n:4, fx:'burst',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 19 虹+SHAKE+WHITE
   ];
 
   function rsvSpawnItemRing(rsvItemEl, color) {
