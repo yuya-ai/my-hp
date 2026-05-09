@@ -6084,15 +6084,24 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL4(container) {
-    // ¥4k: 花火24粒 + 打ち上げ花火1発 + 「あっぱれ！」スタンプ
-    var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66'];
+    // ¥4k: 多発打ち上げ花火3発（中央大+左右小・時間差）+ 「あっぱれ！」スタンプ
+    var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b'];
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
-    var cx = rect.left - cRect.left + rect.width / 2;
+    var containerW = container.offsetWidth;
     var cy = rect.top - cRect.top + rect.height / 2;
-    // 打ち上げ花火（中央から1発）
-    rsvLaunchFirework(container, cx, cy, colors, 24);
+    // 3発打ち上げ：中央→左→右の順（時間差で連続感）
+    var launches = [
+      { x: containerW * 0.5,  dy: 0,   count: 32, delay: 0   }, // 中央大（メイン）
+      { x: containerW * 0.22, dy: 35,  count: 24, delay: 200 }, // 左
+      { x: containerW * 0.78, dy: 35,  count: 24, delay: 400 }  // 右
+    ];
+    launches.forEach(function(l) {
+      setTimeout(function() {
+        rsvLaunchFirework(container, l.x, cy + l.dy, colors, l.count);
+      }, l.delay);
+    });
     // 「あっぱれ！」スタンプ
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
@@ -6100,7 +6109,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
     stamp.style.top = (rect.top - cRect.top - 38) + 'px';
     container.appendChild(stamp);
-    setTimeout(function(){ stamp.remove(); }, 2200);
+    setTimeout(function(){ stamp.remove(); }, 2400);
   }
 
   function rsvMilestoneL5(container) {
