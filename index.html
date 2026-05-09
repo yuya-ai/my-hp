@@ -6768,7 +6768,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     spawnPetalsAround(dateBtn, document.getElementById('rsvDates'), ['🌸', '✨', '🐣', '🌸', '✨', '🌸', '🐣', '✨']);
   }
   function spawnTimePetals(timeBtn) {
-    spawnPetalsAround(timeBtn, document.getElementById('rsvTimes'), ['✨', '🐣', '✨', '🌟', '🐣', '✨', '🌟', '✨']);
+    // 日付選択と同じ演出（🌸+✨+🐣）
+    spawnPetalsAround(timeBtn, document.getElementById('rsvTimes'), ['🌸', '✨', '🐣', '🌸', '✨', '🌸', '🐣', '✨']);
   }
 
   var _rsvCelebTimer = null;
