@@ -2225,14 +2225,21 @@ body.chat-active .yt-popup.is-open {
   color: #fff !important;
 }
 .line-modal__cal-note {
-  margin: 12px 0 0;
-  font-size: 0.78rem;
+  margin: 16px 0 0;
+  font-size: 0.82rem;
   color: var(--brown);
-  text-align: center;
-  line-height: 1.5;
+  text-align: left;
+  line-height: 1.7;
+  padding: 0 4px;
 }
 .line-modal__cal-note strong {
   color: var(--orange, #FF6B2B);
+}
+.line-modal__cal-note-row {
+  display: block;
+  margin: 10px 0;
+  padding-left: 1.6em;
+  text-indent: -1.6em;
 }
 
 /* LINE友だち追加 CTA */
@@ -3316,8 +3323,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         </a>
       </div>
       <p class="line-modal__cal-note">
-        🍎 <strong>Apple カレンダー</strong>：1日前と2時間前に自動でお知らせ✨<br>
-        📅 <strong>Google カレンダー</strong>：通知時間は Google 側の設定に従います
+        <span class="line-modal__cal-note-row">🍎 <strong>Apple カレンダー</strong>：1日前と2時間前に自動でお知らせ✨</span>
+        <span class="line-modal__cal-note-row">📅 <strong>Google カレンダー</strong>：通知時間は Google 側の設定に従います</span>
       </p>
     </div>
 
