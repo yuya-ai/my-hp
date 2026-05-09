@@ -1557,8 +1557,11 @@ body.chat-active .yt-popup.is-open {
   padding: 12px 16px;
   background: var(--bg-warm);
   border-radius: 8px;
-  position: relative;
+  position: sticky;
+  bottom: 8px;
+  z-index: 50;
   overflow: visible;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
   transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 .rsv-total strong { color: var(--orange); font-size: 1.4rem; margin-left: 8px; }
@@ -1682,6 +1685,13 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   60% { transform: scale(0.95); }
 }
 .rsv-total.is-bounce { animation: rsv-total-bounce 0.65s ease-out; }
+
+/* ミニマイルストーン: ¥500 で +ボタン周りの数量エリアを軽くバウンス */
+@keyframes rsv-mini-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.rsv-qty.is-mini-bounce { animation: rsv-mini-bounce 0.5s ease-out; }
 .rsv-sparkle {
   position: absolute;
   font-size: 1.4rem;
@@ -5046,7 +5056,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   // ===== HP予約フォーム =====
   var _rsvLastTotal = 0;
   var _rsvLastMilestone = 0;
-  function rsvUpdateTotal() {
+  var _rsvLastMiniMilestone = 0;
+  function rsvUpdateTotal(sourceBtn) {
     var total = 0;
     document.querySelectorAll('.rsv-qty__input').forEach(function(input){
       var qty = parseInt(input.value, 10) || 0;
@@ -5066,6 +5077,14 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       if (newMilestone > _rsvLastMilestone) {
         rsvFireMilestone(newMilestone, totalContainer);
         _rsvLastMilestone = newMilestone;
+      }
+      // ミニマイルストーン：¥100/¥300/¥500（+ボタン押下時のみ・¥1000未満で発火）
+      if (sourceBtn && sourceBtn.dataset && sourceBtn.dataset.act === '+' && total < 1000) {
+        var newMini = total >= 500 ? 3 : (total >= 300 ? 2 : (total >= 100 ? 1 : 0));
+        if (newMini > _rsvLastMiniMilestone) {
+          rsvFireMiniMilestone(newMini, sourceBtn);
+          _rsvLastMiniMilestone = newMini;
+        }
       }
     }
     _rsvLastTotal = total;
@@ -5114,6 +5133,42 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       c.style.animationDelay = (i * 0.05) + 's';
       totalContainer.appendChild(c);
       (function(e){ setTimeout(function(){ e.remove(); }, 1700 + i * 60); })(c);
+    }
+  }
+
+  // ===== Phase D: ミニマイルストーン（¥100/¥300/¥500・+ボタン横で発火） =====
+  function rsvFireMiniMilestone(level, btn) {
+    var rsvItemEl = btn.closest('.rsv-item') || btn.parentElement;
+    if (!rsvItemEl) return;
+    var btnRect = btn.getBoundingClientRect();
+    var pRect = rsvItemEl.getBoundingClientRect();
+    var cx = btnRect.left - pRect.left + btnRect.width / 2 - 10;
+    var cy = btnRect.top - pRect.top - 4;
+    // ¥100→1粒 / ¥300→3粒 / ¥500→4粒
+    var count = level === 3 ? 4 : (level === 2 ? 3 : 1);
+    for (var i = 0; i < count; i++) {
+      var s = document.createElement('span');
+      s.className = 'rsv-sparkle';
+      s.textContent = '✨';
+      s.style.left = cx + 'px';
+      s.style.top = cy + 'px';
+      var angle = count === 1 ? -Math.PI / 2 : (i / count) * Math.PI - Math.PI / 2;
+      var dist = 28 + (level * 4);
+      s.style.setProperty('--sx', (Math.cos(angle) * dist) + 'px');
+      s.style.setProperty('--sy', (Math.sin(angle) * dist - 8) + 'px');
+      s.style.animationDelay = (i * 0.05) + 's';
+      rsvItemEl.appendChild(s);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1300 + i * 50); })(s);
+    }
+    // ¥500レベルだけ追加バウンス
+    if (level === 3) {
+      var qtyEl = rsvItemEl.querySelector('.rsv-qty');
+      if (qtyEl) {
+        qtyEl.classList.remove('is-mini-bounce');
+        void qtyEl.offsetWidth;
+        qtyEl.classList.add('is-mini-bounce');
+        setTimeout(function(){ qtyEl.classList.remove('is-mini-bounce'); }, 600);
+      }
     }
   }
 
@@ -5455,7 +5510,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         var oldV = parseInt(input.value, 10) || 0;
         var v = btn.dataset.act === '+' ? Math.min(99, oldV + 1) : Math.max(0, oldV - 1);
         input.value = v;
-        rsvUpdateTotal();
+        rsvUpdateTotal(btn);
         // 演出: 5個以上で太っ腹吹き出し（ビオくんピョンは2026-05-09に削除）
         if (v > oldV) {
           var rsvItemEl = btn.closest('.rsv-item');
