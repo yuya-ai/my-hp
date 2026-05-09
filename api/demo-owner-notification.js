@@ -6,24 +6,37 @@ const CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID;
 
 function buildDemoMessage() {
-  // 翌日の日付を計算（デモなので動的に変えても良い・今は固定例）
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  // 翌日の日付を計算（JST基準）
+  const now = new Date();
+  const jstOffset = 9 * 60; // JST = UTC+9
+  const tomorrow = new Date(now.getTime() + (jstOffset + now.getTimezoneOffset()) * 60000 + 86400000);
   const month = tomorrow.getMonth() + 1;
   const day = tomorrow.getDate();
   const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
   const weekday = weekdays[tomorrow.getDay()];
+  const dateLabel = `${month}/${day}(${weekday})`;
 
-  return `🔔 ${month}/${day}(${weekday}) ご予約状況報告
+  // デモ用サンプル数値（本実装では予約データから自動計算）
+  const inariCount = 15;
+  const garlicChickenCount = 8;
+  const bitChickenPack = 3;
+  const mix1Count = 4;
+  const mix2Count = 2;
+  const jubakoCount = 1;
 
-🍙 いなり ×15個
-🍗 ガーリックチキン ×8枚
-🥢 一口チキン ×3パック
-🌟 ミックス（い1×ち1）×4個
-🌟 ミックス（い2×ち1）×2個
-🍱 重箱 ×1件
+  return `🔔 ${dateLabel} ご予約状況報告
 
-合計8件の予約
+【必要個数】
+🌾 いなり ×${inariCount}個
+🍗 ガーリックチキン ×${garlicChickenCount}枚
+🐣 一口チキン ×${bitChickenPack}パック
+【注文内訳】
+🌟 ミックス（い1×ち1）×${mix1Count}個
+🌟 ミックス（い2×ち1）×${mix2Count}個
+🍱 重箱 ×${jubakoCount}件
+
+
+結論：${dateLabel}は「いなり${inariCount}必要」「ガーリックチキン${garlicChickenCount}枚必要」「一口チキン${bitChickenPack}パック必要」です。
 明日もよろしくお願いします🌸
 
 ━━━━━━━━━━━━━━━
