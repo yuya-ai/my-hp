@@ -5577,20 +5577,43 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     }
   }
 
-  // ===== 個数演出 統一システム（1〜20個まで全レベル発火） =====
+  // ===== 個数演出 小マイルストーン（毎+クリック・➕付近キラキラ+紙吹雪のみ） =====
   function rsvShowQtyTick(rsvItemEl) {
     if (!rsvItemEl) return;
-    var input = rsvItemEl.querySelector('.rsv-qty__input');
-    if (!input) return;
-    var iRect = input.getBoundingClientRect();
+    var plusBtn = rsvItemEl.querySelector('[data-act="+"]');
+    if (!plusBtn) return;
+    var bRect = plusBtn.getBoundingClientRect();
     var pRect = rsvItemEl.getBoundingClientRect();
-    var tick = document.createElement('span');
-    tick.className = 'rsv-fx-plus-one';
-    tick.textContent = '+1';
-    tick.style.left = (iRect.left - pRect.left + iRect.width / 2) + 'px';
-    tick.style.top = (iRect.top - pRect.top - 6) + 'px';
-    rsvItemEl.appendChild(tick);
-    setTimeout(function(){ tick.remove(); }, 900);
+    var bx = bRect.left - pRect.left + bRect.width / 2;
+    var by = bRect.top - pRect.top + bRect.height / 2;
+    // キラキラ✨×3粒（小サイズ・➕の上方扇状）
+    var sparklePos = [{x: -18, y: -24}, {x: 0, y: -30}, {x: 18, y: -24}];
+    sparklePos.forEach(function(pos, i) {
+      var s = document.createElement('span');
+      s.className = 'rsv-sparkle';
+      s.textContent = '✨';
+      s.style.left = (bx - 8) + 'px';
+      s.style.top = (by - 8) + 'px';
+      s.style.fontSize = '0.95rem';
+      s.style.setProperty('--sx', pos.x + 'px');
+      s.style.setProperty('--sy', pos.y + 'px');
+      s.style.animationDelay = (i * 0.04) + 's';
+      rsvItemEl.appendChild(s);
+      (function(e){ setTimeout(function(){ e.remove(); }, 950); })(s);
+    });
+    // 紙吹雪🎉×3粒（小サイズ・➕付近から舞う）
+    for (var ci = 0; ci < 3; ci++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-confetti';
+      c.textContent = '🎉';
+      c.style.left = (bx - 8 + (ci - 1) * 14) + 'px';
+      c.style.top = (by - 14) + 'px';
+      c.style.fontSize = '0.85rem';
+      c.style.setProperty('--cx', ((ci - 1) * 22) + 'px');
+      c.style.animationDelay = (ci * 0.06) + 's';
+      rsvItemEl.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1500); })(c);
+    }
   }
 
   function rsvSpawnQtyParticles(rsvItemEl, emoji, count, fxType) {
@@ -5692,14 +5715,13 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 
   function rsvShowQuantityEffect(v, rsvItemEl) {
     if (!rsvItemEl || v <= 0) return;
-    rsvShowQtyTick(rsvItemEl); // 毎回「+1」浮上
-    // 4個刻み5段階マイルストーン（料金¥1k〜¥5kと完全mirror）
-    if (v === 4)  { rsvShowQuantityMilestone(1, rsvItemEl); return; } // ¥1k相当
-    if (v === 8)  { rsvShowQuantityMilestone(2, rsvItemEl); return; } // ¥2k相当
-    if (v === 12) { rsvShowQuantityMilestone(3, rsvItemEl); return; } // ¥3k相当
-    if (v === 16) { rsvShowQuantityMilestone(4, rsvItemEl); return; } // ¥4k相当
-    if (v >= 20)  { rsvShowQuantityMilestone(5, rsvItemEl); return; } // ¥5k相当
-    // 1〜3, 5〜7, 9〜11, 13〜15, 17〜19 = +1tickのみ
+    rsvShowQtyTick(rsvItemEl); // 毎クリック ➕付近キラキラ+紙吹雪
+    // 5個刻み大マイルストーン4段階
+    if (v === 5)  { rsvShowQuantityMilestone(1, rsvItemEl); return; } // 太っ腹
+    if (v === 10) { rsvShowQuantityMilestone(2, rsvItemEl); return; } // 大感激🎉
+    if (v === 15) { rsvShowQuantityMilestone(3, rsvItemEl); return; } // ビオくん大感激🐣
+    if (v >= 20)  { rsvShowQuantityMilestone(4, rsvItemEl); return; } // 神様クラス
+    // 1〜4, 6〜9, 11〜14, 16〜19 = ➕付近キラキラ+紙吹雪のみ
   }
 
   function rsvSpawnItemStamp(rsvItemEl, text) {
@@ -5716,7 +5738,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ stamp.remove(); }, 2200);
   }
 
-  // ===== 個数 大マイルストーン（4/8/12/16/20・料金¥1k〜¥5kと完全mirror） =====
+  // ===== 個数 大マイルストーン 4段階（5/10/15/20） =====
   function rsvShowQuantityMilestone(level, rsvItemEl) {
     if (!rsvItemEl) return;
     var qtyEl = rsvItemEl.querySelector('.rsv-qty');
@@ -5727,27 +5749,11 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var cy = qtyRect.top - itemRect.top + qtyRect.height / 2;
 
     if (level === 1) {
-      // 4個 = ¥1k相当: 数字バウンス + ✨×3粒
-      rsvAddQtyBounce(rsvItemEl);
-      var positions = [{x: -45, y: -25}, {x: 0, y: -45}, {x: 45, y: -25}];
-      positions.forEach(function(pos, i) {
-        var s = document.createElement('span');
-        s.className = 'rsv-sparkle';
-        s.textContent = '✨';
-        s.style.left = (cx - 10) + 'px';
-        s.style.top = (cy - 10) + 'px';
-        s.style.setProperty('--sx', pos.x + 'px');
-        s.style.setProperty('--sy', pos.y + 'px');
-        s.style.animationDelay = (i * 0.06) + 's';
-        rsvItemEl.appendChild(s);
-        (function(e){ setTimeout(function(){ e.remove(); }, 1300 + i * 60); })(s);
-      });
-    } else if (level === 2) {
-      // 8個 = ¥2k相当: 紙吹雪 + 「太っ腹！」スタンプ
+      // 5個: 紙吹雪 + 「太っ腹！」スタンプ
       rsvSpawnConfetti(rsvItemEl);
       rsvSpawnItemStamp(rsvItemEl, '太っ腹！');
-    } else if (level === 3) {
-      // 12個 = ¥3k相当: 回転+虹色 + 🎉×3 + 「大感謝🎉」スタンプ
+    } else if (level === 2) {
+      // 10個: 回転+虹色 + 🎉×3 + 「大感激🎉」スタンプ
       rsvItemEl.classList.remove('is-rainbow-glow');
       void rsvItemEl.offsetWidth;
       rsvItemEl.classList.add('is-rainbow-glow');
@@ -5765,9 +5771,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         rsvItemEl.appendChild(c);
         (function(e){ setTimeout(function(){ e.remove(); }, 1500); })(c);
       });
-      rsvSpawnItemStamp(rsvItemEl, '大感謝🎉');
-    } else if (level === 4) {
-      // 16個 = ¥4k相当: 打ち上げ花火1発 + 🐣ビオくん + 「ビオくん大感激！🐣」
+      rsvSpawnItemStamp(rsvItemEl, '大感激🎉');
+    } else if (level === 3) {
+      // 15個: 打ち上げ花火1発 + 🐣ビオくん + 「ビオくん大感激！🐣」スタンプ
       var colors4 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66'];
       rsvLaunchFirework(rsvItemEl, cx, cy, colors4, 24);
       var bio = document.createElement('span');
@@ -5778,8 +5784,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       rsvItemEl.appendChild(bio);
       setTimeout(function(){ bio.remove(); }, 2200);
       rsvSpawnItemStamp(rsvItemEl, 'ビオくん大感激！🐣');
-    } else if (level >= 5) {
-      // 20個 = ¥5k相当: 全画面 + 「神様クラス！」 + 打ち上げ花火多発
+    } else if (level >= 4) {
+      // 20個: 全画面 + 「神様クラス！」 + 打ち上げ花火多発
       var overlay = document.createElement('div');
       overlay.className = 'rsv-celebration-overlay';
       var god = document.createElement('div');
@@ -5820,7 +5826,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL1(container) {
-    // ¥1k: バウンス + ✨×3粒（初期版8afbb7d復元）
+    // ¥1k: バウンス + ✨×3粒 + 「太っ腹！」スタンプ
     container.classList.remove('is-bounce');
     void container.offsetWidth;
     container.classList.add('is-bounce');
@@ -5843,35 +5849,25 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       container.appendChild(s);
       (function(e){ setTimeout(function(){ e.remove(); }, 1300 + i * 60); })(s);
     });
-  }
-
-  function rsvMilestoneL2(container) {
-    // ¥2k: 紙吹雪 + 「太っ腹！」スタンプ
-    rsvSpawnConfetti(container);
+    // 「太っ腹！」スタンプ
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
     stamp.textContent = '太っ腹！';
-    var totalEl = container.querySelector('strong');
-    var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
-    var cRect = container.getBoundingClientRect();
     stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
     stamp.style.top = (rect.top - cRect.top - 38) + 'px';
     container.appendChild(stamp);
     setTimeout(function(){ stamp.remove(); }, 2000);
   }
 
-  function rsvMilestoneL3(container) {
-    // ¥3k: 回転 + 虹色 + 🎉×3粒 + 「大感謝🎉」
-    container.classList.remove('is-rainbow');
-    void container.offsetWidth;
-    container.classList.add('is-rainbow');
-    setTimeout(function(){ container.classList.remove('is-rainbow'); }, 1600);
+  function rsvMilestoneL2(container) {
+    // ¥2k: 紙吹雪 + 🎉×3粒 + 「大感謝」スタンプ
+    rsvSpawnConfetti(container);
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
     var cx = rect.left - cRect.left + rect.width / 2 - 10;
     var cy = rect.top - cRect.top + rect.height / 2 - 10;
-    // 🎉クラッカー×3
+    // 🎉×3
     var crackerPos = [{x: -55, y: -10}, {x: 0, y: -50}, {x: 55, y: -10}];
     crackerPos.forEach(function(pos, i) {
       var c = document.createElement('span');
@@ -5885,27 +5881,28 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       container.appendChild(c);
       (function(e){ setTimeout(function(){ e.remove(); }, 1400 + i * 60); })(c);
     });
-    // 「大感謝🎉」テキスト
-    var text = document.createElement('span');
-    text.className = 'rsv-gorgeous-text';
-    text.textContent = '大感謝🎉';
-    text.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
-    text.style.top = (rect.top - cRect.top - 38) + 'px';
-    container.appendChild(text);
-    setTimeout(function(){ text.remove(); }, 2200);
+    // 「大感謝」スタンプ
+    var stamp = document.createElement('span');
+    stamp.className = 'rsv-stamp';
+    stamp.textContent = '大感謝';
+    stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
+    stamp.style.top = (rect.top - cRect.top - 38) + 'px';
+    container.appendChild(stamp);
+    setTimeout(function(){ stamp.remove(); }, 2000);
   }
 
-  function rsvMilestoneL4(container) {
-    // ¥4k: 花火24粒 + 🐣ビオくん + 「ビオくん大感激！🐣」 + 打ち上げ花火1発
-    var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66'];
+  function rsvMilestoneL3(container) {
+    // ¥3k: 回転+虹色 + 🐣ビオくん登場 + 「ビオくん大感激！🐣」スタンプ
+    container.classList.remove('is-rainbow');
+    void container.offsetWidth;
+    container.classList.add('is-rainbow');
+    setTimeout(function(){ container.classList.remove('is-rainbow'); }, 1600);
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
     var cx = rect.left - cRect.left + rect.width / 2;
     var cy = rect.top - cRect.top + rect.height / 2;
-    // 打ち上げ花火（中央から1発）
-    rsvLaunchFirework(container, cx, cy, colors, 24);
-    // ビオくん登場
+    // 🐣ビオくん登場
     var bio = document.createElement('span');
     bio.className = 'rsv-bio-kun';
     bio.textContent = '🐣';
@@ -5917,6 +5914,26 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
     stamp.textContent = 'ビオくん大感激！🐣';
+    stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
+    stamp.style.top = (rect.top - cRect.top - 38) + 'px';
+    container.appendChild(stamp);
+    setTimeout(function(){ stamp.remove(); }, 2200);
+  }
+
+  function rsvMilestoneL4(container) {
+    // ¥4k: 花火24粒 + 打ち上げ花火1発 + 「あっぱれ！」スタンプ
+    var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66'];
+    var totalEl = container.querySelector('strong');
+    var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
+    var cRect = container.getBoundingClientRect();
+    var cx = rect.left - cRect.left + rect.width / 2;
+    var cy = rect.top - cRect.top + rect.height / 2;
+    // 打ち上げ花火（中央から1発）
+    rsvLaunchFirework(container, cx, cy, colors, 24);
+    // 「あっぱれ！」スタンプ
+    var stamp = document.createElement('span');
+    stamp.className = 'rsv-stamp';
+    stamp.textContent = 'あっぱれ！';
     stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
     stamp.style.top = (rect.top - cRect.top - 38) + 'px';
     container.appendChild(stamp);
