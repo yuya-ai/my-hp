@@ -5439,17 +5439,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         rsvFireMilestone(newMilestone, totalContainer);
         _rsvLastMilestone = newMilestone;
       }
-      // ミニマイルストーン：¥100/¥200/¥300/¥500/¥700/¥900（+ボタン押下時のみ・¥1000未満で発火）
-      if (sourceBtn && sourceBtn.dataset && sourceBtn.dataset.act === '+' && total < 1000) {
-        var newMini = 0;
-        for (var mi = MINI_DEFS.length - 1; mi >= 0; mi--) {
-          if (total >= MINI_DEFS[mi].threshold) { newMini = mi + 1; break; }
-        }
-        if (newMini > _rsvLastMiniMilestone) {
-          rsvFireMiniMilestone(newMini, sourceBtn);
-          _rsvLastMiniMilestone = newMini;
-        }
-      }
+      // 価格ミニマイルストーン（¥100〜¥900）は完全削除：小マイルストーンはキラキラ+紙吹雪のみ
     }
     _rsvLastTotal = total;
   }
@@ -5773,9 +5763,22 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       });
       rsvSpawnItemStamp(rsvItemEl, '大感激🎉');
     } else if (level === 3) {
-      // 15個: 打ち上げ花火1発 + 🐣ビオくん + 「ビオくん大感激！🐣」スタンプ
-      var colors4 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66'];
-      rsvLaunchFirework(rsvItemEl, cx, cy, colors4, 24);
+      // 15個: 🐣ビオくんマスコット ＋ 虹コラボ + 「ビオくん大感激！🐣」スタンプ
+      // 虹色リング 2重（時間差で広がる）
+      [0, 200].forEach(function(delay) {
+        setTimeout(function(){
+          var ring = document.createElement('div');
+          ring.className = 'rsv-fx-item-ring is-rainbow';
+          rsvItemEl.appendChild(ring);
+          setTimeout(function(){ ring.remove(); }, 1700);
+        }, delay);
+      });
+      // 虹色グラデパルス（アイテム背景）
+      rsvItemEl.classList.remove('is-rainbow-glow');
+      void rsvItemEl.offsetWidth;
+      rsvItemEl.classList.add('is-rainbow-glow');
+      setTimeout(function(){ rsvItemEl.classList.remove('is-rainbow-glow'); }, 2000);
+      // 🐣ビオくん登場
       var bio = document.createElement('span');
       bio.className = 'rsv-bio-kun';
       bio.textContent = '🐣';
@@ -5783,6 +5786,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       bio.style.top = (cy - 90) + 'px';
       rsvItemEl.appendChild(bio);
       setTimeout(function(){ bio.remove(); }, 2200);
+      // 「ビオくん大感激！🐣」スタンプ
       rsvSpawnItemStamp(rsvItemEl, 'ビオくん大感激！🐣');
     } else if (level >= 4) {
       // 20個: 全画面 + 「神様クラス！」 + 打ち上げ花火多発
@@ -5892,16 +5896,25 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL3(container) {
-    // ¥3k: 回転+虹色 + 🐣ビオくん登場 + 「ビオくん大感激！🐣」スタンプ
+    // ¥3k: 🐣ビオくんマスコット ＋ 虹コラボ + 「ビオくん大感激！🐣」スタンプ
     container.classList.remove('is-rainbow');
     void container.offsetWidth;
     container.classList.add('is-rainbow');
-    setTimeout(function(){ container.classList.remove('is-rainbow'); }, 1600);
+    setTimeout(function(){ container.classList.remove('is-rainbow'); }, 1800);
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
     var cx = rect.left - cRect.left + rect.width / 2;
     var cy = rect.top - cRect.top + rect.height / 2;
+    // 虹色リング 2重（時間差で広がる・ビオくんを取り囲む）
+    [0, 200].forEach(function(delay) {
+      setTimeout(function(){
+        var ring = document.createElement('div');
+        ring.className = 'rsv-fx-item-ring is-rainbow';
+        container.appendChild(ring);
+        setTimeout(function(){ ring.remove(); }, 1700);
+      }, delay);
+    });
     // 🐣ビオくん登場
     var bio = document.createElement('span');
     bio.className = 'rsv-bio-kun';
