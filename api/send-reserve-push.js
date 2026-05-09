@@ -65,7 +65,7 @@ function buildAdminMessage(p) {
   const items = p.i || '';
   const total = p.tt || '';
 
-  return `🔔 新しい予約が入りました！
+  return `🔔 新しいご予約が入りました！
 ━━━━━━━━━━━━━━━
 
 👤 ${name} 様
