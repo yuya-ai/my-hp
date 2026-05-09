@@ -1977,6 +1977,68 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   box-shadow: 0 0 12px rgba(255, 100, 150, 0.5);
 }
 
+/* 大マイルストーン用 虹色光線バースト（conic gradient halo・15個ビオくんマスコット背景用） */
+@keyframes rsv-fx-rainbow-burst {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(0); }
+  20%  { opacity: 0.9; transform: translate(-50%, -50%) scale(1) rotate(45deg); }
+  60%  { opacity: 0.7; transform: translate(-50%, -50%) scale(1.25) rotate(120deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5) rotate(220deg); }
+}
+.rsv-fx-rainbow-burst {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  background: conic-gradient(
+    #ff3b8c 0deg 22.5deg, transparent 22.5deg 45deg,
+    #ff8c00 45deg 67.5deg, transparent 67.5deg 90deg,
+    #ffd700 90deg 112.5deg, transparent 112.5deg 135deg,
+    #00cc66 135deg 157.5deg, transparent 157.5deg 180deg,
+    #00b0ff 180deg 202.5deg, transparent 202.5deg 225deg,
+    #4a90e2 225deg 247.5deg, transparent 247.5deg 270deg,
+    #8c00ff 270deg 292.5deg, transparent 292.5deg 315deg,
+    #ff3b8c 315deg 337.5deg, transparent 337.5deg 360deg
+  );
+  border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, transparent 35%, black 42%, transparent 100%);
+  mask: radial-gradient(circle, transparent 35%, black 42%, transparent 100%);
+  filter: blur(2px);
+  animation: rsv-fx-rainbow-burst 1.8s ease-out forwards;
+}
+
+/* 大マイルストーン用 大スタンプ（5/10/15用・stampより大きい・通常stampは¥1k等で使用） */
+.rsv-stamp-big {
+  font-size: 2.2rem !important;
+  padding: 4px 18px !important;
+  border-width: 4px !important;
+}
+
+/* 大マイルストーン用 大きめビオくん（15個用・通常2.5remに対し4rem） */
+.rsv-bio-kun-big {
+  font-size: 4rem !important;
+}
+
+/* 大マイルストーン用 虹色粒子（10個用・色違い6色を放射状に飛ばす） */
+@keyframes rsv-fx-rainbow-particle {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0); }
+  25%  { opacity: 1; transform: translate(var(--px), var(--py)) scale(1.3); }
+  100% { opacity: 0; transform: translate(calc(var(--px) * 1.6), calc(var(--py) * 1.6)) scale(0.5); }
+}
+.rsv-fx-rainbow-particle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  background: var(--p-color, #ff3b8c);
+  box-shadow: 0 0 8px var(--p-color, #ff3b8c), 0 0 16px var(--p-color, #ff3b8c);
+  animation: rsv-fx-rainbow-particle 1.4s ease-out forwards;
+}
+
 /* 小マイルストーン用 CSS製キラキラ（4点星・絵文字フリー・グラデ＋グロー） */
 @keyframes rsv-fx-css-spark {
   0%   { opacity: 0; transform: translate(0, 0) scale(0) rotate(0); }
@@ -5797,33 +5859,32 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var cy = qtyRect.top - itemRect.top + qtyRect.height / 2;
 
     if (level === 1) {
-      // 5個: 紙吹雪 + 「太っ腹！」スタンプ
-      rsvSpawnConfetti(rsvItemEl);
+      // 5個: CSS本物紙吹雪×20枚（8色・回転・舞い落ち・絵文字なし） + 「太っ腹！」スタンプ
+      var confettiColors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b', '#ff9bb0'];
+      var itemRect5 = rsvItemEl.getBoundingClientRect();
+      for (var ci = 0; ci < 20; ci++) {
+        var c = document.createElement('span');
+        c.className = 'rsv-fx-paper-confetti';
+        c.style.background = confettiColors[ci % confettiColors.length];
+        c.style.left = (Math.random() * (itemRect5.width - 12)) + 'px';
+        c.style.top = '-12px';
+        var endX = (Math.random() - 0.5) * 80;
+        var endY = itemRect5.height * 0.85 + Math.random() * 30;
+        c.style.setProperty('--cx', endX + 'px');
+        c.style.setProperty('--cy', endY + 'px');
+        c.style.setProperty('--cr', (Math.random() * 720 + 360) + 'deg');
+        c.style.animationDelay = (ci * 0.04) + 's';
+        rsvItemEl.appendChild(c);
+        (function(e){ setTimeout(function(){ e.remove(); }, 2000); })(c);
+      }
       rsvSpawnItemStamp(rsvItemEl, '太っ腹！');
     } else if (level === 2) {
-      // 10個: 回転+虹色 + 🎉×3 + 「大感激🎉」スタンプ
-      rsvItemEl.classList.remove('is-rainbow-glow');
-      void rsvItemEl.offsetWidth;
-      rsvItemEl.classList.add('is-rainbow-glow');
-      setTimeout(function(){ rsvItemEl.classList.remove('is-rainbow-glow'); }, 1800);
-      var crackerPos = [{x:-50, y:-15}, {x:0, y:-50}, {x:50, y:-15}];
-      crackerPos.forEach(function(pos, i) {
-        var c = document.createElement('span');
-        c.className = 'rsv-sparkle';
-        c.textContent = '🎉';
-        c.style.left = (cx - 10) + 'px';
-        c.style.top = (cy - 10) + 'px';
-        c.style.setProperty('--sx', pos.x + 'px');
-        c.style.setProperty('--sy', pos.y + 'px');
-        c.style.animationDelay = (i * 0.07) + 's';
-        rsvItemEl.appendChild(c);
-        (function(e){ setTimeout(function(){ e.remove(); }, 1500); })(c);
-      });
-      rsvSpawnItemStamp(rsvItemEl, '大感激🎉');
-    } else if (level === 3) {
-      // 15個: 🐣ビオくんマスコット ＋ 虹コラボ + 「ビオくん大感激！🐣」スタンプ
-      // 虹色リング 2重（時間差で広がる）
-      [0, 200].forEach(function(delay) {
+      // 10個: 小打ち上げ花火1発 + 虹リング2重 + 🐣標準ビオくん + 「大感激🎉」
+      var fwColors10 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff'];
+      // 小打ち上げ花火（ロケット+18粒爆発）
+      rsvLaunchFirework(rsvItemEl, cx, cy, fwColors10, 18);
+      // 虹リング2重カスケード
+      [0, 220].forEach(function(delay) {
         setTimeout(function(){
           var ring = document.createElement('div');
           ring.className = 'rsv-fx-item-ring is-rainbow';
@@ -5831,19 +5892,50 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           setTimeout(function(){ ring.remove(); }, 1700);
         }, delay);
       });
-      // 虹色グラデパルス（アイテム背景）
-      rsvItemEl.classList.remove('is-rainbow-glow');
-      void rsvItemEl.offsetWidth;
-      rsvItemEl.classList.add('is-rainbow-glow');
-      setTimeout(function(){ rsvItemEl.classList.remove('is-rainbow-glow'); }, 2000);
-      // 🐣ビオくん登場
-      var bio = document.createElement('span');
-      bio.className = 'rsv-bio-kun';
-      bio.textContent = '🐣';
-      bio.style.left = (cx - 24) + 'px';
-      bio.style.top = (cy - 90) + 'px';
-      rsvItemEl.appendChild(bio);
-      setTimeout(function(){ bio.remove(); }, 2200);
+      // 🐣標準ビオくん（2.5rem・花火爆発と同期して登場）
+      setTimeout(function(){
+        var bio2 = document.createElement('span');
+        bio2.className = 'rsv-bio-kun';
+        bio2.textContent = '🐣';
+        bio2.style.left = (cx - 24) + 'px';
+        bio2.style.top = (cy - 90) + 'px';
+        rsvItemEl.appendChild(bio2);
+        setTimeout(function(){ bio2.remove(); }, 2000);
+      }, 550);
+      // 「大感激🎉」スタンプ
+      rsvSpawnItemStamp(rsvItemEl, '大感激🎉');
+    } else if (level === 3) {
+      // 15個: 大打ち上げ花火1発 + 虹光線halo + 虹リング3重 + 🐣大ビオくん + 「ビオくん大感激！🐣」
+      var fwColors15 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff'];
+      // 大打ち上げ花火（ロケット+24粒爆発）
+      rsvLaunchFirework(rsvItemEl, cx, cy, fwColors15, 24);
+      // 虹リング3重カスケード
+      [0, 200, 400].forEach(function(delay) {
+        setTimeout(function(){
+          var ring = document.createElement('div');
+          ring.className = 'rsv-fx-item-ring is-rainbow';
+          rsvItemEl.appendChild(ring);
+          setTimeout(function(){ ring.remove(); }, 1700);
+        }, delay);
+      });
+      // 🐣大ビオくん + 虹光線halo（花火爆発と同期して登場）
+      setTimeout(function(){
+        // 虹光線halo（🐣の背景・conic gradient）
+        var burst = document.createElement('div');
+        burst.className = 'rsv-fx-rainbow-burst';
+        burst.style.left = cx + 'px';
+        burst.style.top = (cy - 60) + 'px';
+        rsvItemEl.appendChild(burst);
+        setTimeout(function(){ burst.remove(); }, 1900);
+        // 🐣大ビオくん（4rem）
+        var bio = document.createElement('span');
+        bio.className = 'rsv-bio-kun rsv-bio-kun-big';
+        bio.textContent = '🐣';
+        bio.style.left = (cx - 38) + 'px';
+        bio.style.top = (cy - 110) + 'px';
+        rsvItemEl.appendChild(bio);
+        setTimeout(function(){ bio.remove(); }, 2400);
+      }, 600);
       // 「ビオくん大感激！🐣」スタンプ
       rsvSpawnItemStamp(rsvItemEl, 'ビオくん大感激！🐣');
     } else if (level >= 4) {
