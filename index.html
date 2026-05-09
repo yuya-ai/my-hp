@@ -5189,10 +5189,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         var v = btn.dataset.act === '+' ? Math.min(99, oldV + 1) : Math.max(0, oldV - 1);
         input.value = v;
         rsvUpdateTotal();
-        // 演出: 数量増加時のビオくん + 5個以上の太っ腹
+        // 演出: 5個以上で太っ腹吹き出し（ビオくんピョンは2026-05-09に削除）
         if (v > oldV) {
           var rsvItemEl = btn.closest('.rsv-item');
-          rsvSpawnChick(rsvItemEl);
           if (v === 5 || (v > 5 && v % 5 === 0)) {
             rsvShowPraise(rsvItemEl);
           }
