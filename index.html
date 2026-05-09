@@ -1696,7 +1696,7 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   100% { opacity: 0; transform: translate(calc(var(--sx) * 1.5), calc(var(--sy) * 1.5)) scale(0.8); }
 }
 
-/* L2: 「太っ腹！」スタンプ */
+/* L2: 「太っ腹！」スタンプ（合計額の上中央に表示・スマホでも見切れない） */
 .rsv-stamp {
   position: absolute;
   font-family: 'Caveat', cursive;
@@ -1707,7 +1707,6 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   border-radius: 8px;
   padding: 2px 10px;
   background: rgba(255, 255, 255, 0.95);
-  transform: rotate(-12deg);
   pointer-events: none;
   z-index: 10;
   opacity: 0;
@@ -1716,12 +1715,12 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   white-space: nowrap;
 }
 @keyframes rsv-stamp-press {
-  0% { opacity: 0; transform: rotate(-12deg) scale(2.2); }
-  20% { opacity: 1; transform: rotate(-12deg) scale(0.9); }
-  35% { transform: rotate(-12deg) scale(1.05); }
-  55% { transform: rotate(-12deg) scale(1); }
+  0% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(2.2); }
+  20% { opacity: 1; transform: translateX(-50%) rotate(-12deg) scale(0.9); }
+  35% { transform: translateX(-50%) rotate(-12deg) scale(1.05); }
+  55% { transform: translateX(-50%) rotate(-12deg) scale(1); }
   85% { opacity: 1; }
-  100% { opacity: 0; transform: rotate(-12deg) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1); }
 }
 
 /* L3: 回転 + 虹色 + ゴージャスセット */
@@ -1760,11 +1759,11 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   animation: rsv-gorgeous-appear 2.1s ease-out forwards;
 }
 @keyframes rsv-gorgeous-appear {
-  0% { opacity: 0; transform: translateY(20px) scale(0.7); }
-  20% { opacity: 1; transform: translateY(0) scale(1.1); }
-  35% { transform: translateY(-4px) scale(1); }
-  85% { opacity: 1; transform: translateY(-12px) scale(1.05); }
-  100% { opacity: 0; transform: translateY(-30px) scale(1); }
+  0% { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.7); }
+  20% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.1); }
+  35% { transform: translateX(-50%) translateY(-4px) scale(1); }
+  85% { opacity: 1; transform: translateX(-50%) translateY(-12px) scale(1.05); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(1); }
 }
 
 /* L4: 花火 + ビオくん */
@@ -5157,15 +5156,16 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   function rsvMilestoneL2(container) {
     // 紙吹雪（既存ロジック再利用）
     rsvSpawnConfetti(container);
-    // 「太っ腹！」スタンプ
+    // 「太っ腹！」スタンプ：合計額の上中央に配置（モバイル見切れ防止）
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
     stamp.textContent = '太っ腹！';
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
-    stamp.style.left = (rect.left - cRect.left + rect.width + 4) + 'px';
-    stamp.style.top = (rect.top - cRect.top - 14) + 'px';
+    // 合計額の中央 X 座標（CSS の translateX(-50%) で水平中央寄せ）
+    stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
+    stamp.style.top = (rect.top - cRect.top - 38) + 'px';
     container.appendChild(stamp);
     setTimeout(function(){ stamp.remove(); }, 2000);
   }
@@ -5183,7 +5183,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var totalEl = container.querySelector('strong');
     var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
     var cRect = container.getBoundingClientRect();
-    text.style.left = (rect.left - cRect.left + rect.width / 2 - 110) + 'px';
+    // 合計額の中央 X 座標（CSS の translateX(-50%) で水平中央寄せ）
+    text.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
     text.style.top = (rect.top - cRect.top - 38) + 'px';
     container.appendChild(text);
     setTimeout(function(){ text.remove(); }, 2200);
