@@ -6800,15 +6800,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     void celebEl.offsetWidth;
     celebEl.classList.add('is-show');
 
-    // 自動スクロール：吹き出しを画面中央付近に
-    try {
-      var rect = celebEl.getBoundingClientRect();
-      var vh = window.innerHeight || document.documentElement.clientHeight;
-      // 画面外 or 下半分にある場合のみスクロール（既に上にあれば動かさない）
-      if (rect.top < 0 || rect.top > vh * 0.5) {
-        celebEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    } catch (e) { /* scrollIntoView 非対応ブラウザはスキップ */ }
+    // 自動スクロールは削除（ユーザーストレスのため）
 
     if (_rsvCelebTimer) clearTimeout(_rsvCelebTimer);
     _rsvCelebTimer = setTimeout(function(){
