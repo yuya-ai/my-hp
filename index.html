@@ -6590,13 +6590,11 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         if (h === 16 && m > 0) continue; // 16:00 で終了
         var hh = (h < 10 ? '0' : '') + h;
         var mm = (m < 10 ? '0' : '') + m;
-        // 時間帯絵文字（朝🌅 / 昼☀️ / 夕🌇）
-        var icon = h < 11 ? '🌅' : (h < 15 ? '☀️' : '🌇');
         var tBtn = document.createElement('button');
         tBtn.type = 'button';
         tBtn.className = 'rsv-time';
         tBtn.dataset.time = hh + ':' + mm;
-        tBtn.innerHTML = '<span class="rsv-time__icon">' + icon + '</span>' + hh + ':' + mm;
+        tBtn.innerHTML = hh + ':' + mm;
         tBtn.setAttribute('role','radio');
         tBtn.setAttribute('aria-checked','false');
         tBtn.addEventListener('click', function(){
