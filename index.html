@@ -1609,7 +1609,7 @@ body.chat-active .yt-popup.is-open {
 
 /* 感謝吹き出し */
 .rsv-date-celebration {
-  margin: 14px 4px 0;
+  margin: 0 4px 14px;
   padding: 14px 18px;
   background: linear-gradient(135deg, #fff5e6 0%, #fff8d4 100%);
   border-radius: 18px;
@@ -1622,6 +1622,9 @@ body.chat-active .yt-popup.is-open {
   transition: opacity 0.35s, transform 0.35s cubic-bezier(.34,1.56,.64,1);
   pointer-events: none;
   box-shadow: 0 4px 14px rgba(255,107,43,0.18);
+  position: sticky;
+  top: 8px;
+  z-index: 10;
 }
 .rsv-date-celebration.is-show {
   opacity: 1;
@@ -1770,15 +1773,39 @@ body.chat-active .yt-popup.is-open {
   font-weight: 800;
 }
 .rsv-date.is-selected {
-  background: #1a1a1a;
+  background: #1a1a1a !important;
   color: #fff !important;
   font-weight: 800;
-  transform: scale(1.08);
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px var(--orange, #FF6B2B), 0 6px 18px rgba(255,107,43,0.45);
+  position: relative;
+  z-index: 3;
+  animation: rsv-selected-pulse 1.8s ease-in-out infinite;
+}
+.rsv-date.is-selected::before {
+  content: '✨';
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  font-size: 1rem;
+  z-index: 4;
+  animation: rsv-selected-sparkle 1.2s ease-in-out infinite;
+}
+@keyframes rsv-selected-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--orange, #FF6B2B), 0 6px 18px rgba(255,107,43,0.45); }
+  50% { box-shadow: 0 0 0 4px var(--orange, #FF6B2B), 0 8px 24px rgba(255,107,43,0.65); }
+}
+@keyframes rsv-selected-sparkle {
+  0%, 100% { opacity: 1; transform: scale(1) rotate(0); }
+  50% { opacity: 0.7; transform: scale(1.3) rotate(15deg); }
 }
 .rsv-date.is-today.is-selected {
-  background: var(--orange, #ff6b2b);
-  outline: 3px solid #1a1a1a;
-  outline-offset: -3px;
+  background: var(--orange, #ff6b2b) !important;
+  box-shadow: 0 0 0 3px #1a1a1a, 0 6px 18px rgba(255,107,43,0.5);
+}
+/* バウンスアニメ中はパルスを一時停止して上書き */
+.rsv-date.is-just-selected {
+  animation: rsv-date-bounce 0.5s ease-out;
 }
 .rsv-time-note {
   margin: 14px 0 0;
@@ -3334,7 +3361,6 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         <div class="rsv-step__num">2</div>
         <h3 class="rsv-step__title">受取日をお選びください</h3>
       </div>
-      <div class="rsv-dates" id="rsvDates" role="radiogroup" aria-label="受取日"></div>
       <div class="rsv-date-celebration" id="rsvDateCelebration" aria-live="polite" hidden>
         <div class="rsv-date-celebration__icon">🐣</div>
         <div class="rsv-date-celebration__text">
@@ -3342,6 +3368,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           <span class="rsv-date-celebration__sub" id="rsvCelebrationSub"></span>
         </div>
       </div>
+      <div class="rsv-dates" id="rsvDates" role="radiogroup" aria-label="受取日"></div>
       <p style="margin:8px 0 0; font-size:0.78rem; color:var(--gray-2);">※ 月曜日・第4水曜日は定休日のため選べません</p>
     </div>
 
@@ -4998,6 +5025,16 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     // reflow して show クラス適用 → トランジション発火
     void celebEl.offsetWidth;
     celebEl.classList.add('is-show');
+
+    // 自動スクロール：吹き出しを画面中央付近に
+    try {
+      var rect = celebEl.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      // 画面外 or 下半分にある場合のみスクロール（既に上にあれば動かさない）
+      if (rect.top < 0 || rect.top > vh * 0.5) {
+        celebEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } catch (e) { /* scrollIntoView 非対応ブラウザはスキップ */ }
 
     if (_rsvCelebTimer) clearTimeout(_rsvCelebTimer);
     _rsvCelebTimer = setTimeout(function(){
