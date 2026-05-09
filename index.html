@@ -1977,6 +1977,24 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   box-shadow: 0 0 12px rgba(255, 100, 150, 0.5);
 }
 
+/* 小マイルストーン用 本物紙吹雪（色紙片が舞い落ちる・回転付き） */
+@keyframes rsv-fx-paper-confetti {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(0); }
+  12%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--cx, 0), var(--cy, 80px)) rotate(var(--cr, 540deg)); }
+}
+.rsv-fx-paper-confetti {
+  position: absolute;
+  width: 9px;
+  height: 13px;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  border-radius: 1px;
+  animation: rsv-fx-paper-confetti 1.6s ease-out forwards;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
 /* 打ち上げ花火 ロケット軌跡（rocket trail → 頂点で爆発） */
 @keyframes rsv-fx-rocket {
   0% { opacity: 0; transform: translateY(0) scaleY(0.4); }
@@ -5567,7 +5585,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     }
   }
 
-  // ===== 個数演出 小マイルストーン（毎+クリック・➕付近キラキラ+紙吹雪のみ） =====
+  // ===== 個数演出 小マイルストーン（毎+クリック・➕付近キラキラ+紙吹雪のみ・本気版） =====
   function rsvShowQtyTick(rsvItemEl) {
     if (!rsvItemEl) return;
     var plusBtn = rsvItemEl.querySelector('[data-act="+"]');
@@ -5576,33 +5594,38 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var pRect = rsvItemEl.getBoundingClientRect();
     var bx = bRect.left - pRect.left + bRect.width / 2;
     var by = bRect.top - pRect.top + bRect.height / 2;
-    // キラキラ✨×3粒（小サイズ・➕の上方扇状）
-    var sparklePos = [{x: -18, y: -24}, {x: 0, y: -30}, {x: 18, y: -24}];
-    sparklePos.forEach(function(pos, i) {
+    // ✨キラキラ ×6粒・大きめ・➕周囲を扇状放射
+    for (var i = 0; i < 6; i++) {
       var s = document.createElement('span');
       s.className = 'rsv-sparkle';
       s.textContent = '✨';
-      s.style.left = (bx - 8) + 'px';
-      s.style.top = (by - 8) + 'px';
-      s.style.fontSize = '0.95rem';
-      s.style.setProperty('--sx', pos.x + 'px');
-      s.style.setProperty('--sy', pos.y + 'px');
+      s.style.left = (bx - 12) + 'px';
+      s.style.top = (by - 12) + 'px';
+      s.style.fontSize = '1.4rem';
+      var ang = (i / 5) * Math.PI - Math.PI; // 上半球の扇形（左→右）
+      var dist = 36 + (i % 2) * 10;
+      s.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+      s.style.setProperty('--sy', (Math.sin(ang) * dist - 4) + 'px');
       s.style.animationDelay = (i * 0.04) + 's';
       rsvItemEl.appendChild(s);
-      (function(e){ setTimeout(function(){ e.remove(); }, 950); })(s);
-    });
-    // 紙吹雪🎉×3粒（小サイズ・➕付近から舞う）
-    for (var ci = 0; ci < 3; ci++) {
+      (function(e){ setTimeout(function(){ e.remove(); }, 1300); })(s);
+    }
+    // 本物紙吹雪 ×10片（8色・回転しながら舞い落ちる）
+    var confettiColors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b', '#ff9bb0'];
+    for (var ci = 0; ci < 10; ci++) {
       var c = document.createElement('span');
-      c.className = 'rsv-confetti';
-      c.textContent = '🎉';
-      c.style.left = (bx - 8 + (ci - 1) * 14) + 'px';
-      c.style.top = (by - 14) + 'px';
-      c.style.fontSize = '0.85rem';
-      c.style.setProperty('--cx', ((ci - 1) * 22) + 'px');
-      c.style.animationDelay = (ci * 0.06) + 's';
+      c.className = 'rsv-fx-paper-confetti';
+      c.style.background = confettiColors[ci % confettiColors.length];
+      c.style.left = (bx - 4 + (Math.random() - 0.5) * 32) + 'px';
+      c.style.top = (by - 8) + 'px';
+      var endX = (Math.random() - 0.5) * 90;
+      var endY = 60 + Math.random() * 40;
+      c.style.setProperty('--cx', endX + 'px');
+      c.style.setProperty('--cy', endY + 'px');
+      c.style.setProperty('--cr', (Math.random() * 720 + 360) + 'deg');
+      c.style.animationDelay = (ci * 0.03) + 's';
       rsvItemEl.appendChild(c);
-      (function(e){ setTimeout(function(){ e.remove(); }, 1500); })(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
     }
   }
 
