@@ -3160,12 +3160,22 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           </div>
         </div>
         <div class="rsv-item">
-          <img class="rsv-item__photo" src="bio/menu-inari-chicken.jpg" alt="ミックス" loading="lazy">
+          <img class="rsv-item__photo" src="bio/menu-inari-chicken.jpg" alt="ミックス（いなり1＆チキン1）" loading="lazy">
+          <span class="rsv-item__name">ミックス（いなり1＆チキン1）</span>
+          <span class="rsv-item__price">380円</span>
+          <div class="rsv-qty">
+            <button type="button" class="rsv-qty__btn" data-act="-">−</button>
+            <input type="number" min="0" max="20" value="0" class="rsv-qty__input" data-name="ミックス（いなり1＆チキン1）" data-price="380" aria-label="ミックス（いなり1＆チキン1）の数量">
+            <button type="button" class="rsv-qty__btn" data-act="+">＋</button>
+          </div>
+        </div>
+        <div class="rsv-item">
+          <img class="rsv-item__photo" src="bio/menu-inari-chicken.jpg" alt="ミックス（いなり2＆チキン1）" loading="lazy">
           <span class="rsv-item__name">ミックス（いなり2＆チキン1）</span>
           <span class="rsv-item__price">520円</span>
           <div class="rsv-qty">
             <button type="button" class="rsv-qty__btn" data-act="-">−</button>
-            <input type="number" min="0" max="20" value="0" class="rsv-qty__input" data-name="ミックス" data-price="520" aria-label="ミックスの数量">
+            <input type="number" min="0" max="20" value="0" class="rsv-qty__input" data-name="ミックス（いなり2＆チキン1）" data-price="520" aria-label="ミックス（いなり2＆チキン1）の数量">
             <button type="button" class="rsv-qty__btn" data-act="+">＋</button>
           </div>
         </div>
@@ -3295,7 +3305,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 
     <!-- キャンセル防止：カレンダー登録セクション -->
     <div class="line-modal__cal-section">
-      <p class="line-modal__cal-title">📅 カレンダーに登録 <span>→ 自動でリマインダー🔔</span></p>
+      <p class="line-modal__cal-title">📅 カレンダーに登録 <span>→ 当日に自動でお知らせ🔔</span></p>
       <p class="line-modal__cal-sub">ご予約日を忘れないようカレンダーにも登録しておくと安心です🌸</p>
       <div class="line-modal__cal-btns">
         <a href="#" id="lineModalCalGoogle" target="_blank" rel="noopener" class="line-modal__cal-btn line-modal__cal-btn--google">
@@ -3307,7 +3317,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       </div>
       <p class="line-modal__cal-note">
         ⏰ <strong>1日前</strong>と<strong>2時間前</strong>に自動通知<br>
-        ※ Apple カレンダーのみ自動リマインダー対応
+        ※ Apple カレンダーのみ自動お知らせ対応
       </p>
     </div>
 
@@ -3327,7 +3337,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 
     <!-- カレンダー登録セクション（リマインダー自動取得） -->
     <div class="rsv-modal__cal-section">
-      <p class="rsv-modal__cal-title">📅 カレンダーに登録 <span>→ 自動でリマインダー🔔</span></p>
+      <p class="rsv-modal__cal-title">📅 カレンダーに登録 <span>→ 当日に自動でお知らせ🔔</span></p>
       <div class="rsv-modal__cal-btns">
         <a href="#" id="rsvCalGoogle" target="_blank" rel="noopener" class="rsv-cal-btn rsv-cal-btn--google">
           📅 Google カレンダー
@@ -4049,7 +4059,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         '<a href="https://www.google.com/maps/search/?api=1&query=%E6%B2%96%E7%B8%84%E7%9C%8C%E5%8D%97%E5%9F%8E%E5%B8%82%E5%A4%A7%E9%87%8C%E5%AD%97%E4%BB%B2%E9%96%931141" target="_blank" rel="noopener" class="chatbot-map-btn chatbot-map-btn--map">🗺️ 地図を開く</a>' +
         '<a href="https://www.google.com/maps/dir/?api=1&destination=%E6%B2%96%E7%B8%84%E7%9C%8C%E5%8D%97%E5%9F%8E%E5%B8%82%E5%A4%A7%E9%87%8C%E5%AD%97%E4%BB%B2%E9%96%931141" target="_blank" rel="noopener" class="chatbot-map-btn chatbot-map-btn--nav">🚗 ナビ起動</a>' +
       '</div>',
-    menu: 'ぼくたちのメニューはこれだよ〜🌟✨<br>🍙 <strong>いなり 1個：140円</strong>（ぼくの仲間♪）<br>🍗 <strong>ガーリックチキン 1枚：240円</strong><br>🥢 <strong>一口チキン（1パック）：530円</strong><br>🌟 <strong>ミックス（いなり2＆チキン1）：520円</strong> ← 一番人気〜！🥇<br>🍱 <strong>重箱（最大15個まで）※別途料金</strong><br>1個から、何個でも〜😋💕',
+    menu: 'ぼくたちのメニューはこれだよ〜🌟✨<br>🍙 <strong>いなり 1個：140円</strong>（ぼくの仲間♪）<br>🍗 <strong>ガーリックチキン 1枚：240円</strong><br>🥢 <strong>一口チキン（1パック）：530円</strong><br>🌟 <strong>ミックス（いなり1＆チキン1）：380円</strong><br>🌟 <strong>ミックス（いなり2＆チキン1）：520円</strong> ← 一番人気〜！🥇<br>🍱 <strong>重箱（最大15個まで）※別途料金</strong><br>1個から、何個でも〜😋💕',
     phone: 'お電話はこちらだよ〜📞✨<br><strong>098-944-4191</strong>📱<br>営業時間内（9:00〜17:00）にかけてね〜🙏💛<br>👉 <a href="tel:098-944-4191">タップでお電話</a>💕📞',
     payment: 'ごめんね…💦<br><strong>お支払いは現金のみ</strong>になっちゃうんだ💴<br>カードや電子マネーは使えないから、ご準備お願いね〜🙏✨<br>（その分、お母さんがおまけしてくれるかも…？😋💕）',
     reserve: 'ご予約ありがと〜🥰💕<br>ネット注文ページからすぐお取り置きできるよ〜🌸✨<br>1個から、何個でも〜📝💛<br><br>📞 <strong>当日のご予約はお電話のみ対応</strong>だよ〜🌸<br>👉 <a href="tel:098-944-4191"><strong>098-944-4191</strong></a>📱<br>営業時間内（9:00〜17:00）に気軽にかけてね〜🥰🌸',
@@ -4060,7 +4070,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     firsttime: 'はじめまして〜🌸✨<br>初めての方にぼくのおすすめは<strong>「ミックス」（いなり2個＋チキン1枚）520円</strong>だよ〜😋💕<br>ぼくたち、いなりとガーリックチキンの<strong>2品だけ</strong>を、十数年ずっと作ってるんだ〜🍙🍗<br>シンプルだけど、自信あるよ〜🥰✨',
     inari: '<strong>いなり 1個 140円</strong>だよ〜🍙✨<br>白ゴマだけのシンプルないなり寿司♪<br>（ぼくの本体だから自信ある〜！😋💕）<br>1個から注文OKだよ〜！何個でもどうぞ〜🥰',
     chicken: '<strong>ガーリックチキン 1枚 240円</strong>🍗✨<br>鶏むね肉のサクサクで、ガーリックの香りがたまらないよ〜🤤💕<br>1枚240円 / 5枚700円 / 10枚1,400円<br>一口チキン（1パック）は<strong>530円</strong>🥢<br>（ぼくも食べてみたい…🥺💛）',
-    recommend: '迷ったらこれ〜🌟✨<br>👉 <strong>ミックス（いなり2＆チキン1）520円</strong> ← 一番人気♪🥇<br>👉 家族用なら<strong>重箱（最大15個まで）※別途料金</strong>🍱👨‍👩‍👧<br>👉 お子さんには<strong>いなり 140円</strong>がぴったり〜🍙😋<br>（全部おいしいよ、ほんとに〜！🥰💕）',
+    recommend: '迷ったらこれ〜🌟✨<br>👉 <strong>ミックス（いなり1＆チキン1）380円</strong> / <strong>ミックス（いなり2＆チキン1）520円</strong> ← 一番人気♪🥇<br>👉 家族用なら<strong>重箱（最大15個まで）※別途料金</strong>🍱👨‍👩‍👧<br>👉 お子さんには<strong>いなり 140円</strong>がぴったり〜🍙😋<br>（全部おいしいよ、ほんとに〜！🥰💕）',
     gift: '差し入れ・お土産には<strong>重箱（最大15個まで）※別途料金</strong>がおすすめ〜🍱✨🎁<br>清明祭・旧盆・各種行事の食卓に、十数年愛されてきたんだ〜🌺💛<br>事前予約推奨：<a href="tel:098-944-4191"><strong>📞 098-944-4191</strong></a>📱<br>（渡した人も貰った人も笑顔になるよ〜😊🌸）',
     kids: '<strong>「いなり大好き♪子どもも喜ぶ！」</strong>はぼくの定番フレーズ〜🥰💕<br>お子さんには<strong>いなり 1個 140円</strong>がぴったり🍙✨<br>やさしい味で、おやつにもピッタリ〜🍃<br>「ビオくん大好き〜！」って言ってもらえると、ぼく嬉しい〜🤗💛✨',
 
@@ -4312,7 +4322,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         { label: '🍙 いなり（140円）', value: 'いなり 140円' },
         { label: '🍗 ガーリックチキン（240円）', value: 'ガーリックチキン 240円' },
         { label: '🥢 一口チキン 1パック（530円）', value: '一口チキン 530円' },
-        { label: '🌟 ミックス（520円）', value: 'ミックス 520円' },
+        { label: '🌟 ミックス いなり1＆チキン1（380円）', value: 'ミックス（いなり1＆チキン1）380円' },
+        { label: '🌟 ミックス いなり2＆チキン1（520円）', value: 'ミックス（いなり2＆チキン1）520円' },
         { label: '🍱 重箱15個入り（別途340円）', value: '重箱 別途340円' }
       ], 'item');
     }, 500);
@@ -4781,7 +4792,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       } else {
         saveBalloon.classList.add('rsv-save-balloon--unsaved');
         saveBalloonFace.textContent = '🥺'; // ション顔
-        saveBalloonText.innerHTML = '保存すれば<br><strong>次回予約が超簡単</strong>♪✨<br>チェックを入れてみよう☺️';
+        saveBalloonText.innerHTML = '保存すれば<br><strong>次回予約が超簡単</strong>♪✨<br>⬇️ チェックを入れてみよう☺️';
       }
 
       // 状態が変わった時だけ吹き出し本体もぽよん再生
@@ -4917,9 +4928,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         '📝 ' + dateBtn.dataset.date + ' ' + timeWindow + '\n' +
         '👤 ' + name + '様\n' +
         '🍱 ' + items.join(', ') + '\n' +
-        '💴 ' + totalText + '\n\n' +
-        '出来たてご用意してお待ちしております🐣💕\n' +
-        '前日にもリマインダー届きます🔔';
+        '💴 ' + totalText;
     }
 
     // ===== LINE CTA：キャッシュ済みuserIdがあればLIFFスキップ（直LINE app遷移）=====

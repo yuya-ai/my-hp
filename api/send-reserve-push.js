@@ -20,8 +20,7 @@ function buildReservationMessage(p) {
   const total = p.tt || '';
   const saved = p.s === 1 || p.s === true || p.s === '1';
 
-  const header =
-`${name}様
+  return `${name}様
 
 ご予約ありがとうございます🌸${saved ? '☺️' : '✨'}
 ご注文、しっかり承りました↓
@@ -29,54 +28,33 @@ function buildReservationMessage(p) {
 ━━━━━━━━━━━━━━━
 📅 ご予約日時
 　${date} ${time}
+
 🍱 ご注文内容
 　${items}
+
 💴 合計金額
 　${total}
-☎ お電話
+
+☎️ お電話
 　${phone}
-━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━
-
-🐣 追加予約 ♪
-
-📲 ${RESERVE_URL}
-
-━━━━━━━━━━━━━━━
 
 📍 店舗：いなりとチキン ビオ
 〒901-1206 沖縄県南城市大里字仲間1141
 （JAアトールむかい）
-☎ ${PHONE}
+
+🚫 お支払い方法：現金のみ
 
 🌺 ${name}様にお会いできるのを、ビオ一同、心から楽しみにしております${saved ? '✨😊' : '！'}
-
 ━━━━━━━━━━━━━━━
-✨ 当日のご案内
-━━━━━━━━━━━━━━━
-🚫 お支払い方法：現金のみ
-📦 テイクアウト専門店です
-⏰ 売り切れ次第終了します🙏
-🚗 駐車場：JAアトールの共用駐車場をご利用ください
-`;
 
-  const footer =
-`
 
 ━━━━━━━━━━━━━━━
 
-🐣 次回予約 🌸
+✨🐣 追加予約&次回予約はこちら 🌸✨
 
 📲 ${RESERVE_URL}
 
-🎁 LINE限定特典あり ✨
-
-━━━━━━━━━━━━━━━
-
-ご質問はいつでもこのトークへ${saved ? '😊✨' : '✨😊'}`;
-
-  return header + footer;
+━━━━━━━━━━━━━━━`;
 }
 
 function buildAdminMessage(p) {
@@ -99,7 +77,7 @@ function buildAdminMessage(p) {
 
 ━━━━━━━━━━━━━━━
 ✅ お客様にも予約完了通知を送信済
-⚠️ 売り切れの場合は早めに連絡を！`;
+⚠️売り切れの場合は、お客様に即刻ご連絡を🙇‍♀️💦`;
 }
 
 async function pushMessage(userId, text) {
