@@ -2769,7 +2769,20 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
   transition: all 0.15s;
 }
 .rsv-time:hover { background: var(--cream); border-color: var(--orange); }
-.rsv-time.is-selected { background: var(--orange); color: #fff; border-color: var(--orange); transform: scale(1.05); }
+.rsv-time.is-selected { background: var(--orange); color: #fff; border-color: var(--orange); transform: scale(1.05); position: relative; }
+/* 王冠（時間選択にも・日付選択と同じスタイル） */
+.rsv-time.is-selected::before {
+  content: '👑';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  z-index: 4;
+  animation: rsv-crown-bob 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+  pointer-events: none;
+}
 
 .rsv-fields { display: grid; gap: 14px; }
 .rsv-fields label {
