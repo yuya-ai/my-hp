@@ -77,7 +77,7 @@ function buildAdminMessage(p) {
 
 ━━━━━━━━━━━━━━━
 ✅ お客様にも予約完了通知を送信済
-⚠️売り切れの場合は、お客様に即刻ご連絡を🙇‍♀️💦`;
+⚠️売り切れの場合はお客様に即刻ご連絡🙇‍♀️💦`;
 }
 
 async function pushMessage(userId, text) {
