@@ -5591,30 +5591,30 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ qtyEl.classList.remove('is-mini-bounce'); }, 600);
   }
 
-  // パチンコ式・徐々escalation：全レベル派手モード（L18-20 を基準に下位も強化）
-  // 全レベル最低 4要素同時発動：particles + bounce + ring + flash
-  // L10+で shake追加 / L13+で金グロー / L18+で WHITE FLASH + 虹
+  // パチンコ式・全レベル派手モード「ラブ&パーティ系統」
+  // 色階段：白→青→緑→黄→橙→赤→金→虹 / extras 段階増加
+  // 全レベル最低 4要素同時発動 + 段階的にshake/WHITE FLASH/金グロー/虹を追加
   var QTY_LEVELS = [
     null,
-    { e:'🌟', n:3, fx:'sparkle', b:true, ring:'#ffffff', flash:'rgba(255,255,255,0.4)' },                                        // 1  白派手
-    { e:'⚡', n:3, fx:'burst',   b:true, ring:'#a0c4ff', flash:'rgba(160,196,255,0.5)' },                                        // 2  白青派手
-    { e:'💥', n:4, fx:'burst',   b:true, ring:'#4a90e2', flash:'rgba(74,144,226,0.55)', sh:true },                               // 3  青+SHAKE ⬆G1
-    { e:'🔥', n:4, fx:'sparkle', b:true, ring:'#5fbf8c', flash:'rgba(95,191,140,0.55)', sh:true },                               // 4  青緑+SHAKE
-    { e:'🪙', n:4, fx:'food',    b:true, ring:'#3eb371', flash:'rgba(0,200,100,0.55)', sh:true },                                // 5  緑+SHAKE ⬆G2
-    { e:'💰', n:3, fx:'heart',   b:true, ring:'#3eb371', flash:'rgba(62,179,113,0.55)', sh:true },                               // 6  緑+SHAKE
-    { e:'💵', n:4, fx:'petal',   b:true, ring:'#ffd966', flash:'rgba(255,217,102,0.55)', sh:true },                              // 7  黄+SHAKE
-    { e:'🎰', n:4, fx:'radial',  b:true, ring:'#ffc107', flash:'rgba(255,200,0,0.6)', sh:true },                                 // 8  黄強+SHAKE ⬆G3
-    { e:'🎲', n:4, fx:'radial',  b:true, ring:'#ffc107', flash:'rgba(255,193,7,0.6)', sh:true },                                 // 9  黄+SHAKE
-    { e:'🥉', n:1, fx:'crown',   b:true, ring:'#ff8c00', flash:'rgba(255,140,0,0.6)', sh:true, wf:true },                        // 10 橙+SHAKE+miniWHITE ⬆G4
-    { e:'🥈', n:2, fx:'crown',   b:true, ring:'#ff7733', flash:'rgba(255,119,51,0.6)', sh:true, wf:true },                       // 11 橙+SHAKE+WHITE
-    { e:'🏅', n:3, fx:'crown',   b:true, ring:'#ff5533', flash:'rgba(255,85,51,0.6)', sh:true, wf:true },                        // 12 橙赤+SHAKE+WHITE
-    { e:'🎖', n:1, fx:'crown',   b:true, g:'gold', ring:'#dc143c', flash:'rgba(220,20,60,0.6)', sh:true, wf:true },              // 13 赤+金グロー+SHAKE+WHITE ⬆G5
-    { e:'🏵', n:2, fx:'radial',  b:true, g:'gold', ring:'#ff1744', flash:'rgba(255,23,68,0.6)', sh:true, wf:true },              // 14 赤+金+SHAKE+WHITE
-    { e:'🪄', n:4, fx:'burst',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.65)', sh:true, wf:true },             // 15 金+SHAKE+WHITE ⬆G6
-    { e:'🔮', n:1, fx:'crown',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 16 金+SHAKE+WHITE
-    { e:'💍', n:3, fx:'heart',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 17 金+SHAKE+WHITE
-    { e:'👑', n:1, fx:'crown',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 18 虹+SHAKE+WHITE ⬆G7神演出
-    { e:'💝', n:4, fx:'burst',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 19 虹+SHAKE+WHITE
+    { e:'💗', n:3, fx:'heart',   b:true, ring:'#ffd1e0', flash:'rgba(255,209,224,0.45)' },                                       // 1  ようこそ・小ハート 白ピンク
+    { e:'💕', n:3, fx:'heart',   b:true, ring:'#ffb3c6', flash:'rgba(255,179,198,0.5)' },                                        // 2  ハート2連 ピンク
+    { e:'💞', n:4, fx:'heart',   b:true, ring:'#ff80ab', flash:'rgba(255,128,171,0.55)', sh:true },                              // 3  回るハート+SHAKE ⬆G1
+    { e:'💓', n:4, fx:'heart',   b:true, ring:'#ff5c8d', flash:'rgba(255,92,141,0.55)', sh:true },                               // 4  ドキドキ+SHAKE
+    { e:'❤️', n:4, fx:'heart',   b:true, ring:'#e91e63', flash:'rgba(233,30,99,0.55)', sh:true },                                // 5  赤ハート+SHAKE ⬆G2
+    { e:'💌', n:3, fx:'heart',   b:true, ring:'#ec407a', flash:'rgba(236,64,122,0.55)', sh:true },                               // 6  ラブレター+SHAKE
+    { e:'💘', n:4, fx:'burst',   b:true, ring:'#d81b60', flash:'rgba(216,27,96,0.55)', sh:true },                                // 7  ハートの矢+SHAKE
+    { e:'🥳', n:4, fx:'radial',  b:true, ring:'#ffa726', flash:'rgba(255,167,38,0.6)', sh:true },                                // 8  パーティフェイス ⬆G3
+    { e:'🎈', n:4, fx:'heart',   b:true, ring:'#ffb74d', flash:'rgba(255,183,77,0.6)', sh:true },                                // 9  風船+SHAKE
+    { e:'🎂', n:1, fx:'crown',   b:true, ring:'#ff7043', flash:'rgba(255,112,67,0.6)', sh:true, wf:true },                       // 10 ケーキ+SHAKE+WHITE ⬆G4
+    { e:'🍰', n:2, fx:'crown',   b:true, ring:'#ff5722', flash:'rgba(255,87,34,0.6)', sh:true, wf:true },                        // 11 ケーキ+SHAKE+WHITE
+    { e:'🧁', n:3, fx:'crown',   b:true, ring:'#f4511e', flash:'rgba(244,81,30,0.6)', sh:true, wf:true },                        // 12 カップケーキ+SHAKE+WHITE
+    { e:'🌠', n:1, fx:'crown',   b:true, g:'gold', ring:'#dc143c', flash:'rgba(220,20,60,0.6)', sh:true, wf:true },              // 13 流れ星+金グロー ⬆G5
+    { e:'🌟', n:2, fx:'radial',  b:true, g:'gold', ring:'#ff1744', flash:'rgba(255,23,68,0.6)', sh:true, wf:true },              // 14 輝く星+金
+    { e:'🪄', n:4, fx:'burst',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.65)', sh:true, wf:true },             // 15 魔法の杖+金 ⬆G6
+    { e:'🦄', n:1, fx:'crown',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 16 ユニコーン+金
+    { e:'🧚', n:3, fx:'heart',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 17 妖精+金
+    { e:'👑', n:1, fx:'crown',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 18 王冠+虹+WHITE ⬆G7神演出
+    { e:'🎆', n:4, fx:'burst',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 19 花火+虹+WHITE
   ];
 
   function rsvSpawnItemRing(rsvItemEl, color) {
