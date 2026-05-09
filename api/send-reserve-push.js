@@ -50,7 +50,9 @@ function buildReservationMessage(p) {
 
 ━━━━━━━━━━━━━━━
 
-✨🐣 追加予約&次回予約はこちら 🌸✨
+✨🐣 追加予約 & 次回予約 🌸✨
+
+👇 こちらをタップ 👇
 
 📲 ${RESERVE_URL}
 
