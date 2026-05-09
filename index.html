@@ -5596,25 +5596,25 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   // 全レベル最低 4要素同時発動 + 段階的にshake/WHITE FLASH/金グロー/虹を追加
   var QTY_LEVELS = [
     null,
-    { e:'💗', n:3, fx:'heart',   b:true, ring:'#ffd1e0', flash:'rgba(255,209,224,0.45)' },                                       // 1  ようこそ・小ハート 白ピンク
-    { e:'💕', n:3, fx:'heart',   b:true, ring:'#ffb3c6', flash:'rgba(255,179,198,0.5)' },                                        // 2  ハート2連 ピンク
-    { e:'💞', n:4, fx:'heart',   b:true, ring:'#ff80ab', flash:'rgba(255,128,171,0.55)', sh:true },                              // 3  回るハート+SHAKE ⬆G1
-    { e:'💓', n:4, fx:'heart',   b:true, ring:'#ff5c8d', flash:'rgba(255,92,141,0.55)', sh:true },                               // 4  ドキドキ+SHAKE
-    { e:'❤️', n:4, fx:'heart',   b:true, ring:'#e91e63', flash:'rgba(233,30,99,0.55)', sh:true },                                // 5  赤ハート+SHAKE ⬆G2
-    { e:'💌', n:3, fx:'heart',   b:true, ring:'#ec407a', flash:'rgba(236,64,122,0.55)', sh:true },                               // 6  ラブレター+SHAKE
-    { e:'💘', n:4, fx:'burst',   b:true, ring:'#d81b60', flash:'rgba(216,27,96,0.55)', sh:true },                                // 7  ハートの矢+SHAKE
-    { e:'🥳', n:4, fx:'radial',  b:true, ring:'#ffa726', flash:'rgba(255,167,38,0.6)', sh:true },                                // 8  パーティフェイス ⬆G3
-    { e:'🎈', n:4, fx:'heart',   b:true, ring:'#ffb74d', flash:'rgba(255,183,77,0.6)', sh:true },                                // 9  風船+SHAKE
-    { e:'🎂', n:1, fx:'crown',   b:true, ring:'#ff7043', flash:'rgba(255,112,67,0.6)', sh:true, wf:true },                       // 10 ケーキ+SHAKE+WHITE ⬆G4
-    { e:'🍰', n:2, fx:'crown',   b:true, ring:'#ff5722', flash:'rgba(255,87,34,0.6)', sh:true, wf:true },                        // 11 ケーキ+SHAKE+WHITE
-    { e:'🧁', n:3, fx:'crown',   b:true, ring:'#f4511e', flash:'rgba(244,81,30,0.6)', sh:true, wf:true },                        // 12 カップケーキ+SHAKE+WHITE
-    { e:'🌠', n:1, fx:'crown',   b:true, g:'gold', ring:'#dc143c', flash:'rgba(220,20,60,0.6)', sh:true, wf:true },              // 13 流れ星+金グロー ⬆G5
-    { e:'🌟', n:2, fx:'radial',  b:true, g:'gold', ring:'#ff1744', flash:'rgba(255,23,68,0.6)', sh:true, wf:true },              // 14 輝く星+金
-    { e:'🪄', n:4, fx:'burst',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.65)', sh:true, wf:true },             // 15 魔法の杖+金 ⬆G6
-    { e:'🦄', n:1, fx:'crown',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 16 ユニコーン+金
-    { e:'🧚', n:3, fx:'heart',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 17 妖精+金
-    { e:'👑', n:1, fx:'crown',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 18 王冠+虹+WHITE ⬆G7神演出
-    { e:'🎆', n:4, fx:'burst',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 19 花火+虹+WHITE
+    { e:'🌟', n:3, fx:'sparkle', b:true, ring:'#ffd700', flash:'rgba(255,215,0,0.45)' },                                        // 1  ようこそスター キラキラ
+    { e:'🌠', n:3, fx:'sparkle', b:true, ring:'#a0c4ff', flash:'rgba(160,196,255,0.5)' },                                        // 2  流れ星
+    { e:'❄️', n:4, fx:'radial',  b:true, ring:'#81d4fa', flash:'rgba(129,212,250,0.55)', sh:true },                              // 3  雪結晶キラキラ ⬆G1
+    { e:'💠', n:4, fx:'radial',  b:true, ring:'#42a5f5', flash:'rgba(66,165,245,0.55)', sh:true },                               // 4  ダイヤ模様
+    { e:'🔆', n:4, fx:'burst',   b:true, ring:'#7e57c2', flash:'rgba(126,87,194,0.55)', sh:true },                               // 5  輝き ⬆G2
+    { e:'🪐', n:3, fx:'crown',   b:true, ring:'#5e35b1', flash:'rgba(94,53,177,0.55)', sh:true },                                // 6  惑星
+    { e:'🌌', n:4, fx:'petal',   b:true, ring:'#3f51b5', flash:'rgba(63,81,181,0.55)', sh:true },                                // 7  銀河
+    { e:'🌝', n:1, fx:'crown',   b:true, ring:'#ffd966', flash:'rgba(255,217,102,0.6)', sh:true },                               // 8  月 ⬆G3
+    { e:'☀️', n:1, fx:'crown',   b:true, ring:'#ffb300', flash:'rgba(255,179,0,0.6)', sh:true },                                 // 9  太陽
+    { e:'🦋', n:3, fx:'petal',   b:true, ring:'#ff8a65', flash:'rgba(255,138,101,0.6)', sh:true, wf:true },                      // 10 蝶エレガント ⬆G4
+    { e:'🌷', n:3, fx:'food',    b:true, ring:'#ec407a', flash:'rgba(236,64,122,0.6)', sh:true, wf:true },                       // 11 チューリップ
+    { e:'🌹', n:3, fx:'food',    b:true, ring:'#e91e63', flash:'rgba(233,30,99,0.6)', sh:true, wf:true },                        // 12 バラ
+    { e:'🦄', n:1, fx:'crown',   b:true, g:'gold', ring:'#dc143c', flash:'rgba(220,20,60,0.6)', sh:true, wf:true },              // 13 ユニコーン神秘 ⬆G5
+    { e:'🧚', n:3, fx:'heart',   b:true, g:'gold', ring:'#ff1744', flash:'rgba(255,23,68,0.6)', sh:true, wf:true },              // 14 妖精
+    { e:'🪄', n:4, fx:'burst',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.65)', sh:true, wf:true },             // 15 魔法の杖 ⬆G6
+    { e:'🔮', n:1, fx:'crown',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 16 水晶玉
+    { e:'💝', n:3, fx:'heart',   b:true, g:'gold', ring:'#ffd700', flash:'rgba(255,215,0,0.6)', sh:true, wf:true },              // 17 ギフトハート（唯一のハート）
+    { e:'👑', n:1, fx:'crown',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 18 王冠 ⬆G7 神演出 維持
+    { e:'💍', n:3, fx:'heart',   b:true, g:'premium', ring:'rainbow', flash:'rainbow', sh:true, wf:true },                        // 19 指輪プレミアム宝石
   ];
 
   function rsvSpawnItemRing(rsvItemEl, color) {
