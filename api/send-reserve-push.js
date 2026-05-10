@@ -83,6 +83,7 @@ function buildAdminMessage(p) {
 　送信済です🙆‍♂️
 
 
+
 ⚠️ 売り切れ時の対応⚠️
 ①ご注文に売り切れ商品があるか確認
 　↓
