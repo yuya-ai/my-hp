@@ -2708,7 +2708,7 @@ html.rsv-fx-locked {
   z-index: 50;
   pointer-events: none;
   opacity: 0;
-  animation: rsv-first-tap-pop 2.6s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  animation: rsv-first-tap-pop 2s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
 }
 .rsv-fx-first-tap-banner__mascot {
   font-size: 1.4rem;
@@ -6520,7 +6520,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   // 個数 1個目 初回タップ メッセージ（商品別マッピング）
   var rsvFirstTapMessages = {
     'いなり':                          '感謝✨チキンもセットがお勧め💖🐓',
-    'ガーリックチキン':                  '感謝🙏 いなりもセットがお勧め🍙',
+    'ガーリックチキン':                  '感謝✨いなりもセットがお勧め🌾',
     '一口チキン':                       'ビオの隠れ人気商品✨',
     'ミックス（いなり1＆チキン1）':       '一番人気⭐',
     'ミックス（いなり2＆チキン1）':       '一番人気⭐',
@@ -6542,7 +6542,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     banner.innerHTML = '<span class="rsv-fx-first-tap-banner__mascot">🐣</span>' +
                        '<span class="rsv-fx-first-tap-banner__text">' + msg + '</span>';
     rsvItemEl.appendChild(banner);
-    setTimeout(function(){ banner.remove(); }, 2700);
+    setTimeout(function(){ banner.remove(); }, 2000);
   }
 
   function rsvShowQuantityEffect(v, rsvItemEl) {
