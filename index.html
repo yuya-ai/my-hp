@@ -6333,7 +6333,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     banner.className = 'rsv-fx-item-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
     banner.style.position = 'fixed';
-    banner.style.left = 'calc(50% + 40px)';
+    banner.style.left = 'calc(50% + 10px)';
     banner.style.zIndex = '9998';
     banner.style.bottom = 'auto';
     // 合計バーの真上80pxに配置 + viewport内クランプ（合計バーが画面外でも必ず見える）
@@ -6484,14 +6484,14 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 全バナー共通：合計バーの真上 80px に viewport中央 +40px + viewport内クランプ
-    // → 必ず見える + 合計金額と被らない + ビオくん右側アイコンとも被らない + 合計バーが画面外でも見える
+    // 全バナー共通：合計バーの真上 80px に viewport中央 +10px + viewport内クランプ
+    // → 必ず見える + ほぼ viewport 中央 + 合計バーが画面外でも見える
     var barRect = rsvGetTotalBarRect();
     var vh = window.innerHeight;
     var targetY = barRect ? (barRect.top - 80) : (vh / 2);
     if (targetY < 80) targetY = 80;
     if (targetY > vh - 120) targetY = vh - 120;
-    banner.style.left = 'calc(50% + 40px)';
+    banner.style.left = 'calc(50% + 10px)';
     banner.style.top = targetY + 'px';
     banner.style.bottom = 'auto';
     document.body.appendChild(banner);
