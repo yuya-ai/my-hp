@@ -2127,13 +2127,13 @@ html.rsv-fx-locked {
 }
 
 /* 大マイルストーン用 viewportミニバナー（10個/15個・神様textのlite版） */
-/* 眼に優しい滑らかなフェードイン（バウンド最小・bouncy感は ease-out で表現） */
+/* 眼に優しい滑らかなフェードイン＋斜め着地（スタンプ感） */
 @keyframes rsv-fx-mini-banner {
-  0%   { opacity: 0; transform: translateX(-50%) scale(0.75) rotate(-4deg); }
-  35%  { opacity: 1; transform: translateX(-50%) scale(1.04) rotate(1deg); }
-  60%  { transform: translateX(-50%) scale(1) rotate(0); }
-  85%  { opacity: 1; transform: translateX(-50%) scale(1) rotate(0); }
-  100% { opacity: 0; transform: translateX(-50%) scale(1.04) rotate(0); }
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.75) rotate(-16deg); }
+  35%  { opacity: 1; transform: translateX(-50%) scale(1.04) rotate(-8deg); }
+  60%  { transform: translateX(-50%) scale(1) rotate(-10deg); }
+  85%  { opacity: 1; transform: translateX(-50%) scale(1) rotate(-10deg); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.04) rotate(-10deg); }
 }
 /* 料金マイルストーン用：斜め角度で着地（眼に優しい・スタンプ感だけ） */
 @keyframes rsv-fx-mini-banner-tilt {
