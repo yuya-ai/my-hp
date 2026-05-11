@@ -6481,19 +6481,25 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 全バナー共通：※別途料金の下（重箱行下端と合計の間）に配置
-    // → 合計金額の真上ギリギリ（金額には絶対被らない）
+    // 全バナー共通：最後の商品行（※別途料金が含まれる重箱行）の真下に配置
+    var items = document.querySelectorAll('.rsv-item');
     var totalStrong = document.querySelector('.rsv-total strong');
     var barRect = rsvGetTotalBarRect();
-    if (totalStrong) {
+    if (items.length > 0) {
+      // 最後のアイテム（重箱行）を基準
+      var lastItem = items[items.length - 1];
+      var itemRect = lastItem.getBoundingClientRect();
+      // 横位置：重箱行の中央にバナー中央を揃える
+      banner.style.left = ((itemRect.left + itemRect.right) / 2) + 'px';
+      // 縦位置：重箱行の下端 +5px（※別途料金テキストの直下）
+      banner.style.top = (itemRect.bottom + 5) + 'px';
+      banner.style.bottom = 'auto';
+    } else if (totalStrong) {
       var strongRect = totalStrong.getBoundingClientRect();
-      // 横位置：金額の中央位置にバナー中央を揃える
       banner.style.left = ((strongRect.left + strongRect.right) / 2) + 'px';
-      // 縦位置：金額の上端から +5px 上（バナー下端がほぼ金額に密着）
       banner.style.top = 'auto';
       banner.style.bottom = (window.innerHeight - strongRect.top + 5) + 'px';
     } else if (barRect) {
-      // フォールバック：合計バーの真上
       banner.style.top = 'auto';
       banner.style.bottom = (window.innerHeight - barRect.bottom) + 'px';
     }
