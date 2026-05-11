@@ -6670,10 +6670,10 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var isMobile = window.innerWidth <= 767;
 
     if (isMobile) {
-      // スマホ：弾丸射出式（商品カードの qty 位置 → viewport中央上半分へ打ち上げ）
+      // スマホ：弾丸射出式（商品カードの qty 位置 → viewport上部18%へ打ち上げ）
       // → 料金バナーと演出統一・起点だけ違う（料金=合計バー / 個数=商品カード）
       var targetXq = window.innerWidth / 2;
-      var targetYq = Math.round(window.innerHeight * 0.35);
+      var targetYq = Math.round(window.innerHeight * 0.18);
 
       // 商品 qty 位置を起点に
       var qtyElQ = rsvItemEl ? rsvItemEl.querySelector('.rsv-qty') : null;
@@ -6910,9 +6910,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var vh = window.innerHeight;
 
     if (isMobileP) {
-      // スマホ：弾丸射出式 — 合計バーから打ち上げ→画面中央上半分で着地
+      // スマホ：弾丸射出式 — 合計バーから打ち上げ→画面上部18%で着地（商品カードを覆わない）
       var targetXm = window.innerWidth / 2;
-      var targetYm = Math.round(vh * 0.35);
+      var targetYm = Math.round(vh * 0.18);
 
       // 合計バー中心 Y を起点に
       var barRectM = rsvGetTotalBarRect();
