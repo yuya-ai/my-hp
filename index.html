@@ -2686,23 +2686,40 @@ html.rsv-fx-locked {
   100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.02); }
 }
 
-/* ===== 料金バナー「花火爆発から文字が飛び出す」専用アニメ（スマホ） ===== */
-.rsv-fx-mini-banner.is-burst-from-fw {
-  animation: rsv-fx-banner-burst-fw 3.5s cubic-bezier(0.18, 1.1, 0.34, 1.05) forwards !important;
+/* ===== 料金バナー「コメット式」流星墜落アニメ（スマホ） ===== */
+.rsv-fx-mini-banner.is-comet {
+  animation: rsv-fx-banner-comet 3.5s cubic-bezier(0.18, 0.95, 0.32, 1.05) forwards !important;
 }
-.rsv-fx-mini-banner.is-burst-from-fw.is-rainbow {
-  animation: rsv-fx-banner-burst-fw 3.8s cubic-bezier(0.18, 1.1, 0.34, 1.05) forwards !important;
+.rsv-fx-mini-banner.is-comet.is-rainbow {
+  animation: rsv-fx-banner-comet 3.8s cubic-bezier(0.18, 0.95, 0.32, 1.05) forwards !important;
 }
-@keyframes rsv-fx-banner-burst-fw {
-  0%   { opacity: 0; transform: translateX(-50%) scale(0); }
-  4%   { opacity: 1; transform: translateX(-50%) scale(1.85); }
-  10%  { transform: translateX(-50%) scale(0.82); }
-  16%  { transform: translateX(-50%) scale(1.12); }
-  22%  { transform: translateX(-50%) scale(0.96); }
-  28%  { transform: translateX(-50%) scale(1.03); }
-  35%  { transform: translateX(-50%) scale(1); }
-  85%  { opacity: 1; transform: translateX(-50%) scale(1); }
-  100% { opacity: 0; transform: translateX(-50%) scale(1.18) translateY(-30px); }
+@keyframes rsv-fx-banner-comet {
+  0%   { opacity: 0; transform: translate(calc(50vw + 50%), -100vh) scale(0.4) rotate(-25deg); filter: blur(3px) brightness(1.5); }
+  3%   { opacity: 1; transform: translate(calc(50vw + 50%), -100vh) scale(0.4) rotate(-25deg); filter: blur(3px) brightness(1.5); }
+  13%  { opacity: 1; transform: translate(-50%, 0) scale(1.55) rotate(-5deg); filter: blur(0) brightness(1.1); }
+  20%  { transform: translate(-50%, 0) scale(0.85) rotate(0); filter: blur(0) brightness(1); }
+  28%  { transform: translate(-50%, 0) scale(1.08) rotate(0); }
+  35%  { transform: translate(-50%, 0) scale(1) rotate(0); }
+  85%  { opacity: 1; transform: translate(-50%, 0) scale(1) rotate(0); }
+  100% { opacity: 0; transform: translate(-50%, -30px) scale(1.1) rotate(0); }
+}
+/* コメット軌跡（streak）— 飛行中の尾を別要素で */
+.rsv-fx-comet-trail {
+  position: fixed;
+  width: 180px;
+  height: 6px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.85) 50%, rgba(255,100,0,0.6) 85%, rgba(255,60,0,0.2) 100%);
+  border-radius: 100px;
+  z-index: 9996;
+  pointer-events: none;
+  filter: blur(2px);
+  animation: rsv-fx-comet-trail-fly 460ms cubic-bezier(0.25, 0.85, 0.45, 1) forwards;
+}
+@keyframes rsv-fx-comet-trail-fly {
+  0%   { opacity: 0; transform: translate(50vw, -50vh) rotate(225deg) scaleX(0.5); }
+  20%  { opacity: 1; transform: translate(50vw, -50vh) rotate(225deg) scaleX(1); }
+  90%  { opacity: 0.9; transform: translate(0, 0) rotate(225deg) scaleX(0.7); }
+  100% { opacity: 0; transform: translate(0, 0) rotate(225deg) scaleX(0.3); }
 }
 
 /* ===== 個数 1個目 初回タップ メッセージバナー（ビオくん🐣案内） ===== */
@@ -6208,6 +6225,21 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   var _rsvLastTotal = 0;
   var _rsvLastMilestone = 0;
   var _rsvLastMiniMilestone = 0;
+  // 10段階料金マイルストーン用 text override（rsvFireMilestone で設定→rsvShowMilestoneBanner で消費）
+  var _rsvBannerTextOverride = null;
+  // 10段階料金マイルストーンテキスト（¥500 刻み）
+  var RSV_PRICE_MILESTONE_TEXTS = {
+    1:  '本日も感謝🌸',
+    2:  '太っ腹😤',
+    3:  'ビオくん感激✨',
+    4:  'ビオくん大感謝🎉',
+    5:  'あっぱれ🔥🔥',
+    6:  'あんたが大将👑',
+    7:  '大太客💎',
+    8:  '今日の救世主🌟',
+    9:  '英雄⚔️',
+    10: '神様クラス'
+  };
   function rsvUpdateTotal(sourceBtn, deferMilestoneMs) {
     var total = 0;
     document.querySelectorAll('.rsv-qty__input').forEach(function(input){
@@ -6223,8 +6255,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       totalContainer.classList.remove('is-glow');
       void totalContainer.offsetWidth;
       totalContainer.classList.add('is-glow');
-      // 1000円毎マイルストーン演出（最高5段階・上昇時のみ・段階飛ばしも最高レベルで発火）
-      var newMilestone = Math.min(5, Math.floor(total / 1000));
+      // 500円毎マイルストーン演出（最高10段階・¥500/¥1k/.../¥5k 神様）
+      var newMilestone = Math.min(10, Math.floor(total / 500));
       if (newMilestone > _rsvLastMilestone) {
         _rsvLastMilestone = newMilestone;
         // 個数マイルストーンと同時発火時は料金演出を遅延（個数が先に表示完了するまで待つ）
@@ -6811,6 +6843,11 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   // ★合計金額の右上に配置（金額に密着・スタンプを押したような感）
   function rsvShowMilestoneBanner(text, isRainbow, level, isStamp) {
     level = level || 1;
+    // 10段階システムからの override テキストを消費
+    if (_rsvBannerTextOverride) {
+      text = _rsvBannerTextOverride;
+      _rsvBannerTextOverride = null;
+    }
     var banner = document.createElement('div');
     var classes = 'rsv-fx-mini-banner';
     if (isRainbow) classes += ' is-rainbow';
@@ -6823,32 +6860,68 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var vh = window.innerHeight;
 
     if (isMobileP) {
-      // スマホ：花火打ち上げ → 爆発と同時にバナーが飛び出す演出
+      // スマホ：コメット式（流星墜落）— 画面外右上から飛んでくる→着地で衝撃波
       var targetXm = window.innerWidth / 2;
       var targetYm = Math.round(vh * 0.35);
 
-      // 1. 花火を targetX/Y に向けて打ち上げ（rocket trail + 爆発粒）
-      var fwColorsP = isRainbow
-        ? ['#ff0080', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff']
-        : ['#ff8c00', '#ffd700', '#ff3b8c', '#00b0ff'];
-      var fwCount = isRainbow ? 38 : 28;
-      rsvLaunchFireworkRealisticOverlay(targetXm, targetYm, fwColorsP, fwCount);
+      // 1. コメット軌跡（streak）を別要素で先行表示
+      var trail = document.createElement('div');
+      trail.className = 'rsv-fx-comet-trail';
+      trail.style.left = '50%';
+      trail.style.top = (targetYm - 3) + 'px'; // banner中心高さに合わせる
+      document.body.appendChild(trail);
+      setTimeout(function(){ trail.remove(); }, 500);
 
-      // 2. 爆発タイミング(550ms) でバナーを burst-from-firework アニメで出現させる
+      // 2. バナーをコメットアニメで出現（off-screen → 中心着地・bounce）
+      banner.classList.add('is-comet');
+      banner.style.position = 'fixed';
+      banner.style.bottom = 'auto';
+      banner.style.left = '50%';
+      banner.style.top = targetYm + 'px';
+      document.body.appendChild(banner);
+
+      // 3. 着地タイミング(450ms)で衝撃波 shockwave + 爆発粒
       setTimeout(function() {
-        banner.classList.add('is-burst-from-fw');
-        banner.style.position = 'fixed';
-        banner.style.bottom = 'auto';
-        banner.style.left = '50%';
-        banner.style.top = targetYm + 'px';
-        document.body.appendChild(banner);
-        // 表示時間後に削除
-        setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
-      }, 530);
+        var wave = document.createElement('div');
+        wave.className = 'rsv-fx-shockwave';
+        wave.style.position = 'fixed';
+        wave.style.left = targetXm + 'px';
+        wave.style.top = targetYm + 'px';
+        wave.style.zIndex = '9997';
+        wave.style.setProperty('--sw-color', isRainbow ? '#ffd700' : '#ff8c00');
+        document.body.appendChild(wave);
+        setTimeout(function(){ wave.remove(); }, 1100);
 
+        // 爆発粒（小・着地点中心に放射）
+        var burstColors = isRainbow
+          ? ['#ff0080', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff']
+          : ['#ff8c00', '#ffd700', '#ff3b8c'];
+        var burstN = isRainbow ? 24 : 18;
+        for (var bi = 0; bi < burstN; bi++) {
+          var ang = (bi / burstN) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+          var dist = 60 + Math.random() * 70;
+          var p = document.createElement('span');
+          p.className = 'rsv-fx-real-fw';
+          p.style.position = 'fixed';
+          p.style.left = targetXm + 'px';
+          p.style.top = targetYm + 'px';
+          p.style.zIndex = '9996';
+          p.style.setProperty('--fx', (Math.cos(ang) * dist) + 'px');
+          p.style.setProperty('--fy', (Math.sin(ang) * dist) + 'px');
+          p.style.animationDelay = (Math.random() * 0.08) + 's';
+          var streak = document.createElement('span');
+          streak.className = 'rsv-fx-real-fw__streak';
+          streak.style.transform = 'rotate(' + (ang * 180 / Math.PI) + 'deg)';
+          streak.style.setProperty('--fw-color', burstColors[bi % burstColors.length]);
+          p.appendChild(streak);
+          document.body.appendChild(p);
+          (function(e){ setTimeout(function(){ e.remove(); }, 2200); })(p);
+        }
+      }, 450);
+
+      setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
       banner.dataset.alreadyAppended = '1';
-      banner.dataset.deferredRemoval = '1';
-      return; // 以降の append / remove / 衝撃波(bar基準)はスキップ
+      return; // 以降の append / 衝撃波(bar基準)はスキップ
     } else {
       // デスクトップ（既存lock済）：合計バーの真上 80px + viewport中央 +10px
       var targetY = barRect ? (barRect.top - 80) : (vh / 2);
@@ -7262,23 +7335,33 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvFireMilestone(level, container) {
-    // 演出中スクロール固定（スマホカクカク防止＋画面が動かないように）
-    var lockDuration = level >= 5 ? 6000 : 2500;
+    // 10段階システム: ¥500 刻み・¥5000 神様クラスのみ最大スクロール固定
+    var lockDuration = level >= 10 ? 6000 : 2500;
     rsvLockScrollFor(lockDuration);
-    // MEGA版 or シンプル版で分岐
+
+    // テキスト override 設定（rsvShowMilestoneBanner で消費）
+    _rsvBannerTextOverride = RSV_PRICE_MILESTONE_TEXTS[level] || null;
+
+    // レベル→既存Mega関数マッピング（5段階の視覚スケール × 10レベル）
+    // L1-2: stamp(L1Mega) / L3-4: orange(L2Mega) / L5-6: warm(L4Mega) / L7-9: rainbow(L3Mega) / L10: god(L5)
     if (RSV_FX_MEGA_MODE) {
-      if (level === 1) return rsvMilestoneL1Mega();
-      if (level === 2) return rsvMilestoneL2Mega();
-      if (level === 3) return rsvMilestoneL3Mega();
-      if (level === 4) return rsvMilestoneL4Mega();
-      if (level >= 5)  return rsvMilestoneL5(container); // ¥5kは既に大爆発版で確定
+      if (level === 1)  return rsvMilestoneL1Mega();   // ¥500 本日も感謝(stamp)
+      if (level === 2)  return rsvMilestoneL1Mega();   // ¥1000 太っ腹(stamp)
+      if (level === 3)  return rsvMilestoneL2Mega();   // ¥1500 ビオくん感激(orange)
+      if (level === 4)  return rsvMilestoneL2Mega();   // ¥2000 ビオくん大感謝(orange)
+      if (level === 5)  return rsvMilestoneL4Mega();   // ¥2500 あっぱれ(warm)
+      if (level === 6)  return rsvMilestoneL4Mega();   // ¥3000 あんたが大将(warm)
+      if (level === 7)  return rsvMilestoneL3Mega();   // ¥3500 大太客(rainbow)
+      if (level === 8)  return rsvMilestoneL3Mega();   // ¥4000 今日の救世主(rainbow)
+      if (level === 9)  return rsvMilestoneL3Mega();   // ¥4500 英雄(rainbow)
+      if (level >= 10)  return rsvMilestoneL5(container); // ¥5000 神様クラス(locked god)
     }
-    // シンプル版（フォールバック・RSV_FX_MEGA_MODE = false の場合）
-    if (level === 1) rsvMilestoneL1(container);
-    else if (level === 2) rsvMilestoneL2(container);
-    else if (level === 3) rsvMilestoneL3(container);
-    else if (level === 4) rsvMilestoneL4(container);
-    else if (level >= 5) rsvMilestoneL5(container);
+    // シンプル版（フォールバック）：同じマッピングで縮小版
+    if (level <= 2) rsvMilestoneL1(container);
+    else if (level <= 4) rsvMilestoneL2(container);
+    else if (level <= 6) rsvMilestoneL4(container);
+    else if (level <= 9) rsvMilestoneL3(container);
+    else rsvMilestoneL5(container);
   }
 
   function rsvMilestoneL1(container) {
@@ -7892,8 +7975,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           var p = parseInt(inp.dataset.price, 10) || 0;
           newTotal += q * p;
         });
-        var oldPriceLevel = Math.min(5, Math.floor(_rsvLastTotal / 1000));
-        var newPriceLevel = Math.min(5, Math.floor(newTotal / 1000));
+        var oldPriceLevel = Math.min(10, Math.floor(_rsvLastTotal / 500));
+        var newPriceLevel = Math.min(10, Math.floor(newTotal / 500));
         var priceMilestoneFires = newPriceLevel > oldPriceLevel;
 
         var bothFire = qtyMilestoneFires && priceMilestoneFires;
