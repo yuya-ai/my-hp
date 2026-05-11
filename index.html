@@ -2187,15 +2187,15 @@ html.rsv-fx-locked {
   transform: translateX(-50%);
   font-family: 'Caveat', cursive;
   font-weight: 700;
-  font-size: 2.6rem;
+  font-size: 3.2rem;
   color: #fff;
-  text-shadow: 0 0 14px rgba(255, 215, 0, 1), 0 3px 10px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 16px rgba(255, 215, 0, 1), 0 3px 12px rgba(0, 0, 0, 0.55);
   background: linear-gradient(90deg, #ff0080, #ff8c00, #ffd700, #00cc66, #00b0ff, #8c00ff, #ff0080);
   background-size: 250% 100%;
-  padding: 14px 30px;
-  border-radius: 70px;
-  border: 4px solid #fff;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(255, 215, 0, 0.4), 0 0 28px rgba(255, 0, 128, 0.38);
+  padding: 16px 36px;
+  border-radius: 80px;
+  border: 5px solid #fff;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42), 0 0 0 4px rgba(255, 215, 0, 0.42), 0 0 36px rgba(255, 0, 128, 0.45);
   z-index: 9998;
   white-space: nowrap;
   pointer-events: none;
@@ -6464,11 +6464,10 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var barRect = rsvGetTotalBarRect();
     if (totalStrong) {
       var strongRect = totalStrong.getBoundingClientRect();
-      // バナー左端が金額の右 +10px、上端が金額の上 +5px に来るよう調整
-      // translateX(-50%) を考慮：左端からバナー中央までの距離（≒70px）を足す
-      var halfBannerW = isRainbow ? 130 : 75;
+      // バナー左端が金額の右 +10px に来るよう調整（バナー幅約180-300px）
+      var halfBannerW = isRainbow ? 150 : 95;
       banner.style.left = (strongRect.right + 10 + halfBannerW) + 'px';
-      banner.style.top = (strongRect.top - 25) + 'px';
+      banner.style.top = (strongRect.top - 30) + 'px';
       banner.style.bottom = 'auto';
     } else if (barRect) {
       // フォールバック：合計バーの真上
