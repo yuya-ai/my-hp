@@ -2699,6 +2699,61 @@ html.rsv-fx-locked {
     border-radius: 10px;
   }
   /* 紙吹雪・スパークル類は粒のサイズ自体は元から小さい（10-12px）ので維持 */
+
+  /* ===== スマホ jank 対策：GPU 合成強制 + paint 重い表現を軽量化 ===== */
+  /* 演出粒すべてを GPU レイヤーに分離（合成のみで動かす） */
+  .rsv-fx-real-fw,
+  .rsv-fx-real-fw__streak,
+  .rsv-fx-burst-flash,
+  .rsv-fx-paper-confetti,
+  .rsv-fx-css-spark,
+  .rsv-fx-mini-banner,
+  .rsv-fx-item-banner,
+  .rsv-fx-item-ring,
+  .rsv-fx-rainbow-burst,
+  .rsv-fx-shockwave,
+  .rsv-rocket,
+  .rsv-firework,
+  .rsv-celebration-confetti,
+  .rsv-bio-kun,
+  .rsv-stamp,
+  .rsv-sparkle {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+  /* item card に contain で再描画範囲を限定（演出が他要素に波及しない） */
+  .rsv-item {
+    contain: layout style;
+  }
+  /* 多層 box-shadow を軽量化（blur radius 32px → 12px 等） */
+  .rsv-fx-mini-banner {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  }
+  .rsv-fx-mini-banner.is-rainbow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(255, 215, 0, 0.5);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    /* background-position アニメ削除（paint毎フレーム重い）→ 虹グラデは静的 */
+    animation: rsv-fx-mini-banner-tilt 2.6s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  }
+  .rsv-fx-item-banner {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  }
+  .rsv-fx-item-banner.is-rainbow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(255, 215, 0, 0.5);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    /* 同上：rainbow-shift アニメ削除 */
+    animation: rsv-fx-mini-banner 2.1s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  }
+  /* filter: drop-shadow は paint 重い → スマホでは削除（粒の存在感は色＋size で十分） */
+  .rsv-fx-css-spark,
+  .rsv-fx-real-fw,
+  .rsv-fx-real-fw__streak,
+  .rsv-fx-burst-flash,
+  .rsv-fx-paper-confetti {
+    filter: none;
+  }
 }
 
 /* L3: 回転 + 虹色 + ゴージャスセット */
