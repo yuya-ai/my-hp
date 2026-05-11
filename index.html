@@ -2657,6 +2657,50 @@ html.rsv-fx-locked {
   100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.02); }
 }
 
+/* ===== スマホ向け：全マイルストーン演出の縮小（横幅 767px以下）===== */
+@media (max-width: 767px) {
+  /* 料金マイルストーンバナー（¥1k〜¥4k） */
+  .rsv-fx-mini-banner {
+    font-size: 1.4rem;
+    padding: 8px 18px;
+    border-width: 3px;
+    border-radius: 60px;
+    letter-spacing: 0.02em;
+  }
+  .rsv-fx-mini-banner.is-stamp {
+    font-size: 1.5rem;
+    padding: 6px 14px;
+    border-width: 3px;
+    border-radius: 10px;
+  }
+  .rsv-fx-mini-banner.is-rainbow {
+    font-size: 1.4rem;
+    padding: 7px 18px;
+    border-width: 3px;
+    border-radius: 50px;
+  }
+  /* 個数マイルストーンバナー（10個 大感謝🎉 / 15個 ビオくん大感激👏） */
+  .rsv-fx-item-banner {
+    font-size: 1.5rem;
+    padding: 9px 18px;
+    border-width: 3px;
+    border-radius: 60px;
+  }
+  .rsv-fx-item-banner.is-rainbow {
+    font-size: 1.55rem;
+    padding: 9px 20px;
+    border-width: 3px;
+  }
+  /* 個数小マイルストーン スタンプ（5個 太っ腹😤） */
+  .rsv-stamp {
+    font-size: 1.5rem;
+    padding: 5px 14px;
+    border-width: 3px;
+    border-radius: 10px;
+  }
+  /* 紙吹雪・スパークル類は粒のサイズ自体は元から小さい（10-12px）ので維持 */
+}
+
 /* L3: 回転 + 虹色 + ゴージャスセット */
 @keyframes rsv-total-rainbow {
   0% { transform: rotateY(0); }
