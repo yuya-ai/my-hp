@@ -2200,7 +2200,7 @@ html.rsv-fx-locked {
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  animation: rsv-fx-mini-banner-tilt 2.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: rsv-fx-mini-banner-tilt 2.4s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
   letter-spacing: 0.02em;
 }
 /* 神様クラス専用：両サイド金色光線（画面端から降り注ぐ光柱） */
@@ -2303,7 +2303,7 @@ html.rsv-fx-locked {
   background-size: 250% 100%;
   text-shadow: 0 0 10px rgba(255, 215, 0, 1), 0 2px 6px rgba(0, 0, 0, 0.45);
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(255, 215, 0, 0.38);
-  animation: rsv-fx-mini-banner-tilt 2.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, rsv-fx-mini-banner-rainbow-shift 2.6s linear;
+  animation: rsv-fx-mini-banner-tilt 2.6s cubic-bezier(0.2, 0.7, 0.3, 1) forwards, rsv-fx-mini-banner-rainbow-shift 5s linear;
 }
 
 /* 大マイルストーン用 虹色光線バースト（conic gradient halo・15個ビオくんマスコット背景用） */
@@ -2617,7 +2617,7 @@ html.rsv-fx-locked {
   pointer-events: none;
   opacity: 0;
   transform: translateX(-50%);
-  animation: rsv-fx-mini-banner 1.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: rsv-fx-mini-banner 1.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
   letter-spacing: 0.03em;
 }
 .rsv-fx-item-banner.is-rainbow {
@@ -2628,7 +2628,7 @@ html.rsv-fx-locked {
   background-size: 250% 100%;
   text-shadow: 0 0 16px rgba(255, 215, 0, 1), 0 3px 10px rgba(0, 0, 0, 0.5);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 0 5px rgba(255, 215, 0, 0.35);
-  animation: rsv-fx-mini-banner 2.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, rsv-fx-mini-banner-rainbow-shift 2.1s linear;
+  animation: rsv-fx-mini-banner 2.1s cubic-bezier(0.2, 0.7, 0.3, 1) forwards, rsv-fx-mini-banner-rainbow-shift 4s linear;
 }
 @keyframes rsv-stamp-press {
   0% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.25); }
@@ -6300,9 +6300,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
     stamp.textContent = text;
-    // 数量ボタンの上に十分な距離で表示（qtyとスタンプを視覚的に明確に分離）
+    // 数量ボタンから十分離して表示（明確に分離・スタンプ感）
     stamp.style.left = (qtyRect.left - itemRect.left + qtyRect.width / 2) + 'px';
-    stamp.style.top = (qtyRect.top - itemRect.top - 160) + 'px';
+    stamp.style.top = (qtyRect.top - itemRect.top - 200) + 'px';
     rsvItemEl.appendChild(stamp);
     setTimeout(function(){ stamp.remove(); }, 2200);
   }
@@ -6316,9 +6316,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-item-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
-    // 数量ボタンの上に十分なクリアランスで配置（qty数字を絶対に隠さない）
+    // 数量ボタンから十分離して配置（qty数字とバナーを明確に分離）
     banner.style.left = (qtyRect.left - itemRect.left + qtyRect.width / 2) + 'px';
-    banner.style.top = (qtyRect.top - itemRect.top - 120) + 'px';
+    banner.style.top = (qtyRect.top - itemRect.top - 180) + 'px';
     rsvItemEl.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
   }
@@ -6375,21 +6375,19 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         setTimeout(function(){ bio2.remove(); }, 2000);
       }, 550);
     } else if (level === 3) {
-      // 15個: 大打ち上げ花火 + 商品カード内虹バナー「ビオくん大感激👏」 + 🐣大ビオくん + 虹リング2重
+      // 15個: 控えめ大打ち上げ花火 + 商品カード内虹バナー「ビオくん大感激👏」 + 🐣大ビオくん + 虹リング1重
       var fwColors15 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff'];
-      // リアル大打ち上げ花火（ロケット+55粒・ストリーク尾＋重力）
-      rsvLaunchFireworkRealistic(rsvItemEl, cx, cy, fwColors15, 55);
+      // リアル打ち上げ花火（ロケット+38粒・控えめ）
+      rsvLaunchFireworkRealistic(rsvItemEl, cx, cy, fwColors15, 38);
       // 商品カード内 虹色バナー（数量の真上・お客様が個数到達を瞬時認識）
       rsvSpawnItemBanner(rsvItemEl, 'ビオくん大感激👏', true);
-      // 虹リング2重カスケード（即発火）
-      [0, 250].forEach(function(delay) {
-        setTimeout(function(){
-          var ring15 = document.createElement('div');
-          ring15.className = 'rsv-fx-item-ring is-rainbow';
-          rsvItemEl.appendChild(ring15);
-          setTimeout(function(){ ring15.remove(); }, 1700);
-        }, delay);
-      });
+      // 虹リング1重（控えめ・1発のみ）
+      setTimeout(function(){
+        var ring15 = document.createElement('div');
+        ring15.className = 'rsv-fx-item-ring is-rainbow';
+        rsvItemEl.appendChild(ring15);
+        setTimeout(function(){ ring15.remove(); }, 1700);
+      }, 100);
       // 🐣大ビオくん（4rem・花火爆発と同期）
       setTimeout(function(){
         var bio = document.createElement('span');
