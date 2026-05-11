@@ -6176,14 +6176,14 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         setTimeout(function(){ bio2.remove(); }, 2000);
       }, 550);
     } else if (level === 3) {
-      // 15個: 大打ち上げ花火 + viewport虹バナー「ビオくん大感激！🐣」 + 🐣大ビオくん + 虹リング2重
+      // 15個: 大打ち上げ花火 + viewport虹バナー「ビオくん大感激👏」 + 🐣大ビオくん + 虹リング2重
       var fwColors15 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff'];
       // リアル大打ち上げ花火（ロケット+55粒・ストリーク尾＋重力）
       rsvLaunchFireworkRealistic(rsvItemEl, cx, cy, fwColors15, 55);
       // viewport中央 虹色ミニバナー（lite神様text・rainbow shift）
       var banner15 = document.createElement('div');
       banner15.className = 'rsv-fx-mini-banner is-rainbow';
-      banner15.textContent = 'ビオくん大感激！🐣';
+      banner15.textContent = 'ビオくん大感激👏';
       document.body.appendChild(banner15);
       setTimeout(function(){ banner15.remove(); }, 2000);
       // 虹リング2重カスケード（即発火）
@@ -6312,7 +6312,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL3(container) {
-    // ¥3k ビオくん大感激！🐣: viewport中央 虹色バナー + 🐣大ビオくん + 虹リング2重（fixed）
+    // ¥3k ビオくん大感激👏: viewport中央 虹色バナー + 🐣大ビオくん + 虹リング2重（fixed）
     var vw = window.innerWidth;
     // 虹色リング 2重（fixed・画面中央）
     [0, 200].forEach(function(delay) {
@@ -6335,11 +6335,11 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     bio.textContent = '🐣';
     document.body.appendChild(bio);
     setTimeout(function(){ bio.remove(); }, 2400);
-    rsvShowMilestoneBanner('ビオくん大感激！🐣', true);
+    rsvShowMilestoneBanner('ビオくん大感激👏', true);
   }
 
   function rsvMilestoneL4(container) {
-    // ¥4k あっぱれ！: viewport中央バナー + 多発打ち上げ花火3発（全画面・fixed）
+    // ¥4k あっぱれ！！: viewport中央バナー + 多発打ち上げ花火3発（全画面・fixed）
     var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b'];
     var vw = window.innerWidth;
     var vh = window.innerHeight;
@@ -6354,7 +6354,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         rsvLaunchFireworkRealisticOverlay(l.x, vh * 0.35 + l.dy, colors, l.count);
       }, l.delay);
     });
-    rsvShowMilestoneBanner('あっぱれ！', false);
+    rsvShowMilestoneBanner('あっぱれ！！', false);
   }
 
   function rsvMilestoneL5(container) {
