@@ -6451,15 +6451,23 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   // 合計バーの真上に表示するバナー（料金マイルストーン用）
-  // ★段階別: level 1=控えめ → level 4=ほぼ神様クラス未満まで段階的に強化
+  // ★合計金額の右上に配置（金額に密着・スタンプを押したような感）
   function rsvShowMilestoneBanner(text, isRainbow, level) {
     level = level || 1;
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-mini-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
-    // 合計バーに密着（バナー下端がバー下端と同じ位置・バーに「ペタッ」と押された感）
+    // 合計金額（rsv-total内の strong要素）の右上に配置
+    var totalStrong = document.querySelector('.rsv-total strong');
     var barRect = rsvGetTotalBarRect();
-    if (barRect) {
+    if (totalStrong) {
+      var strongRect = totalStrong.getBoundingClientRect();
+      // 合計金額の右上に密着配置（translateX -50% を考慮して中央が strong 右 + 100px）
+      banner.style.left = (strongRect.right + 100) + 'px';
+      banner.style.top = (strongRect.top - 50) + 'px';
+      banner.style.bottom = 'auto';
+    } else if (barRect) {
+      // フォールバック：合計バーの真上
       banner.style.top = 'auto';
       banner.style.bottom = (window.innerHeight - barRect.bottom) + 'px';
     }
