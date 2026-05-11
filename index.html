@@ -6185,7 +6185,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var newLevel = 0;
     if (v >= 20) newLevel = 4;        // 神様クラス
     else if (v >= 15) newLevel = 3;   // ビオくん大感激🐣
-    else if (v >= 10) newLevel = 2;   // 大感激🎉
+    else if (v >= 10) newLevel = 2;   // 大感謝🎉
     else if (v >= 5)  newLevel = 1;   // 太っ腹
     var lastLevel = parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10);
     if (newLevel > lastLevel) {
@@ -6242,7 +6242,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       }
       rsvSpawnItemStamp(rsvItemEl, '太っ腹！');
     } else if (level === 2) {
-      // 10個: 打ち上げ花火 + viewport中央バナー「大感激🎉」 + 🐣ビオくん + 虹リング1重
+      // 10個: 打ち上げ花火 + viewport中央バナー「大感謝🎉」 + 🐣ビオくん + 虹リング1重
       var fwColors10 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff'];
       // リアル打ち上げ花火（ロケット+40粒・ストリーク尾＋重力）
       rsvLaunchFireworkRealistic(rsvItemEl, cx, cy, fwColors10, 40);
@@ -6451,7 +6451,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL4Mega() {
-    // ¥4k MEGA: 多発打ち上げ花火5発（両サイド追加）+ 🔥×8 + viewport中央バナー
+    // ¥4k MEGA: 多発打ち上げ花火5発（両サイド追加）+ viewport中央バナー「あっぱれ🔥🔥」
     var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b'];
     var vw = window.innerWidth;
     var vh = window.innerHeight;
@@ -6468,24 +6468,6 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         rsvLaunchFireworkRealisticOverlay(l.x, vh * 0.35 + l.dy, colors, l.count);
       }, l.delay);
     });
-    // 🔥×8粒 viewport中央付近で爆発
-    for (var i = 0; i < 8; i++) {
-      var c = document.createElement('span');
-      c.className = 'rsv-sparkle';
-      c.textContent = '🔥';
-      c.style.position = 'fixed';
-      c.style.zIndex = '9998';
-      c.style.left = (vw / 2 - 14) + 'px';
-      c.style.top = '50vh';
-      c.style.fontSize = '2rem';
-      var ang = (i / 8) * Math.PI * 2;
-      var dist = 130 + Math.random() * 40;
-      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
-      c.style.setProperty('--sy', (Math.sin(ang) * dist) + 'px');
-      c.style.animationDelay = (i * 0.05) + 's';
-      document.body.appendChild(c);
-      (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
-    }
     rsvShowMilestoneBanner('あっぱれ🔥🔥', false);
   }
 
