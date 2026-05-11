@@ -2126,14 +2126,13 @@ html.rsv-fx-locked {
   backface-visibility: hidden;
 }
 
-/* 大マイルストーン用 viewportミニバナー（10個/15個・神様textのlite版） */
-/* 眼に優しい滑らかなフェードイン＋斜め着地（スタンプ感） */
+/* 大マイルストーン用 viewportミニバナー（10個/15個・水平・斜めなし） */
 @keyframes rsv-fx-mini-banner {
-  0%   { opacity: 0; transform: translateX(-50%) scale(0.75) rotate(-16deg); }
-  35%  { opacity: 1; transform: translateX(-50%) scale(1.04) rotate(-8deg); }
-  60%  { transform: translateX(-50%) scale(1) rotate(-10deg); }
-  85%  { opacity: 1; transform: translateX(-50%) scale(1) rotate(-10deg); }
-  100% { opacity: 0; transform: translateX(-50%) scale(1.04) rotate(-10deg); }
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.75); }
+  35%  { opacity: 1; transform: translateX(-50%) scale(1.04); }
+  60%  { transform: translateX(-50%) scale(1); }
+  85%  { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.04); }
 }
 /* 料金マイルストーン用：斜め角度で着地（眼に優しい・スタンプ感だけ） */
 @keyframes rsv-fx-mini-banner-tilt {
@@ -2599,35 +2598,35 @@ html.rsv-fx-locked {
   letter-spacing: 0.04em;
   text-shadow: 0 2px 5px rgba(255, 59, 0, 0.3);
 }
-/* 個数マイルストーン用 viewport中央バナー（10個・15個用） */
+/* 個数マイルストーン用 viewport中央バナー（10個・15個用・水平表示） */
 .rsv-fx-item-banner {
   position: fixed;
   font-family: 'Caveat', cursive;
   font-weight: 700;
-  font-size: 2.4rem;
+  font-size: 3rem;
   color: #fff;
-  text-shadow: 0 0 10px rgba(255, 140, 0, 0.95), 0 2px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 12px rgba(255, 140, 0, 0.95), 0 3px 10px rgba(0, 0, 0, 0.45);
   background: linear-gradient(135deg, rgba(255, 107, 43, 0.97), rgba(255, 217, 0, 0.97));
-  padding: 10px 24px;
-  border-radius: 60px;
-  border: 4px solid #fff;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35), 0 0 0 3px rgba(255, 107, 43, 0.3);
+  padding: 14px 32px;
+  border-radius: 80px;
+  border: 5px solid #fff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38), 0 0 0 3px rgba(255, 107, 43, 0.32);
   z-index: 9998;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
   transform: translateX(-50%);
   animation: rsv-fx-mini-banner 1.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
 }
 .rsv-fx-item-banner.is-rainbow {
-  font-size: 2.6rem;
-  padding: 12px 28px;
-  border: 4px solid #fff;
+  font-size: 3.2rem;
+  padding: 16px 36px;
+  border: 5px solid #fff;
   background: linear-gradient(90deg, #ff0080, #ff8c00, #ffd700, #00cc66, #00b0ff, #8c00ff, #ff0080);
   background-size: 250% 100%;
-  text-shadow: 0 0 12px rgba(255, 215, 0, 1), 0 2px 8px rgba(0, 0, 0, 0.45);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.38), 0 0 0 3px rgba(255, 215, 0, 0.35);
+  text-shadow: 0 0 14px rgba(255, 215, 0, 1), 0 3px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(255, 215, 0, 0.38);
   animation: rsv-fx-mini-banner 2.1s cubic-bezier(0.2, 0.7, 0.3, 1) forwards, rsv-fx-mini-banner-rainbow-shift 4s linear;
 }
 @keyframes rsv-stamp-press {
@@ -6300,9 +6299,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
     stamp.textContent = text;
-    // 数量ボタンから十分離して表示（明確に分離・スタンプ感）
+    // 数量ボタンの近くに表示（qtyとの関連性が明確）
     stamp.style.left = (qtyRect.left - itemRect.left + qtyRect.width / 2) + 'px';
-    stamp.style.top = (qtyRect.top - itemRect.top - 200) + 'px';
+    stamp.style.top = (qtyRect.top - itemRect.top - 130) + 'px';
     rsvItemEl.appendChild(stamp);
     setTimeout(function(){ stamp.remove(); }, 2200);
   }
