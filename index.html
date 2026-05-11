@@ -2762,15 +2762,7 @@ html.rsv-fx-locked {
     color: #ff6b2b;
     -webkit-text-fill-color: transparent; /* webkit対応端末は gradient が見える・非対応は color fallback */
   }
-  /* ★合計バーをスクロールロック中も画面下部に常に固定表示
-     （body.rsv-fx-locked の overflow:hidden で sticky が破壊される問題回避） */
-  body.rsv-fx-locked .rsv-total {
-    position: fixed !important;
-    bottom: 12px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 100 !important;
-  }
+  /* 合計バー位置の保持は JS スナップショット(rsvLockScrollFor)で行う・CSS では強制しない */
 }
 
 /* L3: 回転 + 虹色 + ゴージャスセット */
@@ -6386,11 +6378,44 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 
   // 演出中スクロール固定（スマホでカクカク防止＋画面が動かないようにする）
   function rsvLockScrollFor(durationMs) {
+    // ロック直前の合計バー視覚位置をスナップショット → 同じ位置に position:fixed で固定
+    // → ロック中に sticky が破壊されてもバーは1pxもずれない
+    var bar = document.querySelector('.rsv-total');
+    if (bar) {
+      var savedRect = bar.getBoundingClientRect();
+      bar.dataset._origPos = bar.style.position;
+      bar.dataset._origLeft = bar.style.left;
+      bar.dataset._origTop = bar.style.top;
+      bar.dataset._origBottom = bar.style.bottom;
+      bar.dataset._origWidth = bar.style.width;
+      bar.dataset._origTransform = bar.style.transform;
+      bar.style.position = 'fixed';
+      bar.style.left = savedRect.left + 'px';
+      bar.style.top = savedRect.top + 'px';
+      bar.style.bottom = 'auto';
+      bar.style.width = savedRect.width + 'px';
+      bar.style.transform = 'none';
+    }
     document.body.classList.add('rsv-fx-locked');
     document.documentElement.classList.add('rsv-fx-locked');
     setTimeout(function(){
       document.body.classList.remove('rsv-fx-locked');
       document.documentElement.classList.remove('rsv-fx-locked');
+      // 合計バーを元の sticky に復元（dataset から元 style を戻す）
+      if (bar) {
+        bar.style.position = bar.dataset._origPos || '';
+        bar.style.left = bar.dataset._origLeft || '';
+        bar.style.top = bar.dataset._origTop || '';
+        bar.style.bottom = bar.dataset._origBottom || '';
+        bar.style.width = bar.dataset._origWidth || '';
+        bar.style.transform = bar.dataset._origTransform || '';
+        delete bar.dataset._origPos;
+        delete bar.dataset._origLeft;
+        delete bar.dataset._origTop;
+        delete bar.dataset._origBottom;
+        delete bar.dataset._origWidth;
+        delete bar.dataset._origTransform;
+      }
     }, durationMs || 2500);
   }
 
