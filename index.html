@@ -6327,19 +6327,22 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ stamp.remove(); }, 2200);
   }
 
-  // 個数マイルストーン用：画面中央に表示（ビオくんアイコン等を隠さない）
+  // 個数マイルストーン用：合計バーの下に表示（料金バナーと同じ位置・ビオくんアイコン等と被らない）
   function rsvSpawnItemBanner(rsvItemEl, text, isRainbow) {
-    var qtyEl = rsvItemEl.querySelector('.rsv-qty');
-    if (!qtyEl) return;
-    var qtyRect = qtyEl.getBoundingClientRect();
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-item-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
-    // 画面中央（横）+ qty 上方の位置（縦）に固定表示
     banner.style.position = 'fixed';
     banner.style.left = '50%';
-    banner.style.top = (qtyRect.top - 150) + 'px';
     banner.style.zIndex = '9998';
+    // 合計バーの下 +12px に配置（料金バナーと完全に同じ位置）
+    var barRect = rsvGetTotalBarRect();
+    if (barRect) {
+      banner.style.top = (barRect.bottom + 12) + 'px';
+    } else {
+      banner.style.top = '40vh';  // フォールバック
+    }
+    banner.style.bottom = 'auto';
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
   }
