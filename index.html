@@ -6487,9 +6487,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (totalStrong) {
       var strongRect = totalStrong.getBoundingClientRect();
       if (isStamp) {
-        // ¥1k 太っ腹 スタンプ：合計金額の下・左寄りに配置（押された感）
-        banner.style.left = (strongRect.left + 20) + 'px';
-        banner.style.top = (strongRect.bottom + 8) + 'px';
+        // ¥1k 太っ腹 スタンプ：※別途料金の下（重箱行と合計の間）に配置
+        banner.style.left = (strongRect.left + 100) + 'px';
+        banner.style.top = (strongRect.top - 70) + 'px';
         banner.style.bottom = 'auto';
       } else {
         // 他バナー：金額の真上中央に配置
