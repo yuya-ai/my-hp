@@ -6456,45 +6456,37 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 
     var isMobile = window.innerWidth <= 767;
 
-    if (isMobile && rsvItemEl) {
-      // スマホ：item card 中央上部に配置（太っ腹スタンプと同じ位置）
-      // → 右側マスコット(メニュー&予約/Instagram/YouTube/ビオくん)と絶対被らない
-      var qtyEl = rsvItemEl.querySelector('.rsv-qty');
-      var itemRect = rsvItemEl.getBoundingClientRect();
-      var anchorTop = qtyEl ? qtyEl.getBoundingClientRect().top : (itemRect.top + 40);
-
-      // 先に画面外で append して実幅取得（opacity:0 アニメ開始なので不可視）
-      banner.style.left = '-9999px';
+    if (isMobile) {
+      // スマホ：Bio-kun(チャットボット)アイコンの真上に配置（料金バナーと統一）
+      // → 個数も料金もマスコット上にポップアップで位置一貫
+      banner.style.left = '-9999px'; // 仮配置で実幅計測
       banner.style.top = '0px';
       document.body.appendChild(banner);
-      var bannerHalfW = banner.offsetWidth / 2;
 
-      // 右側マスコット領域を動的測定（.float-stack の実体left + ラベル吹き出し分のマージン）
-      var floatStack = document.querySelector('.float-stack');
-      var mascotZoneLeft;
-      if (floatStack) {
-        var fsRect = floatStack.getBoundingClientRect();
-        // 吹き出しラベル(.social-btn__mini)が左に張り出すため 90px 追加で確保
-        mascotZoneLeft = fsRect.left - 90;
+      var bioKunQ = document.querySelector('#chatbot-launcher');
+      var bannerWq = banner.offsetWidth;
+      var bannerHq = banner.offsetHeight;
+      if (bioKunQ) {
+        var bkRectQ = bioKunQ.getBoundingClientRect();
+        // Bio-kun の中心 X に banner中心を合わせる
+        var centerXq = bkRectQ.left + bkRectQ.width / 2;
+        // viewport 端を超えないようクランプ
+        if (centerXq + bannerWq / 2 > window.innerWidth - 8) {
+          centerXq = window.innerWidth - 8 - bannerWq / 2;
+        }
+        if (centerXq - bannerWq / 2 < 8) {
+          centerXq = 8 + bannerWq / 2;
+        }
+        banner.style.left = centerXq + 'px';
+        // Bio-kun の真上に banner 配置（12px gap）
+        var topYq = bkRectQ.top - bannerHq - 12;
+        if (topYq < 10) topYq = 10;
+        banner.style.top = topYq + 'px';
       } else {
-        mascotZoneLeft = window.innerWidth - 160;
+        // フォールバック：viewport 上部
+        banner.style.left = '50%';
+        banner.style.top = '90px';
       }
-      var safetyMargin = 16;
-      var maxCenterX = mascotZoneLeft - safetyMargin - bannerHalfW;
-      // 理想は item card の左寄り(38%)、マスコット側からは確実に離れる
-      var idealCenterX = itemRect.left + itemRect.width * 0.38;
-      var finalCenterX = Math.min(idealCenterX, maxCenterX);
-      // 左端も画面外に出ないようクランプ
-      if (finalCenterX - bannerHalfW < 8) finalCenterX = 8 + bannerHalfW;
-
-      banner.style.left = finalCenterX + 'px';
-      // 🐣 ビオくん emoji が qty 上 90px に出るため、バナーは更に上(-120px)で完全分離
-      var mobileY = anchorTop - 120;
-      // viewport 上端を切らないようクランプ。切れる場合は item card の下に配置
-      if (mobileY < 10) {
-        mobileY = itemRect.bottom + 8;
-      }
-      banner.style.top = mobileY + 'px';
       setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
       return;
     }
