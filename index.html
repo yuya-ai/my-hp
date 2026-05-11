@@ -2134,13 +2134,13 @@ html.rsv-fx-locked {
   85%  { opacity: 1; transform: translateX(-50%) scale(1); }
   100% { opacity: 0; transform: translateX(-50%) scale(1.04); }
 }
-/* 料金マイルストーン用：斜め角度で着地（眼に優しい・スタンプ感だけ） */
+/* 料金マイルストーン用：水平表示（斜めなし） */
 @keyframes rsv-fx-mini-banner-tilt {
-  0%   { opacity: 0; transform: translateX(-50%) scale(0.7) rotate(-18deg); }
-  35%  { opacity: 1; transform: translateX(-50%) scale(1.04) rotate(-10deg); }
-  60%  { transform: translateX(-50%) scale(1) rotate(-12deg); }
-  85%  { opacity: 1; transform: translateX(-50%) scale(1) rotate(-12deg); }
-  100% { opacity: 0; transform: translateX(-50%) scale(1.04) rotate(-12deg); }
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  35%  { opacity: 1; transform: translateX(-50%) scale(1.04); }
+  60%  { transform: translateX(-50%) scale(1); }
+  85%  { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.04); }
 }
 @keyframes rsv-fx-banner-halo-spin {
   0%   { transform: translate(-50%, -50%) rotate(0deg); }
@@ -6457,14 +6457,16 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-mini-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
-    // 合計金額（rsv-total内の strong要素）の右上に配置
+    // 合計金額（rsv-total内の strong要素）の右上に密着配置
     var totalStrong = document.querySelector('.rsv-total strong');
     var barRect = rsvGetTotalBarRect();
     if (totalStrong) {
       var strongRect = totalStrong.getBoundingClientRect();
-      // 合計金額の右上に密着配置（translateX -50% を考慮して中央が strong 右 + 100px）
-      banner.style.left = (strongRect.right + 100) + 'px';
-      banner.style.top = (strongRect.top - 50) + 'px';
+      // バナー左端が金額の右 +10px、上端が金額の上 +5px に来るよう調整
+      // translateX(-50%) を考慮：左端からバナー中央までの距離（≒70px）を足す
+      var halfBannerW = isRainbow ? 130 : 75;
+      banner.style.left = (strongRect.right + 10 + halfBannerW) + 'px';
+      banner.style.top = (strongRect.top - 25) + 'px';
       banner.style.bottom = 'auto';
     } else if (barRect) {
       // フォールバック：合計バーの真上
