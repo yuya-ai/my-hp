@@ -2203,13 +2203,13 @@ html.rsv-fx-locked {
   animation: rsv-fx-mini-banner-tilt 2.4s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
   letter-spacing: 0.03em;
 }
-/* ¥1k 太っ腹！専用：個数5個スタンプと同じテイスト（赤フチ・白背景・斜め） */
+/* ¥1k 太っ腹！専用：赤フチ・白背景・水平表示（斜めなし） */
 @keyframes rsv-fx-mini-banner-stamp {
-  0%   { opacity: 0; transform: translateX(-50%) scale(0.7) rotate(-18deg); }
-  35%  { opacity: 1; transform: translateX(-50%) scale(1.04) rotate(-10deg); }
-  60%  { transform: translateX(-50%) scale(1) rotate(-12deg); }
-  85%  { opacity: 1; transform: translateX(-50%) scale(1) rotate(-12deg); }
-  100% { opacity: 0; transform: translateX(-50%) scale(1.04) rotate(-12deg); }
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  35%  { opacity: 1; transform: translateX(-50%) scale(1.04); }
+  60%  { transform: translateX(-50%) scale(1); }
+  85%  { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.04); }
 }
 .rsv-fx-mini-banner.is-stamp {
   font-size: 3rem;
