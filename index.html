@@ -2708,7 +2708,7 @@ html.rsv-fx-locked {
   z-index: 50;
   pointer-events: none;
   opacity: 0;
-  animation: rsv-first-tap-pop 2s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  animation: rsv-first-tap-pop 3s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
 }
 .rsv-fx-first-tap-banner__mascot {
   font-size: 1.4rem;
@@ -6542,7 +6542,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     banner.innerHTML = '<span class="rsv-fx-first-tap-banner__mascot">🐣</span>' +
                        '<span class="rsv-fx-first-tap-banner__text">' + msg + '</span>';
     rsvItemEl.appendChild(banner);
-    setTimeout(function(){ banner.remove(); }, 2000);
+    setTimeout(function(){ banner.remove(); }, 3000);
   }
 
   function rsvShowQuantityEffect(v, rsvItemEl) {
