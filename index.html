@@ -6365,8 +6365,10 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     stamp.className = 'rsv-stamp';
     stamp.textContent = text;
     // 数量ボタンの近くに表示（qtyとの関連性が明確）
+    // スマホ時はスタンプ自体が小さいので qty に近づける（-50px）、デスクトップは -130px
+    var stampOffsetY = window.innerWidth <= 767 ? -50 : -130;
     stamp.style.left = (qtyRect.left - itemRect.left + qtyRect.width / 2) + 'px';
-    stamp.style.top = (qtyRect.top - itemRect.top - 130) + 'px';
+    stamp.style.top = (qtyRect.top - itemRect.top + stampOffsetY) + 'px';
     rsvItemEl.appendChild(stamp);
     setTimeout(function(){ stamp.remove(); }, 2200);
   }
