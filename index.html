@@ -6642,10 +6642,39 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var vh = window.innerHeight;
 
     if (isMobileP) {
-      // スマホ：viewport 上部に配置（マスコットは画面下部にあるので完全分離）
-      // 合計金額の演出と視覚的にリンクしつつ、bottom-right マスコット群と被らない
-      banner.style.left = '50%';
-      banner.style.top = '90px';
+      // スマホ：Bio-kun(チャットボット)アイコンの真上に配置
+      // → 視覚位置が常に同じ・他マスコットとも被らない・「料金到達=マスコット上に祝福」が明確
+      banner.style.bottom = 'auto';
+      banner.style.left = '-9999px'; // 仮配置で実幅計測
+      banner.style.top = '0px';
+      document.body.appendChild(banner);
+
+      var bioKunEl = document.querySelector('#chatbot-launcher');
+      var bannerWp = banner.offsetWidth;
+      var bannerHp = banner.offsetHeight;
+      if (bioKunEl) {
+        var bkRect = bioKunEl.getBoundingClientRect();
+        // Bio-kun の中心 X に banner中心を合わせる（translateX(-50%) は keyframe で適用済）
+        var centerXp = bkRect.left + bkRect.width / 2;
+        // viewport 右端を超えないようクランプ
+        if (centerXp + bannerWp / 2 > window.innerWidth - 8) {
+          centerXp = window.innerWidth - 8 - bannerWp / 2;
+        }
+        if (centerXp - bannerWp / 2 < 8) {
+          centerXp = 8 + bannerWp / 2;
+        }
+        banner.style.left = centerXp + 'px';
+        // Bio-kun の真上に banner 配置（12px gap）
+        var topYp = bkRect.top - bannerHp - 12;
+        if (topYp < 10) topYp = 10;
+        banner.style.top = topYp + 'px';
+      } else {
+        // フォールバック：viewport 上部
+        banner.style.left = '50%';
+        banner.style.top = '90px';
+      }
+      // 既に append 済みなので後の append をスキップするため早期 return しない
+      banner.dataset.alreadyAppended = '1';
     } else {
       // デスクトップ（既存lock済）：合計バーの真上 80px + viewport中央 +10px
       var targetY = barRect ? (barRect.top - 80) : (vh / 2);
@@ -6655,7 +6684,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       banner.style.top = targetY + 'px';
     }
     banner.style.bottom = 'auto';
-    document.body.appendChild(banner);
+    if (banner.dataset.alreadyAppended !== '1') {
+      document.body.appendChild(banner);
+    }
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2800 : 2600);
     // 衝撃波ショックウェーブ（控えめに：レベル1=なし・2/3=1発・4=2発）
     if (barRect && level >= 2) {
