@@ -6333,16 +6333,16 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     banner.className = 'rsv-fx-item-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
     banner.style.position = 'fixed';
-    banner.style.left = '50%';
+    banner.style.left = 'calc(50% + 150px)';
     banner.style.zIndex = '9998';
     banner.style.bottom = 'auto';
-    // 合計バーの真上80pxに配置（必ず見える・ビオくん右側アイコンと被らない）
+    // 合計バーの真上80pxに配置 + viewport内クランプ（合計バーが画面外でも必ず見える）
     var barRect = rsvGetTotalBarRect();
-    if (barRect) {
-      banner.style.top = (barRect.top - 80) + 'px';
-    } else {
-      banner.style.top = '50%';
-    }
+    var vh = window.innerHeight;
+    var targetY = barRect ? (barRect.top - 80) : (vh / 2);
+    if (targetY < 80) targetY = 80;
+    if (targetY > vh - 120) targetY = vh - 120;
+    banner.style.top = targetY + 'px';
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
   }
@@ -6484,15 +6484,15 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 全バナー共通：合計バーの真上 80px に viewport中央表示
-    // → 必ず見える + ビオくん右側アイコンと被らない
+    // 全バナー共通：合計バーの真上 80px に viewport中央 +150px + viewport内クランプ
+    // → 必ず見える + 合計金額と被らない + ビオくん右側アイコンとも被らない + 合計バーが画面外でも見える
     var barRect = rsvGetTotalBarRect();
-    banner.style.left = '50%';
-    if (barRect) {
-      banner.style.top = (barRect.top - 80) + 'px';
-    } else {
-      banner.style.top = '50%';
-    }
+    var vh = window.innerHeight;
+    var targetY = barRect ? (barRect.top - 80) : (vh / 2);
+    if (targetY < 80) targetY = 80;
+    if (targetY > vh - 120) targetY = vh - 120;
+    banner.style.left = 'calc(50% + 150px)';
+    banner.style.top = targetY + 'px';
     banner.style.bottom = 'auto';
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2800 : 2600);
