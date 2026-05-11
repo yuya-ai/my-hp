@@ -2687,9 +2687,10 @@ html.rsv-fx-locked {
     border-radius: 60px;
   }
   .rsv-fx-item-banner.is-rainbow {
-    font-size: 1.35rem;
-    padding: 7px 14px;
+    font-size: 1.15rem;
+    padding: 6px 12px;
     border-width: 3px;
+    letter-spacing: 0;
   }
   /* 個数小マイルストーン スタンプ（5個 太っ腹😤） */
   .rsv-stamp {
@@ -2753,6 +2754,10 @@ html.rsv-fx-locked {
   .rsv-fx-burst-flash,
   .rsv-fx-paper-confetti {
     filter: none;
+  }
+  /* 合計バー rotateY 反転で文字が消えるのを防ぐ（スマホは虹色シフトのみ） */
+  .rsv-total.is-rainbow strong {
+    animation: rsv-rainbow-shift 1.5s linear;
   }
 }
 
@@ -6631,15 +6636,24 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 全バナー共通：合計バーの真上 80px に viewport中央 +10px + viewport内クランプ
-    // → 必ず見える + ほぼ viewport 中央 + 合計バーが画面外でも見える
+
+    var isMobileP = window.innerWidth <= 767;
     var barRect = rsvGetTotalBarRect();
     var vh = window.innerHeight;
-    var targetY = barRect ? (barRect.top - 80) : (vh / 2);
-    if (targetY < 80) targetY = 80;
-    if (targetY > vh - 120) targetY = vh - 120;
-    banner.style.left = 'calc(50% + 10px)';
-    banner.style.top = targetY + 'px';
+
+    if (isMobileP) {
+      // スマホ：viewport 上部に配置（マスコットは画面下部にあるので完全分離）
+      // 合計金額の演出と視覚的にリンクしつつ、bottom-right マスコット群と被らない
+      banner.style.left = '50%';
+      banner.style.top = '90px';
+    } else {
+      // デスクトップ（既存lock済）：合計バーの真上 80px + viewport中央 +10px
+      var targetY = barRect ? (barRect.top - 80) : (vh / 2);
+      if (targetY < 80) targetY = 80;
+      if (targetY > vh - 120) targetY = vh - 120;
+      banner.style.left = 'calc(50% + 10px)';
+      banner.style.top = targetY + 'px';
+    }
     banner.style.bottom = 'auto';
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2800 : 2600);
