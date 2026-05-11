@@ -6327,25 +6327,21 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ stamp.remove(); }, 2200);
   }
 
-  // 個数マイルストーン用：合計金額の右隣に表示（料金バナーと同じ位置）
+  // 個数マイルストーン用：合計バーの真上に viewport 中央表示（必ず見える位置）
   function rsvSpawnItemBanner(rsvItemEl, text, isRainbow) {
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-item-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
     banner.style.position = 'fixed';
+    banner.style.left = '50%';
     banner.style.zIndex = '9998';
     banner.style.bottom = 'auto';
-    // 合計金額の右隣に配置
-    var totalStrong = document.querySelector('.rsv-total strong');
-    if (totalStrong) {
-      var strongRect = totalStrong.getBoundingClientRect();
-      var halfBannerW = isRainbow ? 220 : 150;
-      banner.style.left = (strongRect.right + 40 + halfBannerW) + 'px';
-      var amountCenterY = (strongRect.top + strongRect.bottom) / 2;
-      banner.style.top = (amountCenterY - 40) + 'px';
+    // 合計バーの真上80pxに配置（必ず見える・ビオくん右側アイコンと被らない）
+    var barRect = rsvGetTotalBarRect();
+    if (barRect) {
+      banner.style.top = (barRect.top - 80) + 'px';
     } else {
-      banner.style.left = '50%';
-      banner.style.top = '40vh';
+      banner.style.top = '50%';
     }
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
@@ -6488,24 +6484,16 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 全バナー共通：合計金額の右隣に配置（金額とバナーが横並び）
-    // バナー幅補正（translateX -50% 用）：種類に応じた半幅
-    var totalStrong = document.querySelector('.rsv-total strong');
+    // 全バナー共通：合計バーの真上 80px に viewport中央表示
+    // → 必ず見える + ビオくん右側アイコンと被らない
     var barRect = rsvGetTotalBarRect();
-    if (totalStrong) {
-      var strongRect = totalStrong.getBoundingClientRect();
-      // 横位置：金額右端 + クリアランス + バナー半幅
-      var halfBannerW = isStamp ? 130 : (isRainbow ? 220 : 150);
-      var clearance = 40;
-      banner.style.left = (strongRect.right + clearance + halfBannerW) + 'px';
-      // 縦位置：金額の中央高さにバナー中央を合わせる
-      var amountCenterY = (strongRect.top + strongRect.bottom) / 2;
-      banner.style.top = (amountCenterY - 40) + 'px';  // 40 = バナー半高
-      banner.style.bottom = 'auto';
-    } else if (barRect) {
-      banner.style.top = 'auto';
-      banner.style.bottom = (window.innerHeight - barRect.bottom) + 'px';
+    banner.style.left = '50%';
+    if (barRect) {
+      banner.style.top = (barRect.top - 80) + 'px';
+    } else {
+      banner.style.top = '50%';
     }
+    banner.style.bottom = 'auto';
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2800 : 2600);
     // 衝撃波ショックウェーブ（控えめに：レベル1=なし・2/3=1発・4=2発）
