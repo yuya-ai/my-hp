@@ -6646,38 +6646,43 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var vh = window.innerHeight;
 
     if (isMobileP) {
-      // スマホ：Bio-kun(チャットボット)アイコンの真上に配置
-      // → 視覚位置が常に同じ・他マスコットとも被らない・「料金到達=マスコット上に祝福」が明確
+      // スマホ：合計金額バーの真上にマスコット🐣表示、その真上にバナー配置
+      // 縦並び: [バナー] → [マスコット🐣] → [合計金額バー]
+      // 各 milestone レベルでマスコットの高さオフセットが違うので合わせる
       banner.style.bottom = 'auto';
-      banner.style.left = '-9999px'; // 仮配置で実幅計測
+      banner.style.left = '-9999px';
       banner.style.top = '0px';
       document.body.appendChild(banner);
 
-      var bioKunEl = document.querySelector('#chatbot-launcher');
       var bannerWp = banner.offsetWidth;
       var bannerHp = banner.offsetHeight;
-      if (bioKunEl) {
-        var bkRect = bioKunEl.getBoundingClientRect();
-        // Bio-kun の中心 X に banner中心を合わせる（translateX(-50%) は keyframe で適用済）
-        var centerXp = bkRect.left + bkRect.width / 2;
-        // viewport 右端を超えないようクランプ
-        if (centerXp + bannerWp / 2 > window.innerWidth - 8) {
-          centerXp = window.innerWidth - 8 - bannerWp / 2;
+
+      if (barRect) {
+        // anchorX/Y は MilestoneLX Mega 関数と同じ計算（マスコット位置と一致）
+        var anchorXm = (barRect.left + barRect.right) / 2;
+        var anchorYm = barRect.top;
+        // レベルごとのマスコット top オフセット（rsvMilestoneLX Mega 関数と一致）
+        var mascotTopOffsets = { 1: 200, 2: 240, 3: 280, 4: 290 };
+        var mascotOffset = mascotTopOffsets[level] || 240;
+        // バナー中心X = マスコット中心X = anchorX
+        var centerXm = anchorXm;
+        if (centerXm + bannerWp / 2 > window.innerWidth - 8) {
+          centerXm = window.innerWidth - 8 - bannerWp / 2;
         }
-        if (centerXp - bannerWp / 2 < 8) {
-          centerXp = 8 + bannerWp / 2;
+        if (centerXm - bannerWp / 2 < 8) {
+          centerXm = 8 + bannerWp / 2;
         }
-        banner.style.left = centerXp + 'px';
-        // Bio-kun の真上に banner 配置（12px gap）
-        var topYp = bkRect.top - bannerHp - 12;
-        if (topYp < 10) topYp = 10;
-        banner.style.top = topYp + 'px';
+        banner.style.left = centerXm + 'px';
+        // バナー下端 = マスコット上端 - 12px gap
+        // → バナー上端 = マスコット上端 - bannerH - 12
+        var topYm = anchorYm - mascotOffset - bannerHp - 12;
+        if (topYm < 10) topYm = 10;
+        banner.style.top = topYm + 'px';
       } else {
         // フォールバック：viewport 上部
         banner.style.left = '50%';
         banner.style.top = '90px';
       }
-      // 既に append 済みなので後の append をスキップするため早期 return しない
       banner.dataset.alreadyAppended = '1';
     } else {
       // デスクトップ（既存lock済）：合計バーの真上 80px + viewport中央 +10px
