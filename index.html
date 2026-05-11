@@ -2143,6 +2143,74 @@ html.rsv-fx-locked {
   opacity: 0;
   animation: rsv-fx-mini-banner 1.7s ease-out forwards;
 }
+/* 神様クラス専用：両サイド金色光線（画面端から降り注ぐ光柱） */
+@keyframes rsv-fx-side-beam {
+  0%   { opacity: 0; transform: scaleY(0); }
+  15%  { opacity: 0.85; transform: scaleY(1); }
+  50%  { opacity: 0.7; }
+  85%  { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+.rsv-fx-side-beam {
+  position: fixed;
+  top: 0;
+  width: 80px;
+  height: 100vh;
+  background: linear-gradient(180deg,
+    rgba(255, 215, 0, 0.7) 0%,
+    rgba(255, 140, 0, 0.5) 30%,
+    rgba(255, 215, 0, 0.4) 60%,
+    rgba(255, 100, 200, 0.5) 100%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: 9997;
+  animation: rsv-fx-side-beam 4s ease-in-out forwards;
+  transform-origin: top center;
+}
+.rsv-fx-side-beam--left { left: 0; }
+.rsv-fx-side-beam--right { right: 0; }
+
+/* 神様クラス専用：両サイドから踊りながら登場するビオくん（左版） */
+@keyframes rsv-fx-dancing-bio-left {
+  0%   { left: -100px; transform: rotate(0deg) scale(1); opacity: 0; }
+  10%  { left: 5vw; transform: rotate(-20deg) scale(1.1); opacity: 1; }
+  18%  { transform: rotate(15deg) scale(1.05); }
+  26%  { transform: rotate(-15deg) scale(1.1); }
+  34%  { transform: rotate(15deg) scale(1.05); }
+  42%  { transform: rotate(-15deg) scale(1.1); }
+  50%  { transform: rotate(15deg) scale(1.05); }
+  58%  { transform: rotate(-15deg) scale(1.1); }
+  66%  { transform: rotate(15deg) scale(1.05); }
+  74%  { transform: rotate(0deg) scale(1.2); }
+  85%  { left: 5vw; opacity: 1; transform: rotate(0deg) scale(1); }
+  100% { left: -100px; opacity: 0; transform: rotate(0deg) scale(0.8); }
+}
+/* 右版 */
+@keyframes rsv-fx-dancing-bio-right {
+  0%   { right: -100px; transform: rotate(0deg) scale(1); opacity: 0; }
+  10%  { right: 5vw; transform: rotate(20deg) scale(1.1); opacity: 1; }
+  18%  { transform: rotate(-15deg) scale(1.05); }
+  26%  { transform: rotate(15deg) scale(1.1); }
+  34%  { transform: rotate(-15deg) scale(1.05); }
+  42%  { transform: rotate(15deg) scale(1.1); }
+  50%  { transform: rotate(-15deg) scale(1.05); }
+  58%  { transform: rotate(15deg) scale(1.1); }
+  66%  { transform: rotate(-15deg) scale(1.05); }
+  74%  { transform: rotate(0deg) scale(1.2); }
+  85%  { right: 5vw; opacity: 1; transform: rotate(0deg) scale(1); }
+  100% { right: -100px; opacity: 0; transform: rotate(0deg) scale(0.8); }
+}
+.rsv-fx-dancing-bio {
+  position: absolute;
+  font-size: 3.5rem;
+  pointer-events: none;
+  z-index: 10000;
+  filter: drop-shadow(0 3px 6px rgba(255, 150, 0, 0.6))
+          drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+.rsv-fx-dancing-bio--left  { animation: rsv-fx-dancing-bio-left  5s ease-in-out forwards; }
+.rsv-fx-dancing-bio--right { animation: rsv-fx-dancing-bio-right 5s ease-in-out forwards; }
+
 /* バナー内のビックリマーク強調（金色グラデ＋ドロップシャドウ＋ポップ演出） */
 .rsv-fx-banner-emp {
   background: linear-gradient(180deg, #fff8c0 0%, #ffd700 50%, #ff8c00 100%);
@@ -6122,7 +6190,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var lastLevel = parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10);
     if (newLevel > lastLevel) {
       // 大マイルストーン発火時はスクロール固定（カクカク防止＋画面が動かないように）
-      var lockDuration = newLevel >= 4 ? 5500 : 2500; // 20個=神様クラスは5.5秒
+      var lockDuration = newLevel >= 4 ? 6000 : 2500; // 20個=神様クラスは5.5秒
       rsvLockScrollFor(lockDuration);
       rsvShowQuantityMilestone(newLevel, rsvItemEl);
       rsvItemEl.dataset.lastQtyLevel = newLevel;
@@ -6229,41 +6297,15 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         setTimeout(function(){ bio.remove(); }, 2400);
       }, 600);
     } else if (level >= 4) {
-      // 20個: 全画面 + 「神様クラス！」 + 打ち上げ花火多発
-      var overlay = document.createElement('div');
-      overlay.className = 'rsv-celebration-overlay';
-      var god = document.createElement('div');
-      god.className = 'rsv-god-text';
-      god.textContent = '🎊🎊 神様クラス！🎊🎊';
-      overlay.appendChild(god);
-      var emojis = ['🎁', '🥇', '💎', '🌈', '🎀', '🪅', '🎁', '🥇'];
-      for (var i = 0; i < 50; i++) {
-        var conf = document.createElement('span');
-        conf.className = 'rsv-celebration-confetti';
-        conf.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        conf.style.left = (Math.random() * 100) + 'vw';
-        conf.style.animationDelay = (Math.random() * 1.5) + 's';
-        overlay.appendChild(conf);
-      }
-      document.body.appendChild(overlay);
-      setTimeout(function(){ overlay.remove(); }, 5000);
-      var fwColors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66'];
-      var vw = window.innerWidth, vh = window.innerHeight;
-      [0, 250, 500, 750, 1000].forEach(function(delay, idx) {
-        setTimeout(function(){
-          var positions = [vw * 0.18, vw * 0.36, vw * 0.5, vw * 0.64, vw * 0.82];
-          var fx = positions[idx];
-          var fy = vh * (0.25 + Math.random() * 0.15);
-          rsvLaunchFireworkRealisticOverlay(fx, fy, fwColors, 40);
-        }, delay);
-      });
+      // 20個: 神様クラス（¥5kと共通エフェクト・両サイドビオくん大量登場 + 100粒emoji + 7発花火 + 光線 + 白フラッシュ + シェイク）
+      rsvFireGodClassEffect();
     }
   }
 
   // ===== Phase C: 1000円毎マイルストーン演出 =====
   function rsvFireMilestone(level, container) {
     // 演出中スクロール固定（スマホカクカク防止＋画面が動かないように）
-    var lockDuration = level >= 5 ? 5500 : 2500; // ¥5k=神様クラスは5.5秒
+    var lockDuration = level >= 5 ? 6000 : 2500; // ¥5k=神様クラスは5.5秒
     rsvLockScrollFor(lockDuration);
     if (level === 1) rsvMilestoneL1(container);
     else if (level === 2) rsvMilestoneL2(container);
@@ -6403,8 +6445,75 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ stamp.remove(); }, 2400);
   }
 
+  // 神様クラス共通エフェクト（¥5kと20個両方で使用）
+  function rsvFireGodClassEffect() {
+    var overlay = document.createElement('div');
+    overlay.className = 'rsv-celebration-overlay';
+    var god = document.createElement('div');
+    god.className = 'rsv-god-text';
+    god.textContent = '🎊🎊 神様クラス！🎊🎊';
+    overlay.appendChild(god);
+
+    // 両サイド金色光線（左右）
+    var leftBeam = document.createElement('div');
+    leftBeam.className = 'rsv-fx-side-beam rsv-fx-side-beam--left';
+    overlay.appendChild(leftBeam);
+    var rightBeam = document.createElement('div');
+    rightBeam.className = 'rsv-fx-side-beam rsv-fx-side-beam--right';
+    overlay.appendChild(rightBeam);
+
+    // 両サイドから踊りながら登場するビオくん（左右各5匹・時間差・笑える要素🐣🐣🐣🐣🐣）
+    var sides = ['left', 'right'];
+    sides.forEach(function(side, sIdx) {
+      for (var i = 0; i < 5; i++) {
+        (function(idx) {
+          setTimeout(function(){
+            var bio = document.createElement('span');
+            bio.className = 'rsv-fx-dancing-bio rsv-fx-dancing-bio--' + side;
+            bio.textContent = '🐣';
+            bio.style.top = (12 + idx * 17) + '%';
+            overlay.appendChild(bio);
+          }, idx * 100 + sIdx * 60);
+        })(i);
+      }
+    });
+
+    // 絵文字シャワー 100粒（密度UP・お祭り感MAX）
+    var emojis = ['🎁', '🥇', '💎', '🌈', '🎀', '🪅', '🎁', '🥇'];
+    for (var i = 0; i < 100; i++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-celebration-confetti';
+      c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      c.style.left = (Math.random() * 100) + 'vw';
+      c.style.animationDelay = (Math.random() * 1.8) + 's';
+      overlay.appendChild(c);
+    }
+    document.body.appendChild(overlay);
+    setTimeout(function(){ overlay.remove(); }, 5800);
+
+    // 白フラッシュ（衝撃感）
+    rsvSpawnWhiteFlash();
+    // 軽い画面シェイク
+    rsvSpawnScreenShake();
+
+    // 多発打ち上げ花火 7発（両サイド+中央・時間差連発）
+    var fwColors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66'];
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var positions = [vw * 0.08, vw * 0.22, vw * 0.38, vw * 0.50, vw * 0.62, vw * 0.78, vw * 0.92];
+    [0, 180, 360, 540, 720, 900, 1080].forEach(function(delay, idx) {
+      setTimeout(function(){
+        var fx = positions[idx];
+        var fy = vh * (0.22 + Math.random() * 0.22);
+        rsvLaunchFireworkRealisticOverlay(fx, fy, fwColors, 40);
+      }, delay);
+    });
+  }
+
   function rsvMilestoneL5(container) {
-    // ¥5k: 全画面お祝い + 「🎊🎊 神様クラス！🎊🎊」 + 打ち上げ花火多発
+    // ¥5k: 神様クラス（共通エフェクト使用）
+    rsvFireGodClassEffect();
+    return;
+    // 以下は使用されない（互換性のため残置）
     var overlay = document.createElement('div');
     overlay.className = 'rsv-celebration-overlay';
     var god = document.createElement('div');
