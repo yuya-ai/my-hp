@@ -2687,8 +2687,8 @@ html.rsv-fx-locked {
     border-radius: 60px;
   }
   .rsv-fx-item-banner.is-rainbow {
-    font-size: 1.55rem;
-    padding: 9px 20px;
+    font-size: 1.35rem;
+    padding: 7px 14px;
     border-width: 3px;
   }
   /* 個数小マイルストーン スタンプ（5個 太っ腹😤） */
@@ -6452,12 +6452,20 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       document.body.appendChild(banner);
       var bannerHalfW = banner.offsetWidth / 2;
 
-      // 右側マスコット領域（吹き出し含めて最右110pxを占有）を避ける最大中央X
-      var mascotZoneLeft = window.innerWidth - 110;
-      var safetyMargin = 18;
+      // 右側マスコット領域を動的測定（.float-stack の実体left + ラベル吹き出し分のマージン）
+      var floatStack = document.querySelector('.float-stack');
+      var mascotZoneLeft;
+      if (floatStack) {
+        var fsRect = floatStack.getBoundingClientRect();
+        // 吹き出しラベル(.social-btn__mini)が左に張り出すため 90px 追加で確保
+        mascotZoneLeft = fsRect.left - 90;
+      } else {
+        mascotZoneLeft = window.innerWidth - 160;
+      }
+      var safetyMargin = 16;
       var maxCenterX = mascotZoneLeft - safetyMargin - bannerHalfW;
-      // 理想は item card の左寄り(40%)、マスコット側からは確実に離れる
-      var idealCenterX = itemRect.left + itemRect.width * 0.40;
+      // 理想は item card の左寄り(38%)、マスコット側からは確実に離れる
+      var idealCenterX = itemRect.left + itemRect.width * 0.38;
       var finalCenterX = Math.min(idealCenterX, maxCenterX);
       // 左端も画面外に出ないようクランプ
       if (finalCenterX - bannerHalfW < 8) finalCenterX = 8 + bannerHalfW;
