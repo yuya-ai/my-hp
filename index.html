@@ -6466,12 +6466,12 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-mini-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
-    // 合計バーに密着（スタンプを合計バーの上端にペタッと押した感）
+    // 合計バーに密着（バナー下端がバー下端と同じ位置・バーに「ペタッ」と押された感）
     var barRect = rsvGetTotalBarRect();
     if (barRect) {
       banner.style.top = 'auto';
-      // バナー下端を合計バー上端より少し下に重ねる（密着感）
-      banner.style.bottom = (window.innerHeight - barRect.top - 18) + 'px';
+      // バナー下端を合計バー下端と同じ高さに配置（最大密着）
+      banner.style.bottom = (window.innerHeight - barRect.bottom) + 'px';
     }
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2800 : 2600);
