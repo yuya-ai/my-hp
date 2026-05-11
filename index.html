@@ -6481,16 +6481,22 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 合計金額（rsv-total内の strong要素）の真上に配置（横は金額中央・縦は金額上）
+    // 合計金額（rsv-total内の strong要素）の位置を取得
     var totalStrong = document.querySelector('.rsv-total strong');
     var barRect = rsvGetTotalBarRect();
     if (totalStrong) {
       var strongRect = totalStrong.getBoundingClientRect();
-      // 横位置：金額の中央位置に揃える（バナーは translateX -50% で中央寄せ）
-      banner.style.left = ((strongRect.left + strongRect.right) / 2) + 'px';
-      // 縦位置：金額の上端より十分上（バナー下端が金額上端から少し離れた位置）
-      banner.style.top = 'auto';
-      banner.style.bottom = (window.innerHeight - strongRect.top + 15) + 'px';
+      if (isStamp) {
+        // ¥1k 太っ腹 スタンプ：合計金額の下・左寄りに配置（押された感）
+        banner.style.left = (strongRect.left + 20) + 'px';
+        banner.style.top = (strongRect.bottom + 8) + 'px';
+        banner.style.bottom = 'auto';
+      } else {
+        // 他バナー：金額の真上中央に配置
+        banner.style.left = ((strongRect.left + strongRect.right) / 2) + 'px';
+        banner.style.top = 'auto';
+        banner.style.bottom = (window.innerHeight - strongRect.top + 15) + 'px';
+      }
     } else if (barRect) {
       // フォールバック：合計バーの真上
       banner.style.top = 'auto';
