@@ -2686,6 +2686,25 @@ html.rsv-fx-locked {
   100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.02); }
 }
 
+/* ===== 料金バナー「花火爆発から文字が飛び出す」専用アニメ（スマホ） ===== */
+.rsv-fx-mini-banner.is-burst-from-fw {
+  animation: rsv-fx-banner-burst-fw 3.5s cubic-bezier(0.18, 1.1, 0.34, 1.05) forwards !important;
+}
+.rsv-fx-mini-banner.is-burst-from-fw.is-rainbow {
+  animation: rsv-fx-banner-burst-fw 3.8s cubic-bezier(0.18, 1.1, 0.34, 1.05) forwards !important;
+}
+@keyframes rsv-fx-banner-burst-fw {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0); }
+  4%   { opacity: 1; transform: translateX(-50%) scale(1.85); }
+  10%  { transform: translateX(-50%) scale(0.82); }
+  16%  { transform: translateX(-50%) scale(1.12); }
+  22%  { transform: translateX(-50%) scale(0.96); }
+  28%  { transform: translateX(-50%) scale(1.03); }
+  35%  { transform: translateX(-50%) scale(1); }
+  85%  { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.18) translateY(-30px); }
+}
+
 /* ===== 個数 1個目 初回タップ メッセージバナー（ビオくん🐣案内） ===== */
 .rsv-fx-first-tap-banner {
   position: absolute;
@@ -6804,13 +6823,32 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var vh = window.innerHeight;
 
     if (isMobileP) {
-      // スマホ：画面中央上半分に配置（お客様の視線が集まりやすい・合計バーは下部で別領域）
-      // バナーは viewport 中央 X、viewport の上から 35% の位置
-      banner.style.bottom = 'auto';
-      banner.style.left = '50%';
-      banner.style.top = Math.round(vh * 0.35) + 'px';
-      document.body.appendChild(banner);
+      // スマホ：花火打ち上げ → 爆発と同時にバナーが飛び出す演出
+      var targetXm = window.innerWidth / 2;
+      var targetYm = Math.round(vh * 0.35);
+
+      // 1. 花火を targetX/Y に向けて打ち上げ（rocket trail + 爆発粒）
+      var fwColorsP = isRainbow
+        ? ['#ff0080', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff']
+        : ['#ff8c00', '#ffd700', '#ff3b8c', '#00b0ff'];
+      var fwCount = isRainbow ? 38 : 28;
+      rsvLaunchFireworkRealisticOverlay(targetXm, targetYm, fwColorsP, fwCount);
+
+      // 2. 爆発タイミング(550ms) でバナーを burst-from-firework アニメで出現させる
+      setTimeout(function() {
+        banner.classList.add('is-burst-from-fw');
+        banner.style.position = 'fixed';
+        banner.style.bottom = 'auto';
+        banner.style.left = '50%';
+        banner.style.top = targetYm + 'px';
+        document.body.appendChild(banner);
+        // 表示時間後に削除
+        setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
+      }, 530);
+
       banner.dataset.alreadyAppended = '1';
+      banner.dataset.deferredRemoval = '1';
+      return; // 以降の append / remove / 衝撃波(bar基準)はスキップ
     } else {
       // デスクトップ（既存lock済）：合計バーの真上 80px + viewport中央 +10px
       var targetY = barRect ? (barRect.top - 80) : (vh / 2);
