@@ -2758,6 +2758,18 @@ html.rsv-fx-locked {
   /* 合計バー rotateY 反転で文字が消えるのを防ぐ（スマホは虹色シフトのみ） */
   .rsv-total.is-rainbow strong {
     animation: rsv-rainbow-shift 1.5s linear;
+    /* background-clip:text 失敗時の安全色（Safari等で gradient が描画ミスしても見える） */
+    color: #ff6b2b;
+    -webkit-text-fill-color: transparent; /* webkit対応端末は gradient が見える・非対応は color fallback */
+  }
+  /* ★合計バーをスクロールロック中も画面下部に常に固定表示
+     （body.rsv-fx-locked の overflow:hidden で sticky が破壊される問題回避） */
+  body.rsv-fx-locked .rsv-total {
+    position: fixed !important;
+    bottom: 12px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 100 !important;
   }
 }
 
