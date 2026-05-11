@@ -1788,6 +1788,23 @@ body.rsv-theme-night .rsv-modal__inner { background: linear-gradient(180deg, #f3
 }
 .rsv-total.is-bounce { animation: rsv-total-bounce 0.65s ease-out; }
 
+/* 合計バー祝祭ハイライト（料金マイルストーン発火時に光って拡大） */
+@keyframes rsv-total-celebrate {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  }
+  50% {
+    transform: scale(1.18);
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.7),
+                0 0 0 3px rgba(255, 140, 0, 0.6),
+                0 0 40px rgba(255, 215, 0, 0.6);
+  }
+}
+.rsv-total.is-celebrating {
+  animation: rsv-total-celebrate 1s ease-in-out 2;
+}
+
 /* ミニマイルストーン: ¥500 で +ボタン周りの数量エリアを軽くバウンス */
 @keyframes rsv-mini-bounce {
   0%, 100% { transform: scale(1); }
@@ -6306,6 +6323,24 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   // 大爆発MEGAモード切替フラグ（false にすると元のシンプル版に戻る）
   var RSV_FX_MEGA_MODE = true;
 
+  // 合計バー位置取得（sticky・viewport相対座標）
+  function rsvGetTotalBarRect() {
+    var bar = document.querySelector('.rsv-total');
+    return bar ? bar.getBoundingClientRect() : null;
+  }
+
+  // 合計バーをハイライト（祝祭時に光って拡大）
+  function rsvHighlightTotalBar(durationMs) {
+    var bar = document.querySelector('.rsv-total');
+    if (!bar) return;
+    bar.classList.remove('is-celebrating');
+    void bar.offsetWidth;
+    bar.classList.add('is-celebrating');
+    setTimeout(function() {
+      bar.classList.remove('is-celebrating');
+    }, durationMs || 2200);
+  }
+
   // viewport中央に紙吹雪を撒くヘルパー（fixed positioning・スクロール位置問わず確実に表示）
   function rsvSpawnPaperConfettiViewport(count) {
     var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b', '#ff9bb0'];
@@ -6339,84 +6374,128 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2200 : 2000);
   }
 
-  // ===== MEGA版 料金マイルストーン =====
-  function rsvMilestoneL1Mega() {
-    // ¥1k MEGA: 紙吹雪×40 + 💴×6 + viewport中央「太っ腹！」バナー
-    rsvSpawnPaperConfettiViewport(40);
-    var vw = window.innerWidth;
-    var positions = [{x:-110,y:-30},{x:-65,y:-75},{x:-22,y:-100},{x:22,y:-100},{x:65,y:-75},{x:110,y:-30}];
-    positions.forEach(function(pos, i) {
+  // ===== MEGA版 料金マイルストーン（合計バーから演出が出る・お客様が合計とリンク認識） =====
+
+  // 合計バー位置から紙吹雪を放射状に噴出させるヘルパー
+  function rsvSpawnConfettiFromBar(count) {
+    var barRect = rsvGetTotalBarRect();
+    if (!barRect) return;
+    var anchorX = (barRect.left + barRect.right) / 2;
+    var anchorY = barRect.top;
+    var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b', '#ff9bb0'];
+    for (var ci = 0; ci < count; ci++) {
       var c = document.createElement('span');
-      c.className = 'rsv-sparkle';
-      c.textContent = '💴';
+      c.className = 'rsv-fx-paper-confetti';
       c.style.position = 'fixed';
       c.style.zIndex = '9998';
-      c.style.left = (vw / 2 - 14) + 'px';
-      c.style.top = '40vh';
-      c.style.fontSize = '2.2rem';
-      c.style.setProperty('--sx', pos.x + 'px');
-      c.style.setProperty('--sy', pos.y + 'px');
-      c.style.animationDelay = (i * 0.06) + 's';
+      c.style.background = colors[ci % colors.length];
+      c.style.left = (anchorX + (Math.random() - 0.5) * 80 - 5) + 'px';
+      c.style.top = (anchorY - 20) + 'px';
+      var endX = (Math.random() - 0.5) * 400;
+      var endY = -(180 + Math.random() * 350); // 上方向に舞い上がる
+      c.style.setProperty('--cx', endX + 'px');
+      c.style.setProperty('--cy', endY + 'px');
+      c.style.setProperty('--cr', (Math.random() * 720 + 360) + 'deg');
+      c.style.animationDelay = (ci * 0.03) + 's';
       document.body.appendChild(c);
-      (function(e){ setTimeout(function(){ e.remove(); }, 1800); })(c);
-    });
+      (function(e){ setTimeout(function(){ e.remove(); }, 2500); })(c);
+    }
+  }
+
+  function rsvMilestoneL1Mega() {
+    // ¥1k MEGA: 合計バーから紙吹雪×40噴出 + 💴×6舞う + bar直上スタンプ + バナー
+    rsvHighlightTotalBar(2200);
+    rsvSpawnConfettiFromBar(40);
+    var barRect = rsvGetTotalBarRect();
+    if (barRect) {
+      var anchorX = (barRect.left + barRect.right) / 2;
+      var anchorY = barRect.top;
+      // 💴×6 bar上から放射
+      var positions = [{x:-130,y:-180},{x:-80,y:-230},{x:-25,y:-260},{x:25,y:-260},{x:80,y:-230},{x:130,y:-180}];
+      positions.forEach(function(pos, i) {
+        var c = document.createElement('span');
+        c.className = 'rsv-sparkle';
+        c.textContent = '💴';
+        c.style.position = 'fixed';
+        c.style.zIndex = '9998';
+        c.style.left = (anchorX - 14) + 'px';
+        c.style.top = (anchorY - 20) + 'px';
+        c.style.fontSize = '2.2rem';
+        c.style.setProperty('--sx', pos.x + 'px');
+        c.style.setProperty('--sy', pos.y + 'px');
+        c.style.animationDelay = (i * 0.06) + 's';
+        document.body.appendChild(c);
+        (function(e){ setTimeout(function(){ e.remove(); }, 1800); })(c);
+      });
+    }
     rsvShowMilestoneBanner('太っ腹！', false);
   }
 
   function rsvMilestoneL2Mega() {
-    // ¥2k MEGA: 紙吹雪×40 + 🎉×15 + viewport中央「大感謝🎉」バナー
-    rsvSpawnPaperConfettiViewport(40);
-    var vw = window.innerWidth;
-    for (var i = 0; i < 15; i++) {
-      var c = document.createElement('span');
-      c.className = 'rsv-sparkle';
-      c.textContent = '🎉';
-      c.style.position = 'fixed';
-      c.style.zIndex = '9998';
-      c.style.left = (vw / 2 - 14) + 'px';
-      c.style.top = '38vh';
-      c.style.fontSize = '2rem';
-      var ang = (i / 15) * Math.PI * 2;
-      var dist = 100 + Math.random() * 60;
-      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
-      c.style.setProperty('--sy', (Math.sin(ang) * dist - 30) + 'px');
-      c.style.animationDelay = (i * 0.04) + 's';
-      document.body.appendChild(c);
-      (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
+    // ¥2k MEGA: 合計バーから紙吹雪×40 + 🎉×15噴出 + バナー
+    rsvHighlightTotalBar(2200);
+    rsvSpawnConfettiFromBar(40);
+    var barRect = rsvGetTotalBarRect();
+    if (barRect) {
+      var anchorX = (barRect.left + barRect.right) / 2;
+      var anchorY = barRect.top;
+      // 🎉×15 bar上から噴出（半円状）
+      for (var i = 0; i < 15; i++) {
+        var c = document.createElement('span');
+        c.className = 'rsv-sparkle';
+        c.textContent = '🎉';
+        c.style.position = 'fixed';
+        c.style.zIndex = '9998';
+        c.style.left = (anchorX - 14) + 'px';
+        c.style.top = (anchorY - 20) + 'px';
+        c.style.fontSize = '2rem';
+        // 上半円状に噴出（angle -180° to 0°）
+        var ang = -Math.PI + (i / 14) * Math.PI;
+        var dist = 150 + Math.random() * 100;
+        c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+        c.style.setProperty('--sy', (Math.sin(ang) * dist - 30) + 'px');
+        c.style.animationDelay = (i * 0.04) + 's';
+        document.body.appendChild(c);
+        (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
+      }
     }
     rsvShowMilestoneBanner('大感謝🎉', false);
   }
 
   function rsvMilestoneL3Mega() {
-    // ¥3k MEGA: 巨大🐣 + 両サイドミニ🐣×4 + 虹光線burst + 👏×8 + viewport虹色バナー
+    // ¥3k MEGA: 合計バーから🐣登場 + ミニ🐣両サイド + 虹光線burst + 👏×8 + 虹バナー
+    rsvHighlightTotalBar(2400);
+    var barRect = rsvGetTotalBarRect();
     var vw = window.innerWidth;
-    // 虹光線burst（背景に大きく）
+    var anchorX = barRect ? (barRect.left + barRect.right) / 2 : vw / 2;
+    var anchorY = barRect ? barRect.top : window.innerHeight * 0.85;
+    // 虹光線burst（bar位置から大きく）
     [0, 200, 400].forEach(function(delay) {
       setTimeout(function(){
         var burst = document.createElement('div');
         burst.className = 'rsv-fx-rainbow-burst';
-        burst.style.left = (vw / 2) + 'px';
-        burst.style.top = '40vh';
+        burst.style.left = anchorX + 'px';
+        burst.style.top = (anchorY - 150) + 'px';
         document.body.appendChild(burst);
         setTimeout(function(){ burst.remove(); }, 1900);
       }, delay);
     });
-    // 巨大🐣ビオくん（中央・5rem）
+    // 巨大🐣ビオくん（合計バー上方に登場・5rem）
     var bigBio = document.createElement('span');
     bigBio.className = 'rsv-bio-kun';
     bigBio.style.position = 'fixed';
     bigBio.style.zIndex = '9999';
     bigBio.style.fontSize = '5rem';
-    bigBio.style.left = (vw / 2 - 50) + 'px';
-    bigBio.style.top = '25vh';
+    bigBio.style.left = (anchorX - 50) + 'px';
+    bigBio.style.top = (anchorY - 280) + 'px';
     bigBio.textContent = '🐣';
     document.body.appendChild(bigBio);
     setTimeout(function(){ bigBio.remove(); }, 2500);
-    // 両サイドからミニ🐣×4登場（笑える）
+    // 両サイドからミニ🐣×4（笑える）
     var sides = [
-      {className: 'rsv-fx-dancing-bio--left',  top: '25%'},
+      {className: 'rsv-fx-dancing-bio--left',  top: '30%'},
       {className: 'rsv-fx-dancing-bio--left',  top: '55%'},
-      {className: 'rsv-fx-dancing-bio--right', top: '25%'},
+      {className: 'rsv-fx-dancing-bio--right', top: '30%'},
       {className: 'rsv-fx-dancing-bio--right', top: '55%'}
     ];
     sides.forEach(function(p, i) {
@@ -6429,20 +6508,20 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         document.body.appendChild(bio);
       }, i * 100);
     });
-    // 👏×8粒
+    // 👏×8粒 bar上から放射
     for (var i = 0; i < 8; i++) {
       var c = document.createElement('span');
       c.className = 'rsv-sparkle';
       c.textContent = '👏';
       c.style.position = 'fixed';
       c.style.zIndex = '9998';
-      c.style.left = (vw / 2 - 14) + 'px';
-      c.style.top = '45vh';
+      c.style.left = (anchorX - 14) + 'px';
+      c.style.top = (anchorY - 20) + 'px';
       c.style.fontSize = '1.8rem';
-      var ang = (i / 8) * Math.PI * 2;
-      var dist = 120 + Math.random() * 40;
+      var ang = -Math.PI + (i / 7) * Math.PI;
+      var dist = 140 + Math.random() * 40;
       c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
-      c.style.setProperty('--sy', (Math.sin(ang) * dist) + 'px');
+      c.style.setProperty('--sy', (Math.sin(ang) * dist - 30) + 'px');
       c.style.animationDelay = (i * 0.05) + 's';
       document.body.appendChild(c);
       (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
@@ -6451,21 +6530,24 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL4Mega() {
-    // ¥4k MEGA: 多発打ち上げ花火5発（両サイド追加）+ viewport中央バナー「あっぱれ🔥🔥」
+    // ¥4k MEGA: 合計バーから打ち上げ花火5発上空爆発 + バナー
+    rsvHighlightTotalBar(2400);
     var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b'];
     var vw = window.innerWidth;
     var vh = window.innerHeight;
-    // 5発打ち上げ
+    var barRect = rsvGetTotalBarRect();
+    // 爆発位置はviewport上半分（合計バー位置と離して見やすく）
+    var explosionY = vh * 0.30;
     var launches = [
       { x: vw * 0.50, dy: 0,   count: 55, delay: 0   },
-      { x: vw * 0.20, dy: 30,  count: 40, delay: 150 },
-      { x: vw * 0.80, dy: 30,  count: 40, delay: 300 },
-      { x: vw * 0.10, dy: 50,  count: 30, delay: 500 },
-      { x: vw * 0.90, dy: 50,  count: 30, delay: 700 }
+      { x: vw * 0.22, dy: 40,  count: 40, delay: 150 },
+      { x: vw * 0.78, dy: 40,  count: 40, delay: 300 },
+      { x: vw * 0.10, dy: 70,  count: 30, delay: 500 },
+      { x: vw * 0.90, dy: 70,  count: 30, delay: 700 }
     ];
     launches.forEach(function(l) {
       setTimeout(function() {
-        rsvLaunchFireworkRealisticOverlay(l.x, vh * 0.35 + l.dy, colors, l.count);
+        rsvLaunchFireworkRealisticOverlay(l.x, explosionY + l.dy, colors, l.count);
       }, l.delay);
     });
     rsvShowMilestoneBanner('あっぱれ🔥🔥', false);
