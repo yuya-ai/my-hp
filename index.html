@@ -6390,11 +6390,27 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       var qtyEl = rsvItemEl.querySelector('.rsv-qty');
       var itemRect = rsvItemEl.getBoundingClientRect();
       var anchorTop = qtyEl ? qtyEl.getBoundingClientRect().top : (itemRect.top + 40);
-      banner.style.left = (itemRect.left + itemRect.width / 2) + 'px';
+
+      // 先に画面外で append して実幅取得（opacity:0 アニメ開始なので不可視）
+      banner.style.left = '-9999px';
+      banner.style.top = '0px';
+      document.body.appendChild(banner);
+      var bannerHalfW = banner.offsetWidth / 2;
+
+      // 右側マスコット領域（最右80pxを占有）を避ける最大中央X
+      var mascotZoneLeft = window.innerWidth - 80;
+      var safetyMargin = 12;
+      var maxCenterX = mascotZoneLeft - safetyMargin - bannerHalfW;
+      // 理想は item card 中央、ただしマスコット領域にかかるなら左にシフト
+      var idealCenterX = itemRect.left + itemRect.width / 2;
+      var finalCenterX = Math.min(idealCenterX, maxCenterX);
+      // 左端も画面外に出ないようクランプ
+      if (finalCenterX - bannerHalfW < 8) finalCenterX = 8 + bannerHalfW;
+
+      banner.style.left = finalCenterX + 'px';
       var mobileY = anchorTop - 50;
       if (mobileY < 10) mobileY = 10;
       banner.style.top = mobileY + 'px';
-      document.body.appendChild(banner);
       setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
       return;
     }
