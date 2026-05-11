@@ -6249,136 +6249,112 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     else if (level >= 5) rsvMilestoneL5(container);
   }
 
-  function rsvMilestoneL1(container) {
-    // ¥1k: 個数5個と完全同一演出（CSS本物紙吹雪×20枚 + 「太っ腹！」スタンプ）
-    var confettiColors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b', '#ff9bb0'];
-    var containerW = container.offsetWidth;
-    var containerH = container.offsetHeight;
-    for (var ci = 0; ci < 20; ci++) {
+  // viewport中央に固定表示する紙吹雪ヘルパー（料金マイルストーン用・スクロール位置問わず表示）
+  function rsvSpawnPaperConfettiViewport(count) {
+    var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b', '#ff9bb0'];
+    var vw = window.innerWidth;
+    var n = count || 20;
+    for (var ci = 0; ci < n; ci++) {
       var c = document.createElement('span');
       c.className = 'rsv-fx-paper-confetti';
-      c.style.background = confettiColors[ci % confettiColors.length];
-      c.style.left = (Math.random() * (containerW - 12)) + 'px';
-      c.style.top = '-12px';
-      var endX = (Math.random() - 0.5) * 80;
-      var endY = containerH * 0.85 + Math.random() * 30;
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.background = colors[ci % colors.length];
+      c.style.left = (Math.random() * vw) + 'px';
+      c.style.top = '15vh';
+      var endX = (Math.random() - 0.5) * 200;
+      var endY = 300 + Math.random() * 200;
       c.style.setProperty('--cx', endX + 'px');
       c.style.setProperty('--cy', endY + 'px');
       c.style.setProperty('--cr', (Math.random() * 720 + 360) + 'deg');
       c.style.animationDelay = (ci * 0.04) + 's';
-      container.appendChild(c);
-      (function(e){ setTimeout(function(){ e.remove(); }, 2000); })(c);
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 2300); })(c);
     }
-    // 「太っ腹！」スタンプ
-    var totalEl = container.querySelector('strong');
-    var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
-    var cRect = container.getBoundingClientRect();
-    var stamp = document.createElement('span');
-    stamp.className = 'rsv-stamp';
-    stamp.textContent = '太っ腹！';
-    stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
-    stamp.style.top = (rect.top - cRect.top - 38) + 'px';
-    container.appendChild(stamp);
-    setTimeout(function(){ stamp.remove(); }, 2000);
+  }
+
+  // viewport中央バナー（料金マイルストーン用・スクロール位置問わず表示）
+  function rsvShowMilestoneBanner(text, isRainbow) {
+    var banner = document.createElement('div');
+    banner.className = 'rsv-fx-mini-banner' + (isRainbow ? ' is-rainbow' : '');
+    banner.textContent = text;
+    document.body.appendChild(banner);
+    setTimeout(function(){ banner.remove(); }, isRainbow ? 2000 : 1800);
+  }
+
+  function rsvMilestoneL1(container) {
+    // ¥1k 太っ腹！: viewport中央バナー + 本物紙吹雪×20枚（fixed・スクロール位置問わず表示）
+    rsvSpawnPaperConfettiViewport(20);
+    rsvShowMilestoneBanner('太っ腹！', false);
   }
 
   function rsvMilestoneL2(container) {
-    // ¥2k: 紙吹雪 + 🎉×3粒 + 「大感謝」スタンプ
-    rsvSpawnConfetti(container);
-    var totalEl = container.querySelector('strong');
-    var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
-    var cRect = container.getBoundingClientRect();
-    var cx = rect.left - cRect.left + rect.width / 2 - 10;
-    var cy = rect.top - cRect.top + rect.height / 2 - 10;
-    // 🎉×3
-    var crackerPos = [{x: -55, y: -10}, {x: 0, y: -50}, {x: 55, y: -10}];
+    // ¥2k 大感謝🎉: viewport中央バナー + 紙吹雪 + 🎉粒（fixed）
+    rsvSpawnPaperConfettiViewport(20);
+    // 🎉×5粒 viewport中央付近で爆ぜる
+    var vw = window.innerWidth;
+    var crackerPos = [{x: -80, y: -20}, {x: -40, y: -60}, {x: 0, y: -80}, {x: 40, y: -60}, {x: 80, y: -20}];
     crackerPos.forEach(function(pos, i) {
       var c = document.createElement('span');
       c.className = 'rsv-sparkle';
       c.textContent = '🎉';
-      c.style.left = cx + 'px';
-      c.style.top = cy + 'px';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (vw / 2 - 10) + 'px';
+      c.style.top = '35vh';
       c.style.setProperty('--sx', pos.x + 'px');
       c.style.setProperty('--sy', pos.y + 'px');
-      c.style.animationDelay = (i * 0.07) + 's';
-      container.appendChild(c);
-      (function(e){ setTimeout(function(){ e.remove(); }, 1400 + i * 60); })(c);
+      c.style.animationDelay = (i * 0.06) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1600); })(c);
     });
-    // 「大感謝」スタンプ
-    var stamp = document.createElement('span');
-    stamp.className = 'rsv-stamp';
-    stamp.textContent = '大感謝🎉';
-    stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
-    stamp.style.top = (rect.top - cRect.top - 38) + 'px';
-    container.appendChild(stamp);
-    setTimeout(function(){ stamp.remove(); }, 2000);
+    rsvShowMilestoneBanner('大感謝🎉', false);
   }
 
   function rsvMilestoneL3(container) {
-    // ¥3k: 🐣ビオくんマスコット ＋ 虹コラボ + 「ビオくん大感激！🐣」スタンプ
-    container.classList.remove('is-rainbow');
-    void container.offsetWidth;
-    container.classList.add('is-rainbow');
-    setTimeout(function(){ container.classList.remove('is-rainbow'); }, 1800);
-    var totalEl = container.querySelector('strong');
-    var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
-    var cRect = container.getBoundingClientRect();
-    var cx = rect.left - cRect.left + rect.width / 2;
-    var cy = rect.top - cRect.top + rect.height / 2;
-    // 虹色リング 2重（時間差で広がる・ビオくんを取り囲む）
+    // ¥3k ビオくん大感激！🐣: viewport中央 虹色バナー + 🐣大ビオくん + 虹リング2重（fixed）
+    var vw = window.innerWidth;
+    // 虹色リング 2重（fixed・画面中央）
     [0, 200].forEach(function(delay) {
       setTimeout(function(){
         var ring = document.createElement('div');
-        ring.className = 'rsv-fx-item-ring is-rainbow';
-        container.appendChild(ring);
-        setTimeout(function(){ ring.remove(); }, 1700);
+        ring.className = 'rsv-fx-rainbow-burst';
+        ring.style.left = (vw / 2) + 'px';
+        ring.style.top = '38vh';
+        document.body.appendChild(ring);
+        setTimeout(function(){ ring.remove(); }, 1900);
       }, delay);
     });
-    // 🐣ビオくん登場
+    // 🐣大ビオくん（fixed・画面中央上部）
     var bio = document.createElement('span');
-    bio.className = 'rsv-bio-kun';
+    bio.className = 'rsv-bio-kun rsv-bio-kun-big';
+    bio.style.position = 'fixed';
+    bio.style.zIndex = '9999';
+    bio.style.left = (vw / 2 - 38) + 'px';
+    bio.style.top = '25vh';
     bio.textContent = '🐣';
-    bio.style.left = (cx - 24) + 'px';
-    bio.style.top = (cy - 90) + 'px';
-    container.appendChild(bio);
-    setTimeout(function(){ bio.remove(); }, 2200);
-    // 「ビオくん大感激！🐣」スタンプ
-    var stamp = document.createElement('span');
-    stamp.className = 'rsv-stamp';
-    stamp.textContent = 'ビオくん大感激！🐣';
-    stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
-    stamp.style.top = (rect.top - cRect.top - 38) + 'px';
-    container.appendChild(stamp);
-    setTimeout(function(){ stamp.remove(); }, 2200);
+    document.body.appendChild(bio);
+    setTimeout(function(){ bio.remove(); }, 2400);
+    rsvShowMilestoneBanner('ビオくん大感激！🐣', true);
   }
 
   function rsvMilestoneL4(container) {
-    // ¥4k: 多発打ち上げ花火3発（中央大+左右小・時間差）+ 「あっぱれ！」スタンプ
+    // ¥4k あっぱれ！: viewport中央バナー + 多発打ち上げ花火3発（全画面・fixed）
     var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b'];
-    var totalEl = container.querySelector('strong');
-    var rect = totalEl ? totalEl.getBoundingClientRect() : container.getBoundingClientRect();
-    var cRect = container.getBoundingClientRect();
-    var containerW = container.offsetWidth;
-    var cy = rect.top - cRect.top + rect.height / 2;
-    // 3発打ち上げ：中央→左→右の順（時間差で連続感）
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    // 3発打ち上げ（fixed版・viewport全体に展開）
     var launches = [
-      { x: containerW * 0.5,  dy: 0,   count: 55, delay: 0   }, // 中央大（メイン・リアル55粒）
-      { x: containerW * 0.22, dy: 35,  count: 35, delay: 200 }, // 左（リアル35粒）
-      { x: containerW * 0.78, dy: 35,  count: 35, delay: 400 }  // 右（リアル35粒）
+      { x: vw * 0.5,  dy: 0,   count: 55, delay: 0   }, // 中央大
+      { x: vw * 0.22, dy: 30,  count: 35, delay: 200 }, // 左
+      { x: vw * 0.78, dy: 30,  count: 35, delay: 400 }  // 右
     ];
     launches.forEach(function(l) {
       setTimeout(function() {
-        rsvLaunchFireworkRealistic(container, l.x, cy + l.dy, colors, l.count);
+        rsvLaunchFireworkRealisticOverlay(l.x, vh * 0.35 + l.dy, colors, l.count);
       }, l.delay);
     });
-    // 「あっぱれ！」スタンプ
-    var stamp = document.createElement('span');
-    stamp.className = 'rsv-stamp';
-    stamp.textContent = 'あっぱれ！';
-    stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
-    stamp.style.top = (rect.top - cRect.top - 38) + 'px';
-    container.appendChild(stamp);
-    setTimeout(function(){ stamp.remove(); }, 2400);
+    rsvShowMilestoneBanner('あっぱれ！', false);
   }
 
   function rsvMilestoneL5(container) {
