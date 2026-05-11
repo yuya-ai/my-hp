@@ -2657,6 +2657,57 @@ html.rsv-fx-locked {
   100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.02); }
 }
 
+/* ===== 個数 1個目 初回タップ メッセージバナー（ビオくん🐣案内） ===== */
+.rsv-fx-first-tap-banner {
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #fff8e7, #ffe5b3);
+  color: var(--brown);
+  font-family: 'Klee One', 'Noto Sans JP', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 8px 16px;
+  border-radius: 24px;
+  border: 2.5px solid #ff8c00;
+  box-shadow: 0 6px 16px rgba(255, 140, 0, 0.32), 0 0 0 4px rgba(255, 215, 0, 0.18);
+  white-space: nowrap;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  animation: rsv-first-tap-pop 2.6s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+.rsv-fx-first-tap-banner__mascot {
+  font-size: 1.4rem;
+  display: inline-block;
+  animation: rsv-first-tap-bounce 0.9s ease-in-out infinite alternate;
+}
+@keyframes rsv-first-tap-pop {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.4) translateY(18px); }
+  18%  { opacity: 1; transform: translateX(-50%) scale(1.1) translateY(-4px); }
+  32%  { transform: translateX(-50%) scale(1) translateY(0); }
+  80%  { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.95) translateY(-12px); }
+}
+@keyframes rsv-first-tap-bounce {
+  0%   { transform: translateY(0) rotate(-4deg); }
+  100% { transform: translateY(-3px) rotate(4deg); }
+}
+@media (max-width: 767px) {
+  .rsv-fx-first-tap-banner {
+    font-size: 0.78rem;
+    padding: 6px 12px;
+    border-width: 2px;
+    border-radius: 20px;
+    gap: 6px;
+  }
+  .rsv-fx-first-tap-banner__mascot { font-size: 1.15rem; }
+}
+
 /* ===== スマホ向け：全マイルストーン演出の縮小（横幅 767px以下）===== */
 @media (max-width: 767px) {
   /* 料金マイルストーンバナー（¥1k〜¥4k） */
@@ -6433,8 +6484,40 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ flash.remove(); }, 750);
   }
 
+  // 個数 1個目 初回タップ メッセージ（商品別マッピング）
+  var rsvFirstTapMessages = {
+    'いなり':                          '感謝🙏 チキンもセットがお勧め🐔',
+    'ガーリックチキン':                  '感謝🙏 いなりもセットがお勧め🍙',
+    '一口チキン':                       'ビオの隠れ人気商品✨',
+    'ミックス（いなり1＆チキン1）':       '一番人気⭐',
+    'ミックス（いなり2＆チキン1）':       '一番人気⭐',
+    '重箱15個入り':                     '行事毎と言えばこれ🎉'
+  };
+
+  function rsvShowFirstTapMessage(rsvItemEl) {
+    if (!rsvItemEl) return;
+    var input = rsvItemEl.querySelector('.rsv-qty__input');
+    if (!input) return;
+    var name = input.dataset.name;
+    var msg = rsvFirstTapMessages[name];
+    if (!msg) return;
+    // 既存のバナーがあれば削除（連発防止）
+    var existing = rsvItemEl.querySelector('.rsv-fx-first-tap-banner');
+    if (existing) existing.remove();
+    var banner = document.createElement('div');
+    banner.className = 'rsv-fx-first-tap-banner';
+    banner.innerHTML = '<span class="rsv-fx-first-tap-banner__mascot">🐣</span>' +
+                       '<span class="rsv-fx-first-tap-banner__text">' + msg + '</span>';
+    rsvItemEl.appendChild(banner);
+    setTimeout(function(){ banner.remove(); }, 2700);
+  }
+
   function rsvShowQuantityEffect(v, rsvItemEl) {
     if (!rsvItemEl || v <= 0) return;
+    // 1個目（qty が 0→1）：初回タップメッセージ
+    if (v === 1) {
+      rsvShowFirstTapMessage(rsvItemEl);
+    }
     rsvShowQtyTick(rsvItemEl); // 毎クリック ➕付近キラキラ+紙吹雪
     // 5個刻み大マイルストーン4段階：各レベル初到達時のみ発火（再発火防止）
     // 21,22,23...で神様が連続発火しないよう、アイテムごとに既到達レベルを記録
