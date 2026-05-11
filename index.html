@@ -6309,9 +6309,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
     stamp.textContent = text;
-    // 数量ボタンの真上に表示（お客様が個数到達を瞬時に認識）
+    // 数量ボタンの上に十分なクリアランスで表示（qty数字を絶対に隠さない）
     stamp.style.left = (qtyRect.left - itemRect.left + qtyRect.width / 2) + 'px';
-    stamp.style.top = (qtyRect.top - itemRect.top - 70) + 'px';
+    stamp.style.top = (qtyRect.top - itemRect.top - 130) + 'px';
     rsvItemEl.appendChild(stamp);
     setTimeout(function(){ stamp.remove(); }, 2200);
   }
@@ -6325,8 +6325,9 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-item-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
+    // 数量ボタンの上に十分なクリアランスで配置（qty数字を絶対に隠さない）
     banner.style.left = (qtyRect.left - itemRect.left + qtyRect.width / 2) + 'px';
-    banner.style.top = (qtyRect.top - itemRect.top - 95) + 'px';
+    banner.style.top = (qtyRect.top - itemRect.top - 120) + 'px';
     rsvItemEl.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
   }
