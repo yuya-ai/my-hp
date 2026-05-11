@@ -2686,12 +2686,14 @@ html.rsv-fx-locked {
   100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.02); }
 }
 
-/* ===== 料金バナー「弾丸射出」式アニメ（合計バーから打ち上げ・スマホ） ===== */
+/* ===== 「弾丸射出」式アニメ（料金=合計バー起点 / 個数=商品カード起点・スマホ） ===== */
 /* 全てtransform + opacity + box-shadow（固定値）のみ・GPU合成完結＝カクつき保証ゼロ */
-.rsv-fx-mini-banner.is-bullet {
+.rsv-fx-mini-banner.is-bullet,
+.rsv-fx-item-banner.is-bullet {
   animation: rsv-fx-banner-bullet 3.5s cubic-bezier(0.16, 0.95, 0.30, 1.05) forwards !important;
 }
-.rsv-fx-mini-banner.is-bullet.is-rainbow {
+.rsv-fx-mini-banner.is-bullet.is-rainbow,
+.rsv-fx-item-banner.is-bullet.is-rainbow {
   animation: rsv-fx-banner-bullet 3.8s cubic-bezier(0.16, 0.95, 0.30, 1.05) forwards !important;
 }
 @keyframes rsv-fx-banner-bullet {
@@ -6668,37 +6670,83 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var isMobile = window.innerWidth <= 767;
 
     if (isMobile) {
-      // スマホ：Bio-kun(チャットボット)アイコンの真上に配置（料金バナーと統一）
-      // → 個数も料金もマスコット上にポップアップで位置一貫
-      banner.style.left = '-9999px'; // 仮配置で実幅計測
-      banner.style.top = '0px';
+      // スマホ：弾丸射出式（商品カードの qty 位置 → viewport中央上半分へ打ち上げ）
+      // → 料金バナーと演出統一・起点だけ違う（料金=合計バー / 個数=商品カード）
+      var targetXq = window.innerWidth / 2;
+      var targetYq = Math.round(window.innerHeight * 0.35);
+
+      // 商品 qty 位置を起点に
+      var qtyElQ = rsvItemEl ? rsvItemEl.querySelector('.rsv-qty') : null;
+      var startYqAbs;
+      if (qtyElQ) {
+        var qr = qtyElQ.getBoundingClientRect();
+        startYqAbs = qr.top + qr.height / 2;
+      } else if (rsvItemEl) {
+        var ir = rsvItemEl.getBoundingClientRect();
+        startYqAbs = ir.top + ir.height / 2;
+      } else {
+        startYqAbs = window.innerHeight - 60;
+      }
+      var bulletDistanceQ = startYqAbs - targetYq;
+
+      // 1. 弾丸軌跡（縦streak）
+      var trailQ = document.createElement('div');
+      trailQ.className = 'rsv-fx-bullet-trail';
+      trailQ.style.left = (targetXq - 4) + 'px';
+      trailQ.style.top = targetYq + 'px';
+      trailQ.style.height = Math.max(0, bulletDistanceQ) + 'px';
+      document.body.appendChild(trailQ);
+      setTimeout(function(){ trailQ.remove(); }, 520);
+
+      // 2. バナーを弾丸アニメで打ち上げ
+      banner.classList.add('is-bullet');
+      banner.style.position = 'fixed';
+      banner.style.bottom = 'auto';
+      banner.style.left = '50%';
+      banner.style.top = targetYq + 'px';
+      banner.style.setProperty('--bullet-start-y', bulletDistanceQ + 'px');
+      banner.style.zIndex = '9998';
       document.body.appendChild(banner);
 
-      var bioKunQ = document.querySelector('#chatbot-launcher');
-      var bannerWq = banner.offsetWidth;
-      var bannerHq = banner.offsetHeight;
-      if (bioKunQ) {
-        var bkRectQ = bioKunQ.getBoundingClientRect();
-        // Bio-kun の中心 X に banner中心を合わせる
-        var centerXq = bkRectQ.left + bkRectQ.width / 2;
-        // viewport 端を超えないようクランプ
-        if (centerXq + bannerWq / 2 > window.innerWidth - 8) {
-          centerXq = window.innerWidth - 8 - bannerWq / 2;
+      // 3. 着地タイミング(540ms)で shockwave + 爆発粒
+      setTimeout(function() {
+        var waveQ = document.createElement('div');
+        waveQ.className = 'rsv-fx-shockwave';
+        waveQ.style.position = 'fixed';
+        waveQ.style.left = targetXq + 'px';
+        waveQ.style.top = targetYq + 'px';
+        waveQ.style.zIndex = '9997';
+        waveQ.style.setProperty('--sw-color', isRainbow ? '#ffd700' : '#ff8c00');
+        document.body.appendChild(waveQ);
+        setTimeout(function(){ waveQ.remove(); }, 1100);
+
+        var burstColorsQ = isRainbow
+          ? ['#ff0080', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff']
+          : ['#ff8c00', '#ffd700', '#ff3b8c'];
+        var burstNQ = isRainbow ? 24 : 18;
+        for (var bii = 0; bii < burstNQ; bii++) {
+          var angQ = (bii / burstNQ) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+          var distQ = 60 + Math.random() * 70;
+          var pQ = document.createElement('span');
+          pQ.className = 'rsv-fx-real-fw';
+          pQ.style.position = 'fixed';
+          pQ.style.left = targetXq + 'px';
+          pQ.style.top = targetYq + 'px';
+          pQ.style.zIndex = '9996';
+          pQ.style.setProperty('--fx', (Math.cos(angQ) * distQ) + 'px');
+          pQ.style.setProperty('--fy', (Math.sin(angQ) * distQ) + 'px');
+          pQ.style.animationDelay = (Math.random() * 0.08) + 's';
+          var streakQ = document.createElement('span');
+          streakQ.className = 'rsv-fx-real-fw__streak';
+          streakQ.style.transform = 'rotate(' + (angQ * 180 / Math.PI) + 'deg)';
+          streakQ.style.setProperty('--fw-color', burstColorsQ[bii % burstColorsQ.length]);
+          pQ.appendChild(streakQ);
+          document.body.appendChild(pQ);
+          (function(e){ setTimeout(function(){ e.remove(); }, 2200); })(pQ);
         }
-        if (centerXq - bannerWq / 2 < 8) {
-          centerXq = 8 + bannerWq / 2;
-        }
-        banner.style.left = centerXq + 'px';
-        // Bio-kun の真上に banner 配置（12px gap）
-        var topYq = bkRectQ.top - bannerHq - 12;
-        if (topYq < 10) topYq = 10;
-        banner.style.top = topYq + 'px';
-      } else {
-        // フォールバック：viewport 上部
-        banner.style.left = '50%';
-        banner.style.top = '90px';
-      }
-      setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
+      }, 540);
+
+      setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
       return;
     }
 
