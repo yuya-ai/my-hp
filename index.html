@@ -6379,10 +6379,28 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     banner.className = 'rsv-fx-item-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
     banner.style.position = 'fixed';
-    banner.style.left = 'calc(50% + 10px)';
     banner.style.zIndex = '9998';
     banner.style.bottom = 'auto';
-    // 合計バーの真上80pxに配置 + viewport内クランプ（合計バーが画面外でも必ず見える）
+
+    var isMobile = window.innerWidth <= 767;
+
+    if (isMobile && rsvItemEl) {
+      // スマホ：item card 中央上部に配置（太っ腹スタンプと同じ位置）
+      // → 右側マスコット(メニュー&予約/Instagram/YouTube/ビオくん)と絶対被らない
+      var qtyEl = rsvItemEl.querySelector('.rsv-qty');
+      var itemRect = rsvItemEl.getBoundingClientRect();
+      var anchorTop = qtyEl ? qtyEl.getBoundingClientRect().top : (itemRect.top + 40);
+      banner.style.left = (itemRect.left + itemRect.width / 2) + 'px';
+      var mobileY = anchorTop - 50;
+      if (mobileY < 10) mobileY = 10;
+      banner.style.top = mobileY + 'px';
+      document.body.appendChild(banner);
+      setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
+      return;
+    }
+
+    // デスクトップ：合計バーの真上80px + viewport内クランプ + +10px右シフト（既存lock済）
+    banner.style.left = 'calc(50% + 10px)';
     var barRect = rsvGetTotalBarRect();
     var vh = window.innerHeight;
     var targetY = barRect ? (barRect.top - 80) : (vh / 2);
