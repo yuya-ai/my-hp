@@ -6303,10 +6303,205 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   // ===== Phase C: 1000円毎マイルストーン演出 =====
+  // 大爆発MEGAモード切替フラグ（false にすると元のシンプル版に戻る）
+  var RSV_FX_MEGA_MODE = true;
+
+  // viewport中央に紙吹雪を撒くヘルパー（fixed positioning・スクロール位置問わず確実に表示）
+  function rsvSpawnPaperConfettiViewport(count) {
+    var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b', '#ff9bb0'];
+    var vw = window.innerWidth;
+    var n = count || 30;
+    for (var ci = 0; ci < n; ci++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-fx-paper-confetti';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.background = colors[ci % colors.length];
+      c.style.left = (Math.random() * vw) + 'px';
+      c.style.top = '10vh';
+      var endX = (Math.random() - 0.5) * 250;
+      var endY = 350 + Math.random() * 250;
+      c.style.setProperty('--cx', endX + 'px');
+      c.style.setProperty('--cy', endY + 'px');
+      c.style.setProperty('--cr', (Math.random() * 720 + 360) + 'deg');
+      c.style.animationDelay = (ci * 0.03) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 2500); })(c);
+    }
+  }
+
+  // viewport中央バナー（料金マイルストーン用）
+  function rsvShowMilestoneBanner(text, isRainbow) {
+    var banner = document.createElement('div');
+    banner.className = 'rsv-fx-mini-banner' + (isRainbow ? ' is-rainbow' : '');
+    banner.textContent = text;
+    document.body.appendChild(banner);
+    setTimeout(function(){ banner.remove(); }, isRainbow ? 2200 : 2000);
+  }
+
+  // ===== MEGA版 料金マイルストーン =====
+  function rsvMilestoneL1Mega() {
+    // ¥1k MEGA: 紙吹雪×40 + 💴×6 + viewport中央「太っ腹！」バナー
+    rsvSpawnPaperConfettiViewport(40);
+    var vw = window.innerWidth;
+    var positions = [{x:-110,y:-30},{x:-65,y:-75},{x:-22,y:-100},{x:22,y:-100},{x:65,y:-75},{x:110,y:-30}];
+    positions.forEach(function(pos, i) {
+      var c = document.createElement('span');
+      c.className = 'rsv-sparkle';
+      c.textContent = '💴';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (vw / 2 - 14) + 'px';
+      c.style.top = '40vh';
+      c.style.fontSize = '2.2rem';
+      c.style.setProperty('--sx', pos.x + 'px');
+      c.style.setProperty('--sy', pos.y + 'px');
+      c.style.animationDelay = (i * 0.06) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1800); })(c);
+    });
+    rsvShowMilestoneBanner('太っ腹！', false);
+  }
+
+  function rsvMilestoneL2Mega() {
+    // ¥2k MEGA: 紙吹雪×40 + 🎉×15 + viewport中央「大感謝🎉」バナー
+    rsvSpawnPaperConfettiViewport(40);
+    var vw = window.innerWidth;
+    for (var i = 0; i < 15; i++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-sparkle';
+      c.textContent = '🎉';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (vw / 2 - 14) + 'px';
+      c.style.top = '38vh';
+      c.style.fontSize = '2rem';
+      var ang = (i / 15) * Math.PI * 2;
+      var dist = 100 + Math.random() * 60;
+      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+      c.style.setProperty('--sy', (Math.sin(ang) * dist - 30) + 'px');
+      c.style.animationDelay = (i * 0.04) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
+    }
+    rsvShowMilestoneBanner('大感謝🎉', false);
+  }
+
+  function rsvMilestoneL3Mega() {
+    // ¥3k MEGA: 巨大🐣 + 両サイドミニ🐣×4 + 虹光線burst + 👏×8 + viewport虹色バナー
+    var vw = window.innerWidth;
+    // 虹光線burst（背景に大きく）
+    [0, 200, 400].forEach(function(delay) {
+      setTimeout(function(){
+        var burst = document.createElement('div');
+        burst.className = 'rsv-fx-rainbow-burst';
+        burst.style.left = (vw / 2) + 'px';
+        burst.style.top = '40vh';
+        document.body.appendChild(burst);
+        setTimeout(function(){ burst.remove(); }, 1900);
+      }, delay);
+    });
+    // 巨大🐣ビオくん（中央・5rem）
+    var bigBio = document.createElement('span');
+    bigBio.className = 'rsv-bio-kun';
+    bigBio.style.position = 'fixed';
+    bigBio.style.zIndex = '9999';
+    bigBio.style.fontSize = '5rem';
+    bigBio.style.left = (vw / 2 - 50) + 'px';
+    bigBio.style.top = '25vh';
+    bigBio.textContent = '🐣';
+    document.body.appendChild(bigBio);
+    setTimeout(function(){ bigBio.remove(); }, 2500);
+    // 両サイドからミニ🐣×4登場（笑える）
+    var sides = [
+      {className: 'rsv-fx-dancing-bio--left',  top: '25%'},
+      {className: 'rsv-fx-dancing-bio--left',  top: '55%'},
+      {className: 'rsv-fx-dancing-bio--right', top: '25%'},
+      {className: 'rsv-fx-dancing-bio--right', top: '55%'}
+    ];
+    sides.forEach(function(p, i) {
+      setTimeout(function(){
+        var bio = document.createElement('span');
+        bio.className = 'rsv-fx-dancing-bio ' + p.className;
+        bio.textContent = '🐣';
+        bio.style.top = p.top;
+        bio.style.fontSize = '2.5rem';
+        document.body.appendChild(bio);
+      }, i * 100);
+    });
+    // 👏×8粒
+    for (var i = 0; i < 8; i++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-sparkle';
+      c.textContent = '👏';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (vw / 2 - 14) + 'px';
+      c.style.top = '45vh';
+      c.style.fontSize = '1.8rem';
+      var ang = (i / 8) * Math.PI * 2;
+      var dist = 120 + Math.random() * 40;
+      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+      c.style.setProperty('--sy', (Math.sin(ang) * dist) + 'px');
+      c.style.animationDelay = (i * 0.05) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
+    }
+    rsvShowMilestoneBanner('ビオくん大感激👏', true);
+  }
+
+  function rsvMilestoneL4Mega() {
+    // ¥4k MEGA: 多発打ち上げ花火5発（両サイド追加）+ 🔥×8 + viewport中央バナー
+    var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#00cc66', '#ff6b2b'];
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    // 5発打ち上げ
+    var launches = [
+      { x: vw * 0.50, dy: 0,   count: 55, delay: 0   },
+      { x: vw * 0.20, dy: 30,  count: 40, delay: 150 },
+      { x: vw * 0.80, dy: 30,  count: 40, delay: 300 },
+      { x: vw * 0.10, dy: 50,  count: 30, delay: 500 },
+      { x: vw * 0.90, dy: 50,  count: 30, delay: 700 }
+    ];
+    launches.forEach(function(l) {
+      setTimeout(function() {
+        rsvLaunchFireworkRealisticOverlay(l.x, vh * 0.35 + l.dy, colors, l.count);
+      }, l.delay);
+    });
+    // 🔥×8粒 viewport中央付近で爆発
+    for (var i = 0; i < 8; i++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-sparkle';
+      c.textContent = '🔥';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (vw / 2 - 14) + 'px';
+      c.style.top = '50vh';
+      c.style.fontSize = '2rem';
+      var ang = (i / 8) * Math.PI * 2;
+      var dist = 130 + Math.random() * 40;
+      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+      c.style.setProperty('--sy', (Math.sin(ang) * dist) + 'px');
+      c.style.animationDelay = (i * 0.05) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
+    }
+    rsvShowMilestoneBanner('あっぱれ🔥🔥', false);
+  }
+
   function rsvFireMilestone(level, container) {
     // 演出中スクロール固定（スマホカクカク防止＋画面が動かないように）
-    var lockDuration = level >= 5 ? 6000 : 2500; // ¥5k=神様クラスは5.5秒
+    var lockDuration = level >= 5 ? 6000 : 2500;
     rsvLockScrollFor(lockDuration);
+    // MEGA版 or シンプル版で分岐
+    if (RSV_FX_MEGA_MODE) {
+      if (level === 1) return rsvMilestoneL1Mega();
+      if (level === 2) return rsvMilestoneL2Mega();
+      if (level === 3) return rsvMilestoneL3Mega();
+      if (level === 4) return rsvMilestoneL4Mega();
+      if (level >= 5)  return rsvMilestoneL5(container); // ¥5kは既に大爆発版で確定
+    }
+    // シンプル版（フォールバック・RSV_FX_MEGA_MODE = false の場合）
     if (level === 1) rsvMilestoneL1(container);
     else if (level === 2) rsvMilestoneL2(container);
     else if (level === 3) rsvMilestoneL3(container);
