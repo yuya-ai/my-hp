@@ -6471,8 +6471,12 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       if (finalCenterX - bannerHalfW < 8) finalCenterX = 8 + bannerHalfW;
 
       banner.style.left = finalCenterX + 'px';
-      var mobileY = anchorTop - 50;
-      if (mobileY < 10) mobileY = 10;
+      // 🐣 ビオくん emoji が qty 上 90px に出るため、バナーは更に上(-120px)で完全分離
+      var mobileY = anchorTop - 120;
+      // viewport 上端を切らないようクランプ。切れる場合は item card の下に配置
+      if (mobileY < 10) {
+        mobileY = itemRect.bottom + 8;
+      }
       banner.style.top = mobileY + 'px';
       setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
       return;
