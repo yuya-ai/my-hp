@@ -2143,6 +2143,29 @@ html.rsv-fx-locked {
   opacity: 0;
   animation: rsv-fx-mini-banner 1.7s ease-out forwards;
 }
+/* バナー内のビックリマーク強調（金色グラデ＋ドロップシャドウ＋ポップ演出） */
+.rsv-fx-banner-emp {
+  background: linear-gradient(180deg, #fff8c0 0%, #ffd700 50%, #ff8c00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-size: 1.4em;
+  font-weight: 900;
+  display: inline-block;
+  filter: drop-shadow(0 2px 3px rgba(255, 60, 0, 0.85))
+          drop-shadow(0 0 4px rgba(255, 215, 0, 0.7));
+  animation: rsv-fx-banner-emp-pop 0.7s ease-out;
+  transform-origin: center bottom;
+  margin: 0 1px;
+}
+@keyframes rsv-fx-banner-emp-pop {
+  0%   { transform: translateY(8px) scale(0.5); opacity: 0; }
+  40%  { transform: translateY(-6px) scale(1.4); opacity: 1; }
+  65%  { transform: translateY(2px) scale(0.9); }
+  100% { transform: translateY(0) scale(1); }
+}
+
 .rsv-fx-mini-banner.is-rainbow {
   font-size: 2.1rem;
   background: linear-gradient(90deg, #ff0080, #ff8c00, #ffd700, #00cc66, #00b0ff, #8c00ff, #ff0080);
@@ -6274,10 +6297,15 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   // viewport中央バナー（料金マイルストーン用・スクロール位置問わず表示）
+  // ！ を金色グラデspanで装飾（白いだけでは味気ないので強調）
   function rsvShowMilestoneBanner(text, isRainbow) {
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-mini-banner' + (isRainbow ? ' is-rainbow' : '');
-    banner.textContent = text;
+    // ！ / ! を装飾spanで囲む
+    var html = text.replace(/[！!]+/g, function(match) {
+      return '<span class="rsv-fx-banner-emp">' + match + '</span>';
+    });
+    banner.innerHTML = html;
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2000 : 1800);
   }
