@@ -2739,25 +2739,28 @@ html.rsv-fx-locked {
 
 /* ===== スマホ向け：全マイルストーン演出の縮小（横幅 767px以下）===== */
 @media (max-width: 767px) {
-  /* 料金マイルストーンバナー（¥1k〜¥4k） */
+  /* 料金マイルストーンバナー（¥1k〜¥4k）フィナーレ化：個数演出(stamp 2.2rem)より大きく */
   .rsv-fx-mini-banner {
-    font-size: 1.4rem;
-    padding: 8px 18px;
-    border-width: 3px;
-    border-radius: 60px;
+    font-size: 2rem;
+    padding: 12px 24px;
+    border-width: 4px;
+    border-radius: 80px;
     letter-spacing: 0.02em;
+    animation-duration: 3.5s;
   }
   .rsv-fx-mini-banner.is-stamp {
-    font-size: 1.5rem;
-    padding: 6px 14px;
-    border-width: 3px;
-    border-radius: 10px;
+    font-size: 2.4rem;
+    padding: 10px 22px;
+    border-width: 4px;
+    border-radius: 14px;
+    animation-duration: 3.5s;
   }
   .rsv-fx-mini-banner.is-rainbow {
-    font-size: 1.4rem;
-    padding: 7px 18px;
-    border-width: 3px;
-    border-radius: 50px;
+    font-size: 1.85rem;
+    padding: 12px 22px;
+    border-width: 4px;
+    border-radius: 70px;
+    animation-duration: 3.8s;
   }
   /* 個数マイルストーンバナー（10個 大感謝🎉 / 15個 ビオくん大感激👏） */
   .rsv-fx-item-banner {
@@ -6813,7 +6816,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (banner.dataset.alreadyAppended !== '1') {
       document.body.appendChild(banner);
     }
-    setTimeout(function(){ banner.remove(); }, isRainbow ? 2800 : 2600);
+    // フィナーレ化：個数演出より長く表示してクライマックス感
+    setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
     // 衝撃波ショックウェーブ（控えめに：レベル1=なし・2/3=1発・4=2発）
     if (barRect && level >= 2) {
       var sx = (barRect.left + barRect.right) / 2;
