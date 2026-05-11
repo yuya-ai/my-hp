@@ -6327,22 +6327,26 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ stamp.remove(); }, 2200);
   }
 
-  // 個数マイルストーン用：合計バーの下に表示（料金バナーと同じ位置・ビオくんアイコン等と被らない）
+  // 個数マイルストーン用：合計金額の右隣に表示（料金バナーと同じ位置）
   function rsvSpawnItemBanner(rsvItemEl, text, isRainbow) {
     var banner = document.createElement('div');
     banner.className = 'rsv-fx-item-banner' + (isRainbow ? ' is-rainbow' : '');
     banner.textContent = text;
     banner.style.position = 'fixed';
-    banner.style.left = '50%';
     banner.style.zIndex = '9998';
-    // 合計バーの下 +12px に配置（料金バナーと完全に同じ位置）
-    var barRect = rsvGetTotalBarRect();
-    if (barRect) {
-      banner.style.top = (barRect.bottom + 12) + 'px';
-    } else {
-      banner.style.top = '40vh';  // フォールバック
-    }
     banner.style.bottom = 'auto';
+    // 合計金額の右隣に配置
+    var totalStrong = document.querySelector('.rsv-total strong');
+    if (totalStrong) {
+      var strongRect = totalStrong.getBoundingClientRect();
+      var halfBannerW = isRainbow ? 220 : 150;
+      banner.style.left = (strongRect.right + 40 + halfBannerW) + 'px';
+      var amountCenterY = (strongRect.top + strongRect.bottom) / 2;
+      banner.style.top = (amountCenterY - 40) + 'px';
+    } else {
+      banner.style.left = '50%';
+      banner.style.top = '40vh';
+    }
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2300 : 2100);
   }
@@ -6484,21 +6488,23 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 全バナー共通：合計バーの真下（合計の下のホワイトスペース）に配置
-    // → 合計金額には絶対被らない・お客様の視線は「合計→バナー」と下に流れる
-    var barRect = rsvGetTotalBarRect();
+    // 全バナー共通：合計金額の右隣に配置（金額とバナーが横並び）
+    // バナー幅補正（translateX -50% 用）：種類に応じた半幅
     var totalStrong = document.querySelector('.rsv-total strong');
-    if (barRect) {
-      // 横位置：合計バーの中央にバナー中央を揃える
-      banner.style.left = ((barRect.left + barRect.right) / 2) + 'px';
-      // 縦位置：合計バー下端 +12px（合計の真下のホワイトスペース）
-      banner.style.top = (barRect.bottom + 12) + 'px';
-      banner.style.bottom = 'auto';
-    } else if (totalStrong) {
+    var barRect = rsvGetTotalBarRect();
+    if (totalStrong) {
       var strongRect = totalStrong.getBoundingClientRect();
-      banner.style.left = ((strongRect.left + strongRect.right) / 2) + 'px';
-      banner.style.top = (strongRect.bottom + 12) + 'px';
+      // 横位置：金額右端 + クリアランス + バナー半幅
+      var halfBannerW = isStamp ? 130 : (isRainbow ? 220 : 150);
+      var clearance = 40;
+      banner.style.left = (strongRect.right + clearance + halfBannerW) + 'px';
+      // 縦位置：金額の中央高さにバナー中央を合わせる
+      var amountCenterY = (strongRect.top + strongRect.bottom) / 2;
+      banner.style.top = (amountCenterY - 40) + 'px';  // 40 = バナー半高
       banner.style.bottom = 'auto';
+    } else if (barRect) {
+      banner.style.top = 'auto';
+      banner.style.bottom = (window.innerHeight - barRect.bottom) + 'px';
     }
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2800 : 2600);
