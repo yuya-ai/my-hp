@@ -2686,41 +2686,42 @@ html.rsv-fx-locked {
   100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.02); }
 }
 
-/* ===== 料金バナー「コメット式」流星墜落アニメ（スマホ） ===== */
-.rsv-fx-mini-banner.is-comet {
-  animation: rsv-fx-banner-comet 3.5s cubic-bezier(0.18, 0.95, 0.32, 1.05) forwards !important;
+/* ===== 料金バナー「弾丸射出」式アニメ（合計バーから打ち上げ・スマホ） ===== */
+/* 全てtransform + opacity + box-shadow（固定値）のみ・GPU合成完結＝カクつき保証ゼロ */
+.rsv-fx-mini-banner.is-bullet {
+  animation: rsv-fx-banner-bullet 3.5s cubic-bezier(0.16, 0.95, 0.30, 1.05) forwards !important;
 }
-.rsv-fx-mini-banner.is-comet.is-rainbow {
-  animation: rsv-fx-banner-comet 3.8s cubic-bezier(0.18, 0.95, 0.32, 1.05) forwards !important;
+.rsv-fx-mini-banner.is-bullet.is-rainbow {
+  animation: rsv-fx-banner-bullet 3.8s cubic-bezier(0.16, 0.95, 0.30, 1.05) forwards !important;
 }
-@keyframes rsv-fx-banner-comet {
-  /* GPU合成のみで動かす(transform + opacity)・filter:blur は一切使わない＝カクつき保証ゼロ */
-  0%   { opacity: 0; transform: translate(calc(50vw + 50%), -100vh) scale(0.35) rotate(-25deg); }
-  3%   { opacity: 1; transform: translate(calc(50vw + 50%), -100vh) scale(0.35) rotate(-25deg); }
-  13%  { opacity: 1; transform: translate(-50%, 0) scale(1.65) rotate(-5deg); }
-  20%  { transform: translate(-50%, 0) scale(0.82) rotate(0); }
-  28%  { transform: translate(-50%, 0) scale(1.1) rotate(0); }
-  35%  { transform: translate(-50%, 0) scale(1) rotate(0); }
-  85%  { opacity: 1; transform: translate(-50%, 0) scale(1) rotate(0); }
-  100% { opacity: 0; transform: translate(-50%, -30px) scale(1.1) rotate(0); }
+@keyframes rsv-fx-banner-bullet {
+  0%   { opacity: 0; transform: translate(-50%, var(--bullet-start-y, 50vh)) scale(0.18); }
+  3%   { opacity: 1; transform: translate(-50%, var(--bullet-start-y, 50vh)) scale(0.22); }
+  16%  { opacity: 1; transform: translate(-50%, 0) scale(1.75); }
+  23%  { transform: translate(-50%, 0) scale(0.82); }
+  30%  { transform: translate(-50%, 0) scale(1.1); }
+  37%  { transform: translate(-50%, 0) scale(1); }
+  85%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -30px) scale(1.1); }
 }
-/* コメット軌跡（streak）— transform + opacity のみ・filter:blur なし */
-.rsv-fx-comet-trail {
+/* 弾丸軌跡（rocket trail）— 合計バーから landing point に向かう縦streak */
+.rsv-fx-bullet-trail {
   position: fixed;
-  width: 180px;
-  height: 8px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,215,0,1) 45%, rgba(255,140,0,0.85) 75%, rgba(255,60,0,0.3) 100%);
+  width: 8px;
+  background: linear-gradient(180deg, rgba(255,60,0,0.25) 0%, rgba(255,140,0,0.85) 35%, rgba(255,215,0,1) 75%, rgba(255,255,200,0.95) 100%);
   border-radius: 100px;
-  box-shadow: 0 0 8px rgba(255,200,0,0.5);
+  box-shadow: 0 0 10px rgba(255,200,0,0.7), 0 0 18px rgba(255,140,0,0.45);
   z-index: 9996;
   pointer-events: none;
-  animation: rsv-fx-comet-trail-fly 460ms cubic-bezier(0.25, 0.85, 0.45, 1) forwards;
+  transform-origin: bottom center;
+  animation: rsv-fx-bullet-trail-fly 480ms cubic-bezier(0.25, 0.85, 0.45, 1) forwards;
 }
-@keyframes rsv-fx-comet-trail-fly {
-  0%   { opacity: 0; transform: translate(50vw, -50vh) rotate(225deg) scaleX(0.5); }
-  20%  { opacity: 1; transform: translate(50vw, -50vh) rotate(225deg) scaleX(1); }
-  90%  { opacity: 0.9; transform: translate(0, 0) rotate(225deg) scaleX(0.7); }
-  100% { opacity: 0; transform: translate(0, 0) rotate(225deg) scaleX(0.3); }
+@keyframes rsv-fx-bullet-trail-fly {
+  0%   { opacity: 0; transform: scaleY(0); }
+  25%  { opacity: 1; transform: scaleY(0.5); }
+  60%  { opacity: 1; transform: scaleY(1); }
+  85%  { opacity: 0.7; transform: scaleY(0.85); }
+  100% { opacity: 0; transform: scaleY(0.4); }
 }
 
 /* ===== 個数 1個目 初回タップ メッセージバナー（ビオくん🐣案内） ===== */
@@ -6861,27 +6862,34 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var vh = window.innerHeight;
 
     if (isMobileP) {
-      // スマホ：コメット式（流星墜落）— 画面外右上から飛んでくる→着地で衝撃波
+      // スマホ：弾丸射出式 — 合計バーから打ち上げ→画面中央上半分で着地
       var targetXm = window.innerWidth / 2;
       var targetYm = Math.round(vh * 0.35);
 
-      // 1. コメット軌跡（streak）を別要素で先行表示
-      var trail = document.createElement('div');
-      trail.className = 'rsv-fx-comet-trail';
-      trail.style.left = '50%';
-      trail.style.top = (targetYm - 3) + 'px'; // banner中心高さに合わせる
-      document.body.appendChild(trail);
-      setTimeout(function(){ trail.remove(); }, 500);
+      // 合計バー中心 Y を起点に
+      var barRectM = rsvGetTotalBarRect();
+      var startYabs = barRectM ? (barRectM.top + barRectM.bottom) / 2 : (vh - 60);
+      var bulletDistance = startYabs - targetYm; // 上昇距離（px）
 
-      // 2. バナーをコメットアニメで出現（off-screen → 中心着地・bounce）
-      banner.classList.add('is-comet');
+      // 1. 弾丸軌跡（縦streak）を targetY から startY まで描画
+      var trail = document.createElement('div');
+      trail.className = 'rsv-fx-bullet-trail';
+      trail.style.left = (targetXm - 4) + 'px';
+      trail.style.top = targetYm + 'px';
+      trail.style.height = Math.max(0, bulletDistance) + 'px';
+      document.body.appendChild(trail);
+      setTimeout(function(){ trail.remove(); }, 520);
+
+      // 2. バナーを弾丸アニメで打ち上げ（合計バー位置 → 中心着地・bounce）
+      banner.classList.add('is-bullet');
       banner.style.position = 'fixed';
       banner.style.bottom = 'auto';
       banner.style.left = '50%';
       banner.style.top = targetYm + 'px';
+      banner.style.setProperty('--bullet-start-y', bulletDistance + 'px');
       document.body.appendChild(banner);
 
-      // 3. 着地タイミング(450ms)で衝撃波 shockwave + 爆発粒
+      // 3. 着地タイミング(540ms)で衝撃波 shockwave + 爆発粒（弾丸アニメ16%=560ms と同期）
       setTimeout(function() {
         var wave = document.createElement('div');
         wave.className = 'rsv-fx-shockwave';
@@ -6918,7 +6926,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           document.body.appendChild(p);
           (function(e){ setTimeout(function(){ e.remove(); }, 2200); })(p);
         }
-      }, 450);
+      }, 540);
 
       setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
       banner.dataset.alreadyAppended = '1';
