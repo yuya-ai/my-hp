@@ -6373,7 +6373,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         rsvItemEl.appendChild(c);
         (function(e){ setTimeout(function(){ e.remove(); }, 2000); })(c);
       }
-      rsvSpawnItemStamp(rsvItemEl, '太っ腹！');
+      rsvSpawnItemStamp(rsvItemEl, '太っ腹😤');
     } else if (level === 2) {
       // 10個: 打ち上げ花火 + 商品カード内バナー「大感謝🎉」 + 🐣ビオくん + 虹リング1重
       var fwColors10 = ['#ff3b8c', '#ff8c00', '#ffd700', '#00cc66', '#00b0ff', '#8c00ff'];
@@ -6481,27 +6481,21 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 全バナー共通：最後の商品行（※別途料金が含まれる重箱行）の真下に配置
-    var items = document.querySelectorAll('.rsv-item');
-    var totalStrong = document.querySelector('.rsv-total strong');
+    // 全バナー共通：合計バーの真下（合計の下のホワイトスペース）に配置
+    // → 合計金額には絶対被らない・お客様の視線は「合計→バナー」と下に流れる
     var barRect = rsvGetTotalBarRect();
-    if (items.length > 0) {
-      // 最後のアイテム（重箱行）を基準
-      var lastItem = items[items.length - 1];
-      var itemRect = lastItem.getBoundingClientRect();
-      // 横位置：重箱行の中央にバナー中央を揃える
-      banner.style.left = ((itemRect.left + itemRect.right) / 2) + 'px';
-      // 縦位置：重箱行の下端 +5px（※別途料金テキストの直下）
-      banner.style.top = (itemRect.bottom + 5) + 'px';
+    var totalStrong = document.querySelector('.rsv-total strong');
+    if (barRect) {
+      // 横位置：合計バーの中央にバナー中央を揃える
+      banner.style.left = ((barRect.left + barRect.right) / 2) + 'px';
+      // 縦位置：合計バー下端 +12px（合計の真下のホワイトスペース）
+      banner.style.top = (barRect.bottom + 12) + 'px';
       banner.style.bottom = 'auto';
     } else if (totalStrong) {
       var strongRect = totalStrong.getBoundingClientRect();
       banner.style.left = ((strongRect.left + strongRect.right) / 2) + 'px';
-      banner.style.top = 'auto';
-      banner.style.bottom = (window.innerHeight - strongRect.top + 5) + 'px';
-    } else if (barRect) {
-      banner.style.top = 'auto';
-      banner.style.bottom = (window.innerHeight - barRect.bottom) + 'px';
+      banner.style.top = (strongRect.bottom + 12) + 'px';
+      banner.style.bottom = 'auto';
     }
     document.body.appendChild(banner);
     setTimeout(function(){ banner.remove(); }, isRainbow ? 2800 : 2600);
@@ -6636,7 +6630,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       document.body.appendChild(c);
       (function(e){ setTimeout(function(){ e.remove(); }, 1800); })(c);
     }
-    rsvShowMilestoneBanner('太っ腹！', false, 1, true);  // isStamp=true で個数5個と同じスタンプスタイル
+    rsvShowMilestoneBanner('太っ腹😤', false, 1, true);  // isStamp=true で個数5個と同じスタンプスタイル
   }
 
   function rsvMilestoneL2Mega() {
@@ -6948,7 +6942,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var cRect = container.getBoundingClientRect();
     var stamp = document.createElement('span');
     stamp.className = 'rsv-stamp';
-    stamp.textContent = '太っ腹！';
+    stamp.textContent = '太っ腹😤';
     stamp.style.left = (rect.left - cRect.left + rect.width / 2) + 'px';
     stamp.style.top = (rect.top - cRect.top - 38) + 'px';
     container.appendChild(stamp);
