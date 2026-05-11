@@ -6186,7 +6186,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   var _rsvLastTotal = 0;
   var _rsvLastMilestone = 0;
   var _rsvLastMiniMilestone = 0;
-  function rsvUpdateTotal(sourceBtn) {
+  function rsvUpdateTotal(sourceBtn, deferMilestoneMs) {
     var total = 0;
     document.querySelectorAll('.rsv-qty__input').forEach(function(input){
       var qty = parseInt(input.value, 10) || 0;
@@ -6204,8 +6204,15 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       // 1000円毎マイルストーン演出（最高5段階・上昇時のみ・段階飛ばしも最高レベルで発火）
       var newMilestone = Math.min(5, Math.floor(total / 1000));
       if (newMilestone > _rsvLastMilestone) {
-        rsvFireMilestone(newMilestone, totalContainer);
         _rsvLastMilestone = newMilestone;
+        // 個数マイルストーンと同時発火時は料金演出を遅延（個数が先に表示完了するまで待つ）
+        if (deferMilestoneMs && deferMilestoneMs > 0) {
+          setTimeout(function(){
+            rsvFireMilestone(newMilestone, totalContainer);
+          }, deferMilestoneMs);
+        } else {
+          rsvFireMilestone(newMilestone, totalContainer);
+        }
       }
       // 価格ミニマイルストーン（¥100〜¥900）は完全削除：小マイルストーンはキラキラ+紙吹雪のみ
     }
@@ -7819,10 +7826,19 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         var maxVal = parseInt(input.max, 10) || 999;
         var v = btn.dataset.act === '+' ? Math.min(maxVal, oldV + 1) : Math.max(0, oldV - 1);
         input.value = v;
-        rsvUpdateTotal(btn);
+        // 個数大マイルストーン(v=5/10/15/20)が同時発火するか判定 → 料金演出を遅延
+        var rsvItemEl = btn.closest('.rsv-item');
+        var newQtyLevel = 0;
+        if (v >= 20) newQtyLevel = 4;
+        else if (v >= 15) newQtyLevel = 3;
+        else if (v >= 10) newQtyLevel = 2;
+        else if (v >= 5)  newQtyLevel = 1;
+        var lastQtyLevel = rsvItemEl ? parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10) : 0;
+        var qtyMilestoneFires = v > oldV && newQtyLevel > lastQtyLevel;
+        // 個数マイルストーンが発火する瞬間は料金演出を2.7秒遅延（個数演出が先に表示完了するため）
+        rsvUpdateTotal(btn, qtyMilestoneFires ? 2700 : 0);
         // 個数演出 統一システム：1〜20個まで全レベル発火（各メニュー独立）
         if (v > oldV) {
-          var rsvItemEl = btn.closest('.rsv-item');
           rsvShowQuantityEffect(v, rsvItemEl);
         }
       });
