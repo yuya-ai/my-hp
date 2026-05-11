@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Disallow API routes（クロール不要）
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://my-hp-xi.vercel.app/sitemap.xml
