@@ -6534,87 +6534,154 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL1Mega() {
-    // ¥1k：階段の1段目（軽め・お祝いの始まり）
-    // → 紙吹雪×30 + 💴×8 + バナー（シェイク・フラッシュなし）
-    rsvHighlightTotalBar(2000);
+    // ¥1k：階段の1段目（ビオくん登場系・軽め）
+    // → 紙吹雪×30 + 💴×8 + 🐣（3rem）+ 虹burst×1 + ✨×4 + バナー
+    rsvHighlightTotalBar(2200);
     rsvSpawnConfettiFromBar(30);
     var barRect = rsvGetTotalBarRect();
-    if (barRect) {
-      var anchorX = (barRect.left + barRect.right) / 2;
-      var anchorY = barRect.top;
-      // 💴×8 bar上から扇形放射
-      for (var i = 0; i < 8; i++) {
-        var c = document.createElement('span');
-        c.className = 'rsv-sparkle';
-        c.textContent = '💴';
-        c.style.position = 'fixed';
-        c.style.zIndex = '9998';
-        c.style.left = (anchorX - 14) + 'px';
-        c.style.top = (anchorY - 20) + 'px';
-        c.style.fontSize = (1.8 + Math.random() * 0.5) + 'rem';
-        var ang = -Math.PI + (i / 7) * Math.PI;
-        var dist = 140 + Math.random() * 80;
-        c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
-        c.style.setProperty('--sy', (Math.sin(ang) * dist - 40) + 'px');
-        c.style.animationDelay = (i * 0.04) + 's';
-        document.body.appendChild(c);
-        (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
-      }
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var anchorX = barRect ? (barRect.left + barRect.right) / 2 : vw / 2;
+    var anchorY = barRect ? barRect.top : vh * 0.85;
+    // 虹光線burst×1（控えめ）
+    var burst1 = document.createElement('div');
+    burst1.className = 'rsv-fx-rainbow-burst';
+    burst1.style.left = anchorX + 'px';
+    burst1.style.top = (anchorY - 130) + 'px';
+    document.body.appendChild(burst1);
+    setTimeout(function(){ burst1.remove(); }, 1800);
+    // 🐣ビオくん（3rem・控えめ）
+    var bigBio = document.createElement('span');
+    bigBio.className = 'rsv-bio-kun';
+    bigBio.style.position = 'fixed';
+    bigBio.style.zIndex = '9999';
+    bigBio.style.fontSize = '3rem';
+    bigBio.style.left = (anchorX - 24) + 'px';
+    bigBio.style.top = (anchorY - 200) + 'px';
+    bigBio.textContent = '🐣';
+    document.body.appendChild(bigBio);
+    setTimeout(function(){ bigBio.remove(); }, 2000);
+    // 💴×8 bar上から扇形放射
+    for (var i = 0; i < 8; i++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-sparkle';
+      c.textContent = '💴';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (anchorX - 14) + 'px';
+      c.style.top = (anchorY - 20) + 'px';
+      c.style.fontSize = (1.8 + Math.random() * 0.5) + 'rem';
+      var ang = -Math.PI + (i / 7) * Math.PI;
+      var dist = 140 + Math.random() * 80;
+      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+      c.style.setProperty('--sy', (Math.sin(ang) * dist - 40) + 'px');
+      c.style.animationDelay = (i * 0.04) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1700); })(c);
+    }
+    // ✨×4 きらめき
+    for (var i = 0; i < 4; i++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-sparkle';
+      c.textContent = '✨';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (anchorX - 12) + 'px';
+      c.style.top = (anchorY - 20) + 'px';
+      c.style.fontSize = (1.3 + Math.random() * 0.4) + 'rem';
+      var ang = -Math.PI + Math.random() * Math.PI;
+      var dist = 100 + Math.random() * 130;
+      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+      c.style.setProperty('--sy', (Math.sin(ang) * dist - 30) + 'px');
+      c.style.animationDelay = (Math.random() * 0.5) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1800); })(c);
     }
     rsvShowMilestoneBanner('太っ腹！', false, 1);
   }
 
   function rsvMilestoneL2Mega() {
-    // ¥2k：階段の2段目（¥1kより明確に派手・打ち上げ花火1発追加）
-    // → 紙吹雪×45 + 🎉×15 + 🎊×8 + 打ち上げ花火1発 + バナー
-    rsvHighlightTotalBar(2200);
-    rsvSpawnConfettiFromBar(45);
+    // ¥2k：階段の2段目（ビオくん大きく・両サイド踊るビオくん×2・花火1発）
+    // → 紙吹雪×40 + 🎉×15 + 🎊×8 + 🐣大（3.8rem）+ 踊るビオくん×2 + 虹burst×2 + 花火1発 + バナー
+    rsvHighlightTotalBar(2400);
+    rsvSpawnConfettiFromBar(40);
     var vw = window.innerWidth;
     var vh = window.innerHeight;
     var barRect = rsvGetTotalBarRect();
-    if (barRect) {
-      var anchorX = (barRect.left + barRect.right) / 2;
-      var anchorY = barRect.top;
-      // 🎉×15 bar上から扇形噴出
-      for (var i = 0; i < 15; i++) {
-        var c = document.createElement('span');
-        c.className = 'rsv-sparkle';
-        c.textContent = '🎉';
-        c.style.position = 'fixed';
-        c.style.zIndex = '9998';
-        c.style.left = (anchorX - 14) + 'px';
-        c.style.top = (anchorY - 20) + 'px';
-        c.style.fontSize = (1.6 + Math.random() * 0.6) + 'rem';
-        var ang = -Math.PI + (i / 14) * Math.PI;
-        var dist = 150 + Math.random() * 110;
-        c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
-        c.style.setProperty('--sy', (Math.sin(ang) * dist - 40) + 'px');
-        c.style.animationDelay = (i * 0.03) + 's';
-        document.body.appendChild(c);
-        (function(e){ setTimeout(function(){ e.remove(); }, 1800); })(c);
-      }
-      // 🎊×8 bar上から外側放射
-      for (var i = 0; i < 8; i++) {
-        var c = document.createElement('span');
-        c.className = 'rsv-sparkle';
-        c.textContent = '🎊';
-        c.style.position = 'fixed';
-        c.style.zIndex = '9998';
-        c.style.left = (anchorX - 14) + 'px';
-        c.style.top = (anchorY - 20) + 'px';
-        c.style.fontSize = (1.7 + Math.random() * 0.7) + 'rem';
-        var ang = -Math.PI + (i / 7) * Math.PI;
-        var dist = 200 + Math.random() * 120;
-        c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
-        c.style.setProperty('--sy', (Math.sin(ang) * dist - 50) + 'px');
-        c.style.animationDelay = (i * 0.04 + 0.1) + 's';
-        document.body.appendChild(c);
-        (function(e){ setTimeout(function(){ e.remove(); }, 1900); })(c);
-      }
+    var anchorX = barRect ? (barRect.left + barRect.right) / 2 : vw / 2;
+    var anchorY = barRect ? barRect.top : vh * 0.85;
+    // 虹光線burst×2（時間差）
+    [0, 220].forEach(function(delay, idx) {
+      setTimeout(function(){
+        var burst = document.createElement('div');
+        burst.className = 'rsv-fx-rainbow-burst';
+        burst.style.left = (anchorX + (idx === 0 ? 0 : -60)) + 'px';
+        burst.style.top = (anchorY - 140 - idx * 20) + 'px';
+        document.body.appendChild(burst);
+        setTimeout(function(){ burst.remove(); }, 1900);
+      }, delay);
+    });
+    // 🐣ビオくん（3.8rem・¥1kより大きい）
+    var bigBio = document.createElement('span');
+    bigBio.className = 'rsv-bio-kun';
+    bigBio.style.position = 'fixed';
+    bigBio.style.zIndex = '9999';
+    bigBio.style.fontSize = '3.8rem';
+    bigBio.style.left = (anchorX - 30) + 'px';
+    bigBio.style.top = (anchorY - 240) + 'px';
+    bigBio.textContent = '🐣';
+    document.body.appendChild(bigBio);
+    setTimeout(function(){ bigBio.remove(); }, 2200);
+    // 両サイドから踊るビオくん×2（各1匹）
+    ['left', 'right'].forEach(function(side, sIdx) {
+      setTimeout(function(){
+        var bio = document.createElement('span');
+        bio.className = 'rsv-fx-dancing-bio rsv-fx-dancing-bio--' + side;
+        bio.textContent = '🐣';
+        bio.style.top = '40%';
+        bio.style.fontSize = '2.2rem';
+        document.body.appendChild(bio);
+      }, sIdx * 80);
+    });
+    // 🎉×15 bar上から扇形噴出
+    for (var i = 0; i < 15; i++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-sparkle';
+      c.textContent = '🎉';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (anchorX - 14) + 'px';
+      c.style.top = (anchorY - 20) + 'px';
+      c.style.fontSize = (1.6 + Math.random() * 0.6) + 'rem';
+      var ang = -Math.PI + (i / 14) * Math.PI;
+      var dist = 150 + Math.random() * 110;
+      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+      c.style.setProperty('--sy', (Math.sin(ang) * dist - 40) + 'px');
+      c.style.animationDelay = (i * 0.03) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1800); })(c);
+    }
+    // 🎊×8 bar上から外側放射
+    for (var i = 0; i < 8; i++) {
+      var c = document.createElement('span');
+      c.className = 'rsv-sparkle';
+      c.textContent = '🎊';
+      c.style.position = 'fixed';
+      c.style.zIndex = '9998';
+      c.style.left = (anchorX - 14) + 'px';
+      c.style.top = (anchorY - 20) + 'px';
+      c.style.fontSize = (1.7 + Math.random() * 0.7) + 'rem';
+      var ang = -Math.PI + (i / 7) * Math.PI;
+      var dist = 200 + Math.random() * 120;
+      c.style.setProperty('--sx', (Math.cos(ang) * dist) + 'px');
+      c.style.setProperty('--sy', (Math.sin(ang) * dist - 50) + 'px');
+      c.style.animationDelay = (i * 0.04 + 0.1) + 's';
+      document.body.appendChild(c);
+      (function(e){ setTimeout(function(){ e.remove(); }, 1900); })(c);
     }
     // 打ち上げ花火1発（中央上空）
     var fwColors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff'];
-    setTimeout(function(){ rsvLaunchFireworkRealisticOverlay(vw * 0.50, vh * 0.30, fwColors, 35); }, 150);
+    setTimeout(function(){ rsvLaunchFireworkRealisticOverlay(vw * 0.50, vh * 0.30, fwColors, 38); }, 200);
     rsvShowMilestoneBanner('大感謝🎉', false, 2);
   }
 
@@ -6713,8 +6780,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   function rsvMilestoneL4Mega() {
-    // ¥4k：階段の4段目（神様クラスの一歩手前・花火4発・軽シェイク）
-    // → 軽い画面シェイク + 花火4発 + 🔥×14 + 紙吹雪×50 + バナー
+    // ¥4k：階段の4段目（神様クラスの一歩手前・巨大ビオくん・両サイド踊るビオくん×6）
+    // → 軽シェイク + 花火4発 + 🔥×14 + 巨大🐣（5rem）+ 踊るビオくん×6 + 虹burst×4 + 紙吹雪×50 + バナー
     rsvHighlightTotalBar(2600);
     rsvSpawnScreenShake();
     var colors = ['#ff3b8c', '#ff8c00', '#ffd700', '#00b0ff', '#8c00ff', '#ff6b2b'];
@@ -6723,7 +6790,46 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var barRect = rsvGetTotalBarRect();
     var anchorX = barRect ? (barRect.left + barRect.right) / 2 : vw / 2;
     var anchorY = barRect ? barRect.top : vh * 0.85;
-    // 4発の打ち上げ花火（神様クラス7発より明らかに少ない・控えめ）
+    // 虹光線burst×4（広範囲・時間差連発）
+    [0, 150, 300, 500].forEach(function(delay, idx) {
+      setTimeout(function(){
+        var burst = document.createElement('div');
+        burst.className = 'rsv-fx-rainbow-burst';
+        var bx = anchorX + (idx === 0 ? 0 : (idx % 2 === 0 ? -120 : 120) * (1 + idx * 0.15));
+        var by = anchorY - 150 - idx * 25;
+        burst.style.left = bx + 'px';
+        burst.style.top = by + 'px';
+        document.body.appendChild(burst);
+        setTimeout(function(){ burst.remove(); }, 2000);
+      }, delay);
+    });
+    // 巨大🐣ビオくん（5rem・¥3kより大きい）
+    var bigBio = document.createElement('span');
+    bigBio.className = 'rsv-bio-kun';
+    bigBio.style.position = 'fixed';
+    bigBio.style.zIndex = '9999';
+    bigBio.style.fontSize = '5rem';
+    bigBio.style.left = (anchorX - 40) + 'px';
+    bigBio.style.top = (anchorY - 290) + 'px';
+    bigBio.textContent = '🐣';
+    document.body.appendChild(bigBio);
+    setTimeout(function(){ bigBio.remove(); }, 2600);
+    // 両サイドから踊るビオくん×6（左右各3匹）
+    ['left', 'right'].forEach(function(side, sIdx) {
+      for (var i = 0; i < 3; i++) {
+        (function(idx, s) {
+          setTimeout(function(){
+            var bio = document.createElement('span');
+            bio.className = 'rsv-fx-dancing-bio rsv-fx-dancing-bio--' + s;
+            bio.textContent = '🐣';
+            bio.style.top = (20 + idx * 25) + '%';
+            bio.style.fontSize = '2.6rem';
+            document.body.appendChild(bio);
+          }, idx * 100 + sIdx * 60);
+        })(i, side);
+      }
+    });
+    // 4発の打ち上げ花火
     var launches = [
       { x: vw * 0.30, y: vh * 0.30, count: 50, delay: 0   },
       { x: vw * 0.70, y: vh * 0.30, count: 50, delay: 220 },
