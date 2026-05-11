@@ -6481,15 +6481,17 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (isStamp) classes += ' is-stamp';
     banner.className = classes;
     banner.textContent = text;
-    // 合計金額（rsv-total内の strong要素）の右上に密着配置
+    // 合計金額（rsv-total内の strong要素）の右上に配置（被らない距離を確保）
     var totalStrong = document.querySelector('.rsv-total strong');
     var barRect = rsvGetTotalBarRect();
     if (totalStrong) {
       var strongRect = totalStrong.getBoundingClientRect();
-      // バナー左端が金額の右 +10px に来るよう調整（バナー幅約180-300px）
-      var halfBannerW = isRainbow ? 150 : 95;
-      banner.style.left = (strongRect.right + 10 + halfBannerW) + 'px';
-      banner.style.top = (strongRect.top - 30) + 'px';
+      // バナー幅の半分（translateX -50% 補正）+ 金額右からのクリアランス
+      // スタンプ斜めで広めにクリアランス、虹は文字幅広いので最大、通常はその中間
+      var halfBannerW = isStamp ? 140 : (isRainbow ? 150 : 100);
+      var clearance = isStamp ? 40 : 20;  // 金額からのクリアランス
+      banner.style.left = (strongRect.right + clearance + halfBannerW) + 'px';
+      banner.style.top = (strongRect.top - 35) + 'px';
       banner.style.bottom = 'auto';
     } else if (barRect) {
       // フォールバック：合計バーの真上
