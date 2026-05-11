@@ -6555,7 +6555,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     setTimeout(function(){ banner.remove(); }, 3000);
   }
 
-  function rsvShowQuantityEffect(v, rsvItemEl) {
+  function rsvShowQuantityEffect(v, rsvItemEl, deferBigMilestoneMs) {
     if (!rsvItemEl || v <= 0) return;
     // 1個目（qty が 0→1）：初回タップメッセージ
     if (v === 1) {
@@ -6571,11 +6571,18 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     // qty=5 のマイルストーンは廃止（"今まで通り" のキラキラ＋紙吹雪のみ）
     var lastLevel = parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10);
     if (newLevel > lastLevel) {
-      // 大マイルストーン発火時はスクロール固定（カクカク防止＋画面が動かないように）
-      var lockDuration = newLevel >= 4 ? 6000 : 2500; // 20個=神様クラスは5.5秒
-      rsvLockScrollFor(lockDuration);
-      rsvShowQuantityMilestone(newLevel, rsvItemEl);
-      rsvItemEl.dataset.lastQtyLevel = newLevel;
+      rsvItemEl.dataset.lastQtyLevel = newLevel; // 即時マーク（再発火防止）
+      var lockDuration = newLevel >= 4 ? 6000 : 2500;
+      var fireQtyMilestone = function() {
+        rsvLockScrollFor(lockDuration);
+        rsvShowQuantityMilestone(newLevel, rsvItemEl);
+      };
+      // 料金演出と同時の場合、個数大マイルストーンを遅延（料金演出が先）
+      if (deferBigMilestoneMs && deferBigMilestoneMs > 0) {
+        setTimeout(fireQtyMilestone, deferBigMilestoneMs);
+      } else {
+        fireQtyMilestone();
+      }
     }
   }
 
@@ -7830,20 +7837,34 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         var maxVal = parseInt(input.max, 10) || 999;
         var v = btn.dataset.act === '+' ? Math.min(maxVal, oldV + 1) : Math.max(0, oldV - 1);
         input.value = v;
-        // 個数大マイルストーン(v=10/15/20)が同時発火するか判定 → 料金演出を遅延
-        // qty=5 マイルストーンは廃止済なので判定不要
         var rsvItemEl = btn.closest('.rsv-item');
+
+        // 個数大マイルストーン(v=10/15/20)が同時発火するか判定
         var newQtyLevel = 0;
         if (v >= 20) newQtyLevel = 4;
         else if (v >= 15) newQtyLevel = 3;
         else if (v >= 10) newQtyLevel = 2;
         var lastQtyLevel = rsvItemEl ? parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10) : 0;
         var qtyMilestoneFires = v > oldV && newQtyLevel > lastQtyLevel;
-        // 個数マイルストーンが発火する瞬間は料金演出を3秒遅延（個数演出が先に表示完了するため）
-        rsvUpdateTotal(btn, qtyMilestoneFires ? 3000 : 0);
-        // 個数演出 統一システム：1〜20個まで全レベル発火（各メニュー独立）
+
+        // 料金マイルストーンが発火するか事前計算（_rsvLastTotal は更新前なので old とみなせる）
+        var newTotal = 0;
+        document.querySelectorAll('.rsv-qty__input').forEach(function(inp){
+          var q = parseInt(inp.value, 10) || 0;
+          var p = parseInt(inp.dataset.price, 10) || 0;
+          newTotal += q * p;
+        });
+        var oldPriceLevel = Math.min(5, Math.floor(_rsvLastTotal / 1000));
+        var newPriceLevel = Math.min(5, Math.floor(newTotal / 1000));
+        var priceMilestoneFires = newPriceLevel > oldPriceLevel;
+
+        var bothFire = qtyMilestoneFires && priceMilestoneFires;
+
+        // 料金演出は常に即時発火（hybrid フィナーレの「料金が先」式）
+        rsvUpdateTotal(btn, 0);
+        // 個数演出：小さい演出は即時。両方発火時は大マイルストーンのみ4秒遅延
         if (v > oldV) {
-          rsvShowQuantityEffect(v, rsvItemEl);
+          rsvShowQuantityEffect(v, rsvItemEl, bothFire ? 4000 : 0);
         }
       });
     });
