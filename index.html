@@ -7980,13 +7980,19 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         var newPriceLevel = Math.min(10, Math.floor(newTotal / 500));
         var priceMilestoneFires = newPriceLevel > oldPriceLevel;
 
-        var bothFire = qtyMilestoneFires && priceMilestoneFires;
-
-        // 料金演出は常に即時発火（hybrid フィナーレの「料金が先」式）
+        // 料金演出は常に即時発火
         rsvUpdateTotal(btn, 0);
-        // 個数演出：小さい演出は即時。両方発火時は大マイルストーンのみ4秒遅延
+        // タイミング被り時は個数演出を完全スキップ（目線を料金演出に集中させる）
         if (v > oldV) {
-          rsvShowQuantityEffect(v, rsvItemEl, bothFire ? 4000 : 0);
+          if (priceMilestoneFires) {
+            // 個数演出は出さない。ただし個数大マイルストーンの再発火防止用に lastQtyLevel だけ更新
+            if (qtyMilestoneFires && rsvItemEl) {
+              rsvItemEl.dataset.lastQtyLevel = newQtyLevel;
+            }
+          } else {
+            // 料金演出と被らないときのみ個数演出（小キラキラ・初回タップメッセージ・大マイルストーン）発火
+            rsvShowQuantityEffect(v, rsvItemEl, 0);
+          }
         }
       });
     });
