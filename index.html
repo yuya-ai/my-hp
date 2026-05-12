@@ -6617,13 +6617,13 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       rsvShowFirstTapMessage(rsvItemEl);
     }
     rsvShowQtyTick(rsvItemEl); // 毎クリック ➕付近キラキラ+紙吹雪
-    // 大マイルストーン2段階：qty=10/15 のみ発火
-    // qty=5 太っ腹 / qty=20 神様クラスは廃止済
-    // → 神様クラスは料金 ¥5000 のみ専用に変更（個数では発火させない）
+    // 大マイルストーン1段階：qty=15 のみ発火
+    // qty=5 太っ腹 / qty=10 大感謝 / qty=20 神様クラスは全て廃止済
+    // → 大感謝は料金 ¥2000 ビオくん大感謝🎉🎉 と混同するため qty=10 も削除
+    // → 神様クラスは料金 ¥5000 のみ専用
     var newLevel = 0;
     if (v >= 15) newLevel = 3;        // ビオくん大感激🐣
-    else if (v >= 10) newLevel = 2;   // 大感謝🎉
-    // qty=5/20 のマイルストーンは廃止（"今まで通り" のキラキラ＋紙吹雪のみ）
+    // qty=5/10/20 のマイルストーンは廃止（"今まで通り" のキラキラ＋紙吹雪のみ）
     var lastLevel = parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10);
     if (newLevel > lastLevel) {
       rsvItemEl.dataset.lastQtyLevel = newLevel; // 即時マーク（再発火防止）
@@ -8017,11 +8017,10 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         input.value = v;
         var rsvItemEl = btn.closest('.rsv-item');
 
-        // 個数大マイルストーン(v=10/15)が同時発火するか判定
-        // qty=20 神様クラスは廃止済（料金¥5000専用）
+        // 個数大マイルストーン(v=15)のみ発火
+        // qty=5/10/20 は廃止済（5=料金¥1k太っ腹、10=料金¥2k大感謝、20=料金¥5k神様と混同するため）
         var newQtyLevel = 0;
         if (v >= 15) newQtyLevel = 3;
-        else if (v >= 10) newQtyLevel = 2;
         var lastQtyLevel = rsvItemEl ? parseInt(rsvItemEl.dataset.lastQtyLevel || '0', 10) : 0;
         var qtyMilestoneFires = v > oldV && newQtyLevel > lastQtyLevel;
 
