@@ -2686,6 +2686,30 @@ html.rsv-fx-locked {
   100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.02); }
 }
 
+/* ===== 「ズーム叩きつけ」式アニメ（必殺技スタイル・スマホ） ===== */
+/* 巨大size から一気に scale 1 へ叩きつける・アニメ必殺技風「ドンッ！」 */
+.rsv-fx-mini-banner.is-slam,
+.rsv-fx-item-banner.is-slam {
+  animation: rsv-fx-banner-zoom-slam 3.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+.rsv-fx-mini-banner.is-slam.is-rainbow,
+.rsv-fx-item-banner.is-slam.is-rainbow {
+  animation: rsv-fx-banner-zoom-slam 3.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+@keyframes rsv-fx-banner-zoom-slam {
+  /* GPU合成のみ: transform + opacity（filter:blur 一切なし） */
+  0%   { opacity: 0; transform: translate(-50%, 0) scale(6) rotate(-8deg); }
+  5%   { opacity: 0.4; transform: translate(-50%, 0) scale(4.2) rotate(-5deg); }
+  10%  { opacity: 1; transform: translate(-50%, 0) scale(2.2) rotate(-2deg); }
+  14%  { transform: translate(-50%, 0) scale(0.88) rotate(0); }  /* ドンッ！着地 */
+  20%  { transform: translate(-50%, 0) scale(1.18) rotate(0); }  /* バウンド */
+  26%  { transform: translate(-50%, 0) scale(0.95) rotate(0); }
+  32%  { transform: translate(-50%, 0) scale(1.04) rotate(0); }
+  38%  { transform: translate(-50%, 0) scale(1) rotate(0); }
+  85%  { opacity: 1; transform: translate(-50%, 0) scale(1) rotate(0); }
+  100% { opacity: 0; transform: translate(-50%, -30px) scale(1.1) rotate(0); }
+}
+
 /* ===== 「弾丸射出」式アニメ（料金=合計バー起点 / 個数=商品カード起点・スマホ） ===== */
 /* 全てtransform + opacity + box-shadow（固定値）のみ・GPU合成完結＝カクつき保証ゼロ */
 .rsv-fx-mini-banner.is-bullet,
@@ -6670,45 +6694,20 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var isMobile = window.innerWidth <= 767;
 
     if (isMobile) {
-      // スマホ：弾丸射出式（商品カードの qty 位置 → viewport上部18%へ打ち上げ）
-      // → 料金バナーと演出統一・起点だけ違う（料金=合計バー / 個数=商品カード）
+      // スマホ：ズーム叩きつけ式（料金バナーと演出統一）
       var targetXq = window.innerWidth / 2;
       var targetYq = Math.round(window.innerHeight * 0.18);
 
-      // 商品 qty 位置を起点に
-      var qtyElQ = rsvItemEl ? rsvItemEl.querySelector('.rsv-qty') : null;
-      var startYqAbs;
-      if (qtyElQ) {
-        var qr = qtyElQ.getBoundingClientRect();
-        startYqAbs = qr.top + qr.height / 2;
-      } else if (rsvItemEl) {
-        var ir = rsvItemEl.getBoundingClientRect();
-        startYqAbs = ir.top + ir.height / 2;
-      } else {
-        startYqAbs = window.innerHeight - 60;
-      }
-      var bulletDistanceQ = startYqAbs - targetYq;
-
-      // 1. 弾丸軌跡（縦streak）
-      var trailQ = document.createElement('div');
-      trailQ.className = 'rsv-fx-bullet-trail';
-      trailQ.style.left = (targetXq - 4) + 'px';
-      trailQ.style.top = targetYq + 'px';
-      trailQ.style.height = Math.max(0, bulletDistanceQ) + 'px';
-      document.body.appendChild(trailQ);
-      setTimeout(function(){ trailQ.remove(); }, 520);
-
-      // 2. バナーを弾丸アニメで打ち上げ
-      banner.classList.add('is-bullet');
+      // バナーを zoom-slam アニメで叩きつけ（軌跡なし・巨大からズームダウン）
+      banner.classList.add('is-slam');
       banner.style.position = 'fixed';
       banner.style.bottom = 'auto';
       banner.style.left = '50%';
       banner.style.top = targetYq + 'px';
-      banner.style.setProperty('--bullet-start-y', bulletDistanceQ + 'px');
       banner.style.zIndex = '9998';
       document.body.appendChild(banner);
 
-      // 3. 着地タイミング(540ms)で shockwave + 爆発粒
+      // 着地タイミング(490ms)で shockwave + 爆発粒（zoom-slam 14%=490ms と同期）
       setTimeout(function() {
         var waveQ = document.createElement('div');
         waveQ.className = 'rsv-fx-shockwave';
@@ -6744,7 +6743,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           document.body.appendChild(pQ);
           (function(e){ setTimeout(function(){ e.remove(); }, 2200); })(pQ);
         }
-      }, 540);
+      }, 490);
 
       setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
       return;
@@ -6910,34 +6909,19 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var vh = window.innerHeight;
 
     if (isMobileP) {
-      // スマホ：弾丸射出式 — 合計バーから打ち上げ→画面上部18%で着地（商品カードを覆わない）
+      // スマホ：ズーム叩きつけ式 — 巨大→1.0で叩きつけ着地（必殺技スタイル）
       var targetXm = window.innerWidth / 2;
       var targetYm = Math.round(vh * 0.18);
 
-      // 合計バー中心 Y を起点に
-      var barRectM = rsvGetTotalBarRect();
-      var startYabs = barRectM ? (barRectM.top + barRectM.bottom) / 2 : (vh - 60);
-      var bulletDistance = startYabs - targetYm; // 上昇距離（px）
-
-      // 1. 弾丸軌跡（縦streak）を targetY から startY まで描画
-      var trail = document.createElement('div');
-      trail.className = 'rsv-fx-bullet-trail';
-      trail.style.left = (targetXm - 4) + 'px';
-      trail.style.top = targetYm + 'px';
-      trail.style.height = Math.max(0, bulletDistance) + 'px';
-      document.body.appendChild(trail);
-      setTimeout(function(){ trail.remove(); }, 520);
-
-      // 2. バナーを弾丸アニメで打ち上げ（合計バー位置 → 中心着地・bounce）
-      banner.classList.add('is-bullet');
+      // バナーを zoom-slam アニメで叩きつけ（軌跡なし・巨大からズームダウンで現れる）
+      banner.classList.add('is-slam');
       banner.style.position = 'fixed';
       banner.style.bottom = 'auto';
       banner.style.left = '50%';
       banner.style.top = targetYm + 'px';
-      banner.style.setProperty('--bullet-start-y', bulletDistance + 'px');
       document.body.appendChild(banner);
 
-      // 3. 着地タイミング(540ms)で衝撃波 shockwave + 爆発粒（弾丸アニメ16%=560ms と同期）
+      // 着地タイミング(490ms)で衝撃波 shockwave + 爆発粒（zoom-slam 14%=490ms と同期）
       setTimeout(function() {
         var wave = document.createElement('div');
         wave.className = 'rsv-fx-shockwave';
@@ -6974,7 +6958,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           document.body.appendChild(p);
           (function(e){ setTimeout(function(){ e.remove(); }, 2200); })(p);
         }
-      }, 540);
+      }, 490);
 
       setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
       banner.dataset.alreadyAppended = '1';
