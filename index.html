@@ -2686,28 +2686,6 @@ html.rsv-fx-locked {
   100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scale(1.02); }
 }
 
-/* ===== 「忍者シュリケン」式アニメ（横回転スピン・スマホ） ===== */
-/* 画面外右から720度回転しながら飛んでくる・中心で急停止＋バウンド */
-.rsv-fx-mini-banner.is-shuriken,
-.rsv-fx-item-banner.is-shuriken {
-  animation: rsv-fx-banner-shuriken 3.5s cubic-bezier(0.18, 0.95, 0.30, 1.05) forwards !important;
-}
-.rsv-fx-mini-banner.is-shuriken.is-rainbow,
-.rsv-fx-item-banner.is-shuriken.is-rainbow {
-  animation: rsv-fx-banner-shuriken 3.8s cubic-bezier(0.18, 0.95, 0.30, 1.05) forwards !important;
-}
-@keyframes rsv-fx-banner-shuriken {
-  /* GPU合成のみ: transform + opacity・filter:blur 一切なし */
-  0%   { opacity: 0; transform: translate(calc(50vw + 50%), 0) rotate(0deg) scale(0.3); }
-  4%   { opacity: 1; transform: translate(calc(50vw + 50%), 0) rotate(0deg) scale(0.3); }
-  14%  { opacity: 1; transform: translate(-50%, 0) rotate(720deg) scale(1.3); }
-  22%  { transform: translate(-50%, 0) rotate(720deg) scale(0.85); }
-  30%  { transform: translate(-50%, 0) rotate(720deg) scale(1.08); }
-  37%  { transform: translate(-50%, 0) rotate(720deg) scale(1); }
-  85%  { opacity: 1; transform: translate(-50%, 0) rotate(720deg) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -30px) rotate(720deg) scale(1.1); }
-}
-
 /* ===== 「弾丸射出」式アニメ（料金=合計バー起点 / 個数=商品カード起点・スマホ） ===== */
 /* 全てtransform + opacity + box-shadow（固定値）のみ・GPU合成完結＝カクつき保証ゼロ */
 .rsv-fx-mini-banner.is-bullet,
@@ -6692,20 +6670,45 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var isMobile = window.innerWidth <= 767;
 
     if (isMobile) {
-      // スマホ：忍者シュリケン式（料金バナーと演出統一）
+      // スマホ：弾丸射出式（商品カードの qty 位置 → viewport上部18%へ打ち上げ）
+      // → 料金バナーと演出統一・起点だけ違う（料金=合計バー / 個数=商品カード）
       var targetXq = window.innerWidth / 2;
       var targetYq = Math.round(window.innerHeight * 0.18);
 
-      // バナーをシュリケンアニメで投擲（軌跡なし・横移動＋720度回転）
-      banner.classList.add('is-shuriken');
+      // 商品 qty 位置を起点に
+      var qtyElQ = rsvItemEl ? rsvItemEl.querySelector('.rsv-qty') : null;
+      var startYqAbs;
+      if (qtyElQ) {
+        var qr = qtyElQ.getBoundingClientRect();
+        startYqAbs = qr.top + qr.height / 2;
+      } else if (rsvItemEl) {
+        var ir = rsvItemEl.getBoundingClientRect();
+        startYqAbs = ir.top + ir.height / 2;
+      } else {
+        startYqAbs = window.innerHeight - 60;
+      }
+      var bulletDistanceQ = startYqAbs - targetYq;
+
+      // 1. 弾丸軌跡（縦streak）
+      var trailQ = document.createElement('div');
+      trailQ.className = 'rsv-fx-bullet-trail';
+      trailQ.style.left = (targetXq - 4) + 'px';
+      trailQ.style.top = targetYq + 'px';
+      trailQ.style.height = Math.max(0, bulletDistanceQ) + 'px';
+      document.body.appendChild(trailQ);
+      setTimeout(function(){ trailQ.remove(); }, 520);
+
+      // 2. バナーを弾丸アニメで打ち上げ
+      banner.classList.add('is-bullet');
       banner.style.position = 'fixed';
       banner.style.bottom = 'auto';
       banner.style.left = '50%';
       banner.style.top = targetYq + 'px';
+      banner.style.setProperty('--bullet-start-y', bulletDistanceQ + 'px');
       banner.style.zIndex = '9998';
       document.body.appendChild(banner);
 
-      // 着地タイミング(490ms)で shockwave + 爆発粒（shuriken 14%=490ms と同期）
+      // 3. 着地タイミング(540ms)で shockwave + 爆発粒
       setTimeout(function() {
         var waveQ = document.createElement('div');
         waveQ.className = 'rsv-fx-shockwave';
@@ -6741,7 +6744,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           document.body.appendChild(pQ);
           (function(e){ setTimeout(function(){ e.remove(); }, 2200); })(pQ);
         }
-      }, 490);
+      }, 540);
 
       setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
       return;
@@ -6907,19 +6910,34 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     var vh = window.innerHeight;
 
     if (isMobileP) {
-      // スマホ：忍者シュリケン式 — 画面外右から720度回転しながら飛んでくる→中心で急停止
+      // スマホ：弾丸射出式 — 合計バーから打ち上げ→画面上部18%で着地（商品カードを覆わない）
       var targetXm = window.innerWidth / 2;
       var targetYm = Math.round(vh * 0.18);
 
-      // バナーをシュリケンアニメで投擲（軌跡なし・横移動＋猛回転）
-      banner.classList.add('is-shuriken');
+      // 合計バー中心 Y を起点に
+      var barRectM = rsvGetTotalBarRect();
+      var startYabs = barRectM ? (barRectM.top + barRectM.bottom) / 2 : (vh - 60);
+      var bulletDistance = startYabs - targetYm; // 上昇距離（px）
+
+      // 1. 弾丸軌跡（縦streak）を targetY から startY まで描画
+      var trail = document.createElement('div');
+      trail.className = 'rsv-fx-bullet-trail';
+      trail.style.left = (targetXm - 4) + 'px';
+      trail.style.top = targetYm + 'px';
+      trail.style.height = Math.max(0, bulletDistance) + 'px';
+      document.body.appendChild(trail);
+      setTimeout(function(){ trail.remove(); }, 520);
+
+      // 2. バナーを弾丸アニメで打ち上げ（合計バー位置 → 中心着地・bounce）
+      banner.classList.add('is-bullet');
       banner.style.position = 'fixed';
       banner.style.bottom = 'auto';
       banner.style.left = '50%';
       banner.style.top = targetYm + 'px';
+      banner.style.setProperty('--bullet-start-y', bulletDistance + 'px');
       document.body.appendChild(banner);
 
-      // 着地タイミング(490ms)で衝撃波 shockwave + 爆発粒（shuriken 14%=490ms と同期）
+      // 3. 着地タイミング(540ms)で衝撃波 shockwave + 爆発粒（弾丸アニメ16%=560ms と同期）
       setTimeout(function() {
         var wave = document.createElement('div');
         wave.className = 'rsv-fx-shockwave';
@@ -6956,7 +6974,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           document.body.appendChild(p);
           (function(e){ setTimeout(function(){ e.remove(); }, 2200); })(p);
         }
-      }, 490);
+      }, 540);
 
       setTimeout(function(){ banner.remove(); }, isRainbow ? 3800 : 3500);
       banner.dataset.alreadyAppended = '1';
