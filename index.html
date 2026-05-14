@@ -134,6 +134,80 @@
 }
 </script>
 
+<!-- ===== Schema.org JSON-LD（FAQPage・リッチリザルト対応）===== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "事前予約は必要ですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "いなり寿司・ガーリックチキンともに1個から、当日のお電話でもお取り置きが可能です（098-944-4191）。LINEでのご予約も24時間承っております。重箱や大量ご注文の場合は前日までのご予約をおすすめしております。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "重箱は何個から注文できますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "重箱は最大15個入りまでお作りできます（別途料金340円）。少数の組み合わせ注文も承っておりますので、お気軽にご相談ください。清明祭・旧盆の時期は早めのご予約を強くおすすめいたします。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "駐車場はありますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "店舗は南城市大里・JAアトール向かいに位置しております。お近くのスペースをご利用いただけます。テイクアウト専門のため、お受け取り後すぐにご移動いただけます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "テイクアウト料金（容器代）はかかりますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "通常メニューには容器代等の追加料金はございません。重箱（15個入り）のみ別途340円を頂戴しております。お持ち帰りに便利な手提げ袋もご用意しております。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "清明祭・旧盆の重箱は予約必須ですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "清明祭（シーミー）・旧盆・お正月の時期は大変混雑いたしますため、お早めのご予約を強くおすすめしております。1週間前までにお電話（098-944-4191）またはLINEでご予約ください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "支払い方法は何が使えますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "大変申し訳ございませんが、現金のみのお取り扱いとなっております。クレジットカード・電子マネー・QRコード決済はご利用いただけません。お釣りのないようご準備いただけますとスムーズです。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "売り切れることはありますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "手作りのため、その日の販売数に限りがございます。売り切れ次第終了となっておりますので、確実にお求めいただきたい場合は事前のご予約をおすすめいたします。お電話で在庫確認も承ります（098-944-4191）。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "アレルギー対応はしていますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "主な原材料は、米・酢・砂糖・油揚げ（いなり寿司）、鶏肉・小麦粉・にんにく・醤油・卵（ガーリックチキン）です。アレルギー成分について詳細をお知りになりたい場合は、お電話（098-944-4191）にてお気軽にお問い合わせください。"
+      }
+    }
+  ]
+}
+</script>
+
 <!-- ===== ホーム画面追加（PWA-lite）対応 ===== -->
 <meta name="theme-color" content="#FF8C42">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -5065,6 +5139,205 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     <button type="button" class="rsv-modal__close" onclick="rsvCloseModal()">閉じる</button>
   </div>
 </div>
+
+<!-- ============= FAQ よくあるご質問 ============= -->
+<style>
+.faq-section {
+  background: var(--bg-warm, #fdf2ad);
+  padding: 80px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.faq-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+.faq-section__inner {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+.faq-section__pretitle {
+  text-align: center;
+  font-family: 'Caveat', 'Klee One', cursive;
+  font-size: 1.6rem;
+  color: var(--orange, #ff8c42);
+  margin: 0 0 4px;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+}
+.faq-section__title {
+  text-align: center;
+  font-family: 'Klee One', 'Noto Sans JP', serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--brown, #323131);
+  margin: 0 0 12px;
+}
+.faq-section__lead {
+  text-align: center;
+  font-family: 'Klee One', 'Noto Sans JP', serif;
+  color: var(--brown, #323131);
+  margin: 0 0 48px;
+  font-size: 1rem;
+  opacity: 0.85;
+  line-height: 1.7;
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.faq-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 0;
+  box-shadow: 0 2px 12px rgba(50, 49, 49, 0.08);
+  border-left: 5px solid var(--orange, #ff8c42);
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.faq-item:hover {
+  box-shadow: 0 4px 16px rgba(50, 49, 49, 0.12);
+}
+.faq-item[open] {
+  box-shadow: 0 6px 24px rgba(255, 140, 66, 0.18);
+}
+.faq-item__q {
+  font-family: 'Klee One', 'Noto Sans JP', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--brown, #323131);
+  list-style: none;
+  position: relative;
+  padding: 22px 60px 22px 26px;
+  user-select: none;
+  line-height: 1.5;
+}
+.faq-item__q::-webkit-details-marker { display: none; }
+.faq-item__q::marker { content: ''; }
+.faq-item__q::after {
+  content: '+';
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.8rem;
+  color: var(--orange, #ff8c42);
+  font-weight: 300;
+  transition: transform 0.25s ease;
+  line-height: 1;
+  width: 24px;
+  text-align: center;
+}
+.faq-item[open] .faq-item__q::after {
+  content: '−';
+  transform: translateY(-50%) rotate(180deg);
+}
+.faq-item__a {
+  margin: 0;
+  padding: 0 26px 24px 26px;
+  font-family: 'Klee One', 'Noto Sans JP', serif;
+  line-height: 1.85;
+  color: var(--brown, #323131);
+  font-size: 0.95rem;
+  border-top: 1px dashed rgba(255, 140, 66, 0.3);
+  padding-top: 18px;
+  margin-top: 0;
+}
+.faq-item__a strong {
+  color: var(--orange, #ff8c42);
+  font-weight: 700;
+}
+.faq-item__a a {
+  color: var(--orange, #ff8c42);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid var(--orange, #ff8c42);
+  padding-bottom: 1px;
+}
+.faq-item__a a:hover {
+  background: rgba(255, 140, 66, 0.08);
+}
+.faq-section__footer {
+  margin-top: 40px;
+  text-align: center;
+  font-family: 'Klee One', 'Noto Sans JP', serif;
+  font-size: 0.9rem;
+  color: var(--brown, #323131);
+  opacity: 0.75;
+}
+.faq-section__footer a {
+  color: var(--orange, #ff8c42);
+  font-weight: 700;
+  text-decoration: none;
+}
+@media (max-width: 767px) {
+  .faq-section { padding: 60px 16px; }
+  .faq-section__pretitle { font-size: 1.4rem; }
+  .faq-section__title { font-size: 1.7rem; }
+  .faq-section__lead { font-size: 0.9rem; margin-bottom: 36px; }
+  .faq-item__q { font-size: 0.98rem; padding: 18px 50px 18px 20px; }
+  .faq-item__q::after { right: 18px; font-size: 1.6rem; }
+  .faq-item__a { padding: 18px 20px 20px 20px; font-size: 0.9rem; }
+}
+</style>
+<section class="faq-section" id="faq">
+  <div class="faq-section__inner">
+    <p class="faq-section__pretitle">— FAQ —</p>
+    <h2 class="faq-section__title">よくあるご質問</h2>
+    <p class="faq-section__lead">お電話の前に、こちらをご確認いただけますと幸いです🌸</p>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary class="faq-item__q">Q. 事前予約は必要ですか？</summary>
+        <p class="faq-item__a">いなり寿司・ガーリックチキンともに <strong>1個から</strong>、当日のお電話でもお取り置きが可能です（<a href="tel:098-944-4191">098-944-4191</a>）。LINEでのご予約も24時間承っております。<strong>重箱や大量ご注文の場合は前日までのご予約</strong>をおすすめしております。</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-item__q">Q. 重箱は何個から注文できますか？</summary>
+        <p class="faq-item__a">重箱は <strong>最大15個入り</strong> までお作りできます（別途料金 340円）。少数の組み合わせ注文も承っておりますので、お気軽にご相談ください。<strong>清明祭（シーミー）・旧盆の時期は早めのご予約</strong> を強くおすすめいたします。</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-item__q">Q. 駐車場はありますか？</summary>
+        <p class="faq-item__a">店舗は <strong>南城市大里・JAアトール向かい</strong> に位置しております。お近くのスペースをご利用いただけます。テイクアウト専門のため、お受け取り後すぐにご移動いただけます。</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-item__q">Q. テイクアウト料金（容器代）はかかりますか？</summary>
+        <p class="faq-item__a">通常メニューには <strong>容器代等の追加料金はございません</strong>。重箱（15個入り）のみ別途 340円を頂戴しております。お持ち帰りに便利な手提げ袋もご用意しております。</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-item__q">Q. 清明祭・旧盆の重箱は予約必須ですか？</summary>
+        <p class="faq-item__a"><strong>清明祭（シーミー）・旧盆・お正月</strong> の時期は大変混雑いたしますため、お早めのご予約を強くおすすめしております。1週間前までにお電話（<a href="tel:098-944-4191">098-944-4191</a>）またはLINEでご予約ください。</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-item__q">Q. 支払い方法は何が使えますか？</summary>
+        <p class="faq-item__a">大変申し訳ございませんが、<strong>現金のみ</strong> のお取り扱いとなっております。クレジットカード・電子マネー・QRコード決済はご利用いただけません。お釣りのないようご準備いただけますとスムーズです🙏</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-item__q">Q. 売り切れることはありますか？</summary>
+        <p class="faq-item__a">手作りのため、その日の販売数に限りがございます。<strong>「売り切れ次第終了」</strong> となっておりますので、確実にお求めいただきたい場合は事前のご予約をおすすめいたします。お電話で在庫確認も承ります（<a href="tel:098-944-4191">098-944-4191</a>）。</p>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-item__q">Q. アレルギー対応はしていますか？</summary>
+        <p class="faq-item__a">主な原材料は、<strong>米・酢・砂糖・油揚げ</strong>（いなり寿司）、<strong>鶏肉・小麦粉・にんにく・醤油・卵</strong>（ガーリックチキン）です。アレルギー成分について詳細をお知りになりたい場合は、お電話（<a href="tel:098-944-4191">098-944-4191</a>）にてお気軽にお問い合わせください。</p>
+      </details>
+
+    </div>
+    <p class="faq-section__footer">その他のご質問は、お気軽に <a href="tel:098-944-4191">📞 098-944-4191</a> またはLINEまでお問い合わせください🌸</p>
+  </div>
+</section>
 
 <!-- ============= SCENE / STAFF（ポラロイド風スライド） ============= -->
 <section class="scene-section" id="staff">
