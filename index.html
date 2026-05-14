@@ -4767,6 +4767,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       <a href="#" class="is-current">Home</a>
       <a href="#about">ビオについて</a>
       <a href="#reserve">メニュー・ネット注文</a>
+      <a href="#faq">よくある質問</a>
       <a href="#shop">店舗情報</a>
       <a href="#order">ご来店</a>
     </nav>
@@ -5268,11 +5269,60 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   margin-top: 40px;
   text-align: center;
   font-family: 'Klee One', 'Noto Sans JP', serif;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--brown, #323131);
-  opacity: 0.75;
 }
-.faq-section__footer a {
+.faq-section__footer-lead {
+  margin: 0 0 20px;
+  opacity: 0.85;
+  line-height: 1.7;
+}
+.faq-section__footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin: 0 0 20px;
+}
+.faq-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-family: 'Klee One', 'Noto Sans JP', serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.faq-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(50, 49, 49, 0.15);
+}
+.faq-action-btn--reserve {
+  background: var(--orange, #ff8c42);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+}
+.faq-action-btn--shop {
+  background: #fff;
+  color: var(--brown, #323131);
+  border: 2px solid var(--brown, #323131);
+}
+.faq-action-btn--phone {
+  background: #fff;
+  color: var(--orange, #ff8c42);
+  border: 2px solid var(--orange, #ff8c42);
+}
+.faq-section__footer-note {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  line-height: 1.6;
+}
+.faq-section__footer-note a {
   color: var(--orange, #ff8c42);
   font-weight: 700;
   text-decoration: none;
@@ -5285,6 +5335,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   .faq-item__q { font-size: 0.98rem; padding: 18px 50px 18px 20px; }
   .faq-item__q::after { right: 18px; font-size: 1.6rem; }
   .faq-item__a { padding: 18px 20px 20px 20px; font-size: 0.9rem; }
+  .faq-action-btn { padding: 12px 18px; font-size: 0.9rem; flex: 1 1 calc(50% - 6px); justify-content: center; }
+  .faq-section__footer-actions { gap: 10px; }
 }
 </style>
 <section class="faq-section" id="faq">
@@ -5335,7 +5387,21 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       </details>
 
     </div>
-    <p class="faq-section__footer">その他のご質問は、お気軽に <a href="tel:098-944-4191">📞 098-944-4191</a> またはLINEまでお問い合わせください🌸</p>
+    <div class="faq-section__footer">
+      <p class="faq-section__footer-lead">疑問は解消されましたか？お気軽にご注文・ご来店ください🌸</p>
+      <div class="faq-section__footer-actions">
+        <a href="#reserve" class="faq-action-btn faq-action-btn--reserve">
+          <span aria-hidden="true">🍱</span> ネット注文・ご予約はこちら
+        </a>
+        <a href="#shop" class="faq-action-btn faq-action-btn--shop">
+          <span aria-hidden="true">📍</span> 店舗情報・地図を見る
+        </a>
+        <a href="tel:098-944-4191" class="faq-action-btn faq-action-btn--phone">
+          <span aria-hidden="true">📞</span> 098-944-4191
+        </a>
+      </div>
+      <p class="faq-section__footer-note">その他のご質問は、お気軽に <a href="tel:098-944-4191">お電話</a> またはLINEまでお問い合わせください🙏</p>
+    </div>
   </div>
 </section>
 
@@ -5645,6 +5711,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     <li><a href="#" class="js-mobile-link">Home</a></li>
     <li><a href="#about" class="js-mobile-link">ビオについて</a></li>
     <li><a href="#reserve" class="js-mobile-link">メニュー・ネット注文</a></li>
+    <li><a href="#faq" class="js-mobile-link">よくある質問</a></li>
     <li><a href="#shop" class="js-mobile-link">店舗情報</a></li>
     <li><a href="#order" class="js-mobile-link">ご来店</a></li>
   </ul>
