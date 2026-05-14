@@ -93,14 +93,7 @@
   var statusEl = document.getElementById('status');
   var subEl = document.getElementById('sub');
 
-  function setSuccess(text) {
-    wrap.classList.remove('err');
-    wrap.classList.add('ok');
-    spinner.style.display = 'none';
-    icon.textContent = '✨';
-    statusEl.textContent = text;
-    subEl.innerHTML = 'LINEのトーク画面でご確認ください💕<br><br><a href="https://line.me/R/ti/p/@708zxzjm" class="retry">LINEを開く →</a>';
-  }
+  var LINE_URL = 'https://line.me/R/ti/p/@708zxzjm';
 
   function setError(text, sub) {
     wrap.classList.remove('ok');
@@ -108,21 +101,26 @@
     spinner.style.display = 'none';
     icon.textContent = '🙏';
     statusEl.textContent = text;
-    subEl.textContent = sub || 'お手数ですがもう一度お試しください';
+    subEl.innerHTML = (sub || 'お手数ですがもう一度お試しください') +
+      '<br><br><a href="' + LINE_URL + '" class="retry" target="_top">LINEを開く →</a>';
   }
 
   function autoOpenLine() {
-    var url = 'https://line.me/R/ti/p/@708zxzjm';
-    // iOS Safari は <a> タグ クリック経由が Universal Link 起動率高い
-    var link = document.createElement('a');
-    link.href = url;
-    link.target = '_top';
-    link.rel = 'noopener';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    // 100ms後にバックアップで window.location.href も実行
-    setTimeout(function(){ window.location.href = url; }, 100);
+    var url = LINE_URL;
+    // ① <a target="_top"> クリック（iOS Universal Link 起動率最大）
+    try {
+      var link = document.createElement('a');
+      link.href = url;
+      link.target = '_top';
+      link.rel = 'noopener';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {}
+    // ② 即 location.replace（履歴を汚さず最速遷移）
+    try { window.location.replace(url); } catch (e) {}
+    // ③ 50ms 後 location.href（②が失敗した時のフォールバック）
+    setTimeout(function(){ try { window.location.href = url; } catch (e) {} }, 50);
   }
 
   function getPayloadParam() {
@@ -150,6 +148,20 @@
     }
   }
 
+  function firePush(userId, payloadB64) {
+    if (!userId) return;
+    try {
+      fetch(PUSH_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: userId, payload: payloadB64 }),
+        keepalive: true
+      }).catch(function(e){ console.error('push fetch failed:', e); });
+    } catch (e) {
+      console.error('push fetch sync failed:', e);
+    }
+  }
+
   async function main(payloadB64) {
     try {
       await liff.init({ liffId: LIFF_ID });
@@ -172,34 +184,18 @@
       console.error('liff.getProfile failed:', e);
     }
 
-    // userIdをlocalStorageにキャッシュ → 次回以降のLP訪問時にLIFFをスキップ可能
     if (userId) {
       try { localStorage.setItem('bio_line_user_id', userId); } catch (e) {}
-    }
-
-    // Push API は fire-and-forget（待たない・keepalive で navigation 後も継続送信）
-    if (userId) {
-      try {
-        fetch(PUSH_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: userId, payload: payloadB64 }),
-          keepalive: true
-        }).catch(function(e){ console.error('push fetch failed:', e); });
-      } catch (e) {
-        console.error('push fetch sync failed:', e);
-      }
+      firePush(userId, payloadB64);
     } else {
-      // userId 取得失敗時のみ sendMessages フォールバック
       try { fallbackSendMessage(payloadB64); } catch (e) {}
     }
 
-    // user activation が鮮度高いうちに即座にLINE遷移を実行
-    setSuccess('LINEを開いています…🌸');
+    // 成功画面を見せず即LINEへ遷移（user activation 鮮度MAX）
     if (liff.isInClient()) {
-      setTimeout(function(){ liff.closeWindow(); }, 1500);
+      liff.closeWindow();
     } else {
-      setTimeout(autoOpenLine, 200);
+      autoOpenLine();
     }
   }
 
@@ -208,6 +204,16 @@
     setError('予約データが見つかりません', '予約フォームからやり直してください🙏');
     return;
   }
+
+  // 🚀 Hot path: userIdキャッシュ済みなら LIFF をスキップして即LINE遷移
+  var cachedUserId = null;
+  try { cachedUserId = localStorage.getItem('bio_line_user_id'); } catch (e) {}
+  if (cachedUserId) {
+    firePush(cachedUserId, payloadB64);
+    autoOpenLine();
+    return;
+  }
+
   if (LIFF_ID === '__LIFF_ID__') {
     setError('LIFF IDが未設定です', 'システム管理者にご連絡ください🙏');
     return;
