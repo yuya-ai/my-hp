@@ -10,6 +10,25 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://my-hp-xi.vercel.app/">
 
+<!-- ===== Google tag (gtag.js) GA4: いなりとチキン ビオ LP ===== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7CD8NBZ9JY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7CD8NBZ9JY');
+
+  // CTAイベント自動計測（電話タップ・LINE誘導・地図誘導）
+  document.addEventListener('click', function(e) {
+    var tel  = e.target.closest('a[href^="tel:"]');
+    var line = e.target.closest('a[href*="line.me"], a[href*="liff.line.me"], a[href*="lin.ee"]');
+    var map  = e.target.closest('a[href*="google.com/maps"], a[href*="goo.gl/maps"], a[href*="maps.app.goo.gl"]');
+    if (tel)  gtag('event', 'phone_tap',       {event_category:'CTA', event_label: tel.href});
+    if (line) gtag('event', 'line_click',      {event_category:'CTA', event_label: line.href});
+    if (map)  gtag('event', 'map_click',       {event_category:'CTA', event_label: map.href});
+  });
+</script>
+
 <!-- ===== Open Graph（Facebook・LINE他）===== -->
 <meta property="og:type" content="restaurant">
 <meta property="og:title" content="いなりとチキン ビオ｜沖縄南城市のテイクアウト専門店">
