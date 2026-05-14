@@ -36,7 +36,7 @@ function buildReservationMessage(p) {
 💴 合計金額
 　${total}
 
-☎️ ビオの電話番号
+☎️ ビオの電話番号🐣
 　${PHONE}
 
 📍 店舗：いなりとチキン ビオ
