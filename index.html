@@ -3707,6 +3707,146 @@ html.rsv-fx-locked {
   display: block;
   margin-bottom: 4px;
 }
+
+/* 当日タップ時：ビオくん吹き出しモーダル（お電話案内） */
+.rsv-today-phone-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.rsv-today-phone-modal.is-open { display: flex; }
+.rsv-today-phone-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.rsv-today-phone-modal__content {
+  position: relative;
+  background: #fff;
+  border-radius: 22px;
+  padding: 24px 22px 26px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0,0,0,.32);
+  text-align: center;
+  font-family: 'Zen Maru Gothic', 'Noto Sans JP', sans-serif;
+  animation: rsv-today-phone-pop 0.42s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes rsv-today-phone-pop {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.rsv-today-phone-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+}
+.rsv-today-phone-modal__close:hover { background: #e4e4e4; }
+.rsv-today-phone-modal__bot {
+  width: 76px;
+  height: 76px;
+  margin: 4px auto 14px;
+  background: linear-gradient(135deg, #FFD900, #FF6B2B);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  box-shadow: 0 6px 18px rgba(255,107,43,.35);
+  animation: rsv-today-phone-bot-bounce 1.6s ease-in-out infinite;
+}
+@keyframes rsv-today-phone-bot-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.rsv-today-phone-modal__bubble {
+  background: #fffaef;
+  border: 2px solid #ffe6b8;
+  border-radius: 18px;
+  padding: 18px 16px 20px;
+  position: relative;
+}
+.rsv-today-phone-modal__bubble::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid #ffe6b8;
+}
+.rsv-today-phone-modal__bubble::after {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #fffaef;
+}
+.rsv-today-phone-modal__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #FF6B2B;
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+.rsv-today-phone-modal__msg {
+  font-size: 0.92rem;
+  color: #4a3b2a;
+  line-height: 1.65;
+  margin: 0 0 14px;
+}
+.rsv-today-phone-modal__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #FF6B2B, #ff8c4d);
+  color: #fff;
+  padding: 13px 26px;
+  border-radius: 999px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+  margin: 4px 0 6px;
+  box-shadow: 0 6px 16px rgba(255,107,43,.4);
+  letter-spacing: 0.02em;
+  transition: transform 0.15s ease;
+}
+.rsv-today-phone-modal__phone:hover { transform: translateY(-2px); }
+.rsv-today-phone-modal__phone:active { transform: translateY(0); }
+.rsv-today-phone-modal__hours {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 0;
+}
+@media (max-width: 480px) {
+  .rsv-today-phone-modal__content { padding: 22px 18px 24px; border-radius: 20px; }
+  .rsv-today-phone-modal__bot { width: 68px; height: 68px; font-size: 40px; }
+  .rsv-today-phone-modal__title { font-size: 1rem; }
+  .rsv-today-phone-modal__phone { font-size: 1.1rem; padding: 12px 22px; }
+}
 .rsv-day-of-notice__text a {
   color: var(--brown);
   font-weight: 700;
@@ -8330,6 +8470,11 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       btn.dataset.day = dom;
       if (!disabled) {
         btn.addEventListener('click', function(){
+          // 当日タップ：お電話のみ案内モーダルを表示（選択フローには進めない）
+          if (this.classList.contains('is-today')) {
+            showTodayPhoneOnly();
+            return;
+          }
           document.querySelectorAll('.rsv-date').forEach(function(b){
             b.classList.remove('is-selected', 'is-just-selected');
             b.setAttribute('aria-checked','false');
@@ -8566,6 +8711,45 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
   }
 
   var _rsvCelebTimer = null;
+  // 当日タップ時：お電話のみ案内モーダル（ビオくん吹き出し）
+  function showTodayPhoneOnly() {
+    var modal = document.getElementById('rsvTodayPhoneModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'rsvTodayPhoneModal';
+      modal.className = 'rsv-today-phone-modal';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('aria-labelledby', 'rsvTodayPhoneTitle');
+      modal.innerHTML =
+        '<div class="rsv-today-phone-modal__overlay" data-close="1"></div>' +
+        '<div class="rsv-today-phone-modal__content">' +
+          '<button type="button" class="rsv-today-phone-modal__close" aria-label="閉じる" data-close="1">×</button>' +
+          '<div class="rsv-today-phone-modal__bot" aria-hidden="true">🐣</div>' +
+          '<div class="rsv-today-phone-modal__bubble">' +
+            '<p class="rsv-today-phone-modal__title" id="rsvTodayPhoneTitle">当日のご予約はお電話で🌸</p>' +
+            '<p class="rsv-today-phone-modal__msg">当日のご予約は<br><strong>お電話のみ</strong>で承っております🙇‍♀️<br>下記までお気軽にどうぞ💕</p>' +
+            '<a href="tel:098-944-4191" class="rsv-today-phone-modal__phone">📞 098-944-4191</a>' +
+            '<p class="rsv-today-phone-modal__hours">営業時間：9:00〜17:00</p>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(modal);
+      modal.addEventListener('click', function(e){
+        if (e.target.dataset && e.target.dataset.close === '1') {
+          modal.classList.remove('is-open');
+        }
+      });
+      // 電話タップ計測（GA4タグ環境のみ動作）
+      var phoneLink = modal.querySelector('.rsv-today-phone-modal__phone');
+      phoneLink.addEventListener('click', function(){
+        if (typeof gtag === 'function') {
+          gtag('event', 'phone_tap', { event_category: 'CTA', event_label: 'rsv_today_phone_modal' });
+        }
+      });
+    }
+    modal.classList.add('is-open');
+  }
+
   function showDateCelebration(dateBtn) {
     var celebEl = document.getElementById('rsvDateCelebration');
     var titleEl = document.getElementById('rsvCelebrationTitle');

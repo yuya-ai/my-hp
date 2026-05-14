@@ -37,7 +37,7 @@ function buildReservationMessage(p) {
 　${total}
 
 ☎️ お電話
-　${phone}
+　${PHONE}
 
 📍 店舗：いなりとチキン ビオ
 〒901-1206 沖縄県南城市大里字仲間1141
