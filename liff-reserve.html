@@ -200,8 +200,25 @@
   }
 
   var payloadB64 = getPayloadParam();
+
+  // 🌸 payload無しモード：LINEあいさつメッセージのリンク経由でuserId取得 → LPへリダイレクト
   if (!payloadB64) {
-    setError('予約データが見つかりません', '予約フォームからやり直してください🙏');
+    (async function captureAndRedirect() {
+      try {
+        statusEl.textContent = '予約フォームを準備中…';
+        await liff.init({ liffId: LIFF_ID });
+        if (liff.isInClient() && liff.isLoggedIn()) {
+          try {
+            var profile = await liff.getProfile();
+            if (profile && profile.userId) {
+              localStorage.setItem('bio_line_user_id', profile.userId);
+            }
+          } catch (e) { console.warn('profile fetch skipped:', e); }
+        }
+      } catch (e) { console.warn('LIFF init skipped:', e); }
+      // LP本体へ遷移
+      window.location.replace('/');
+    })();
     return;
   }
 
