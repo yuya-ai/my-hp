@@ -2,7 +2,7 @@ const CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID;
 const GAS_WEBHOOK_URL = process.env.GAS_WEBHOOK_URL;
 
-const RESERVE_URL = 'https://my-hp-xi.vercel.app';
+const RESERVE_URL = 'https://liff.line.me/2010011597-5zLtfRAm';
 const PHONE = '098-944-4191';
 
 function decodePayload(b64) {

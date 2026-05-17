@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET;
 const CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 
-const RESERVE_URL = 'https://my-hp-xi.vercel.app';
+const RESERVE_URL = 'https://liff.line.me/2010011597-5zLtfRAm';
 const PHONE = '098-944-4191';
 const MAP_URL = 'https://www.google.com/maps/search/?api=1&query=%E6%B2%96%E7%B8%84%E7%9C%8C%E5%8D%97%E5%9F%8E%E5%B8%82%E5%A4%A7%E9%87%8C%E5%AD%97%E4%BB%B2%E9%96%931141';
 const NAV_URL = 'https://www.google.com/maps/dir/?api=1&destination=%E6%B2%96%E7%B8%84%E7%9C%8C%E5%8D%97%E5%9F%8E%E5%B8%82%E5%A4%A7%E9%87%8C%E5%AD%97%E4%BB%B2%E9%96%931141';
