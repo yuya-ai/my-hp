@@ -455,6 +455,14 @@ module.exports = async (req, res) => {
     const events = data.events || [];
 
     await Promise.all(events.map(async (event) => {
+      // 友だち追加（follow）→ welcome メッセージで案内（初回ユーザーが予約完了時に
+      // oaMessage URL経由で来た場合、この後 BIO_RSV: メッセージが pre-fill されて
+      // 送信される流れ。welcome は「ようこそ」基本案内のみで予約内容には触れない）
+      if (event.type === 'follow') {
+        await replyMessage(event.replyToken, faqAnswers.welcome);
+        return;
+      }
+
       if (event.type === 'message' && event.message.type === 'text') {
         const userText = event.message.text;
 

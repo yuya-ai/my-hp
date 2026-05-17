@@ -5253,8 +5253,8 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       </div>
     </div>
 
-    <!-- LINE友だち追加CTA -->
-    <a href="https://line.me/R/ti/p/@708zxzjm" target="_blank" rel="noopener" class="line-modal__cta" id="lineModalCta">
+    <!-- LINE友だち追加CTA: target="_blank" を外してUniversal Link発火を確実にする（モバイルSafariが新タブで開くとLINE app遷移が失敗するケース対策・2026-05-17 ゆきさんバグ修正） -->
+    <a href="https://line.me/R/ti/p/@708zxzjm" rel="noopener" class="line-modal__cta" id="lineModalCta">
       <span class="line-modal__cta-icon">💬</span>
       <span class="line-modal__cta-text">
         <strong>LINEで予約を完了する</strong>
@@ -8926,63 +8926,72 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
         '💴 ' + totalText;
     }
 
-    // ===== LINE CTA：キャッシュ済みuserIdがあればLIFFスキップ（直LINE app遷移）=====
-    // ★ LIFF ID は LINE Developers Console > LIFFタブ で発行された値に差し替え
+    // ===== LINE CTA：全員に予約内容を届ける2系統設計（2026-05-17 ゆきさんバグ修正）=====
+    //   ・モバイル初回（userId未キャッシュ）→ oaMessage URL で友だち追加 + 予約トークン pre-fill
+    //     → 送信タップで bot が BIO_RSV: を検知して予約内容を自動返信
+    //   ・モバイル2回目以降（userId キャッシュ済）→ タップ瞬間に Push API 発火（自動到着）
+    //   ・PC → 通常友だち追加URL（oaMessageはPC環境で挙動が不安定なため）
     var lineCta = document.getElementById('lineModalCta');
     if (lineCta) {
-      // 全員 直LINE友だち追加URL（1-tapでLINE起動・認証画面ナシ）
-      lineCta.href = 'https://line.me/R/ti/p/@708zxzjm';
+      // ① 予約payload を b64エンコード（全員共通・oaMessage URL/Push API 両方で使用）
+      var savedFlag = (rememberCb && rememberCb.checked) ? 1 : 0;
+      var rsvPayload = {
+        n: name,
+        p: phone,
+        d: dateBtn.dataset.date,
+        dIso: year + '-' + pad2(month) + '-' + pad2(day),
+        t: timeWindow,
+        i: items.join(', '),
+        tt: totalText,
+        s: savedFlag
+      };
+      var b64 = '';
+      try {
+        var jsonStr = JSON.stringify(rsvPayload);
+        var bytes = new TextEncoder().encode(jsonStr);
+        var binStr = '';
+        for (var bi = 0; bi < bytes.length; bi++) binStr += String.fromCharCode(bytes[bi]);
+        b64 = btoa(binStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      } catch (err) {
+        console.error('LINE payload encode failed:', err);
+      }
 
-      // userIdキャッシュ済（2回目以降）はタップ瞬間にPush API発火
+      // ② URL設定：モバイルは oaMessage で予約トークン pre-fill、PCは通常友だち追加
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile && b64) {
+        var prefillText = 'BIO_RSV:' + b64;
+        lineCta.href = 'https://line.me/R/oaMessage/@708zxzjm/?' + encodeURIComponent(prefillText);
+      } else {
+        lineCta.href = 'https://line.me/R/ti/p/@708zxzjm';
+      }
+
+      // ③ userIdキャッシュ済（2回目以降）→ タップ瞬間に Push API 発火（送信タップ不要）
       var cachedUserId = null;
       try { cachedUserId = localStorage.getItem('bio_line_user_id'); } catch (e) {}
 
-      if (cachedUserId) {
-        var savedFlag = (rememberCb && rememberCb.checked) ? 1 : 0;
-        var rsvPayload = {
-          n: name,
-          p: phone,
-          d: dateBtn.dataset.date,
-          dIso: year + '-' + pad2(month) + '-' + pad2(day),
-          t: timeWindow,
-          i: items.join(', '),
-          tt: totalText,
-          s: savedFlag
-        };
-        try {
-          var jsonStr = JSON.stringify(rsvPayload);
-          var bytes = new TextEncoder().encode(jsonStr);
-          var binStr = '';
-          for (var bi = 0; bi < bytes.length; bi++) binStr += String.fromCharCode(bytes[bi]);
-          var b64 = btoa(binStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-
-          lineCta.onclick = function(ev) {
-            try {
-              fetch('/api/send-reserve-push', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: cachedUserId, payload: b64 }),
-                keepalive: true
-              }).catch(function(err){ console.error('cached push failed:', err); });
-            } catch (err) {
-              console.error('cached push sync failed:', err);
+      if (cachedUserId && b64) {
+        lineCta.onclick = function(ev) {
+          try {
+            fetch('/api/send-reserve-push', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: cachedUserId, payload: b64 }),
+              keepalive: true
+            }).catch(function(err){ console.error('cached push failed:', err); });
+          } catch (err) {
+            console.error('cached push sync failed:', err);
+          }
+          // LINE内ブラウザで開いてる場合 → liff.closeWindow()で即LINEチャットに戻る（iOSプロンプトナシ）
+          try {
+            if (typeof liff !== 'undefined' && liff.isInClient && liff.isInClient()) {
+              if (ev && ev.preventDefault) ev.preventDefault();
+              setTimeout(function() { try { liff.closeWindow(); } catch (e) {} }, 200);
+              return false;
             }
-            // LINE内ブラウザで開いてる場合 → liff.closeWindow()で即LINEチャットに戻る（iOSプロンプトナシ）
-            try {
-              if (typeof liff !== 'undefined' && liff.isInClient && liff.isInClient()) {
-                if (ev && ev.preventDefault) ev.preventDefault();
-                // Pushが届くまで一瞬待ってからクローズ（fire-and-forget確保）
-                setTimeout(function() { try { liff.closeWindow(); } catch (e) {} }, 200);
-                return false;
-              }
-            } catch (e) { /* fallback to normal navigation */ }
-          };
-        } catch (err) {
-          console.error('LINE payload encode failed:', err);
-          lineCta.onclick = null;
-        }
+          } catch (e) { /* fallback to normal navigation */ }
+        };
       } else {
-        // 初回（userId未取得）→ Pushはスキップ、友だち追加時の自動応答に任せる
+        // 初回モバイル → oaMessage URLで友だち追加&pre-fillメッセージに任せる（onclick不要）
         lineCta.onclick = null;
       }
     }
