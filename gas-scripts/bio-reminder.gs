@@ -30,10 +30,21 @@ const LINE_TOKEN = PropertiesService.getScriptProperties().getProperty('LINE_CHA
 const STORE_PHONE = '098-944-4191';
 const STORE_ADDR = '〒901-1206 沖縄県南城市大里字仲間1141\n（JAアトールむかい）';
 
-/* ===== Webhook 受信（Vercel から呼ばれる） ===== */
+/* ===== Webhook 受信（Vercel から呼ばれる） =====
+ * action パラメータで処理分岐:
+ *   - 省略 or action="saveReservation" → 予約データをシートに追加（既存動作）
+ *   - action="queryReservation" → userId 別の最新未受取予約を返却（予約確認ボタン用・2026-05-17 追加）
+ */
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
+    const action = data.action || 'saveReservation';
+
+    if (action === 'queryReservation') {
+      return handleQueryReservation(data);
+    }
+
+    // 既存：予約データ保存
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
     if (!sheet) {
       throw new Error('シート「' + SHEET_NAME + '」が見つかりません');
@@ -55,6 +66,104 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     console.error('doPost error:', err);
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/* ===== 予約確認: 該当userIdの最新未受取予約を返却（2026-05-17 追加） ===== */
+function handleQueryReservation(data) {
+  try {
+    const userId = data.userId;
+    if (!userId) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: false, error: 'userId required' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      throw new Error('シート「' + SHEET_NAME + '」が見つかりません');
+    }
+    const rows = sheet.getDataRange().getValues();
+    if (rows.length < 2) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true, found: false }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // userId一致 かつ 未受取（expired じゃない）の予約を探す。複数あれば最も近い予約を返す
+    const now = new Date();
+    let bestRow = null;
+    let bestPickup = null;
+
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      const rowUserId = String(row[5] || '');
+      if (rowUserId !== userId) continue;
+
+      const pickupDateRaw = row[1];
+      const pickupTimeRaw = String(row[2] || '');
+
+      // 受取日パース
+      let pickupDateObj = null;
+      if (pickupDateRaw && typeof pickupDateRaw.getTime === 'function') {
+        pickupDateObj = pickupDateRaw;
+      } else {
+        const raw = String(pickupDateRaw);
+        const tryDate = new Date(raw);
+        if (!isNaN(tryDate.getTime())) {
+          pickupDateObj = tryDate;
+        } else {
+          const jp = raw.match(/(\d{1,2})月(\d{1,2})日/);
+          if (jp) {
+            pickupDateObj = new Date(now.getFullYear(), Number(jp[1]) - 1, Number(jp[2]));
+          }
+        }
+      }
+      if (!pickupDateObj || isNaN(pickupDateObj.getTime())) continue;
+
+      // 受取時刻パース
+      const timeMatch = pickupTimeRaw.match(/(\d{1,2}):(\d{2})/);
+      const pickupH = timeMatch ? Number(timeMatch[1]) : 23;
+      const pickupMin = timeMatch ? Number(timeMatch[2]) : 59;
+      const pickupDateTime = new Date(
+        pickupDateObj.getFullYear(),
+        pickupDateObj.getMonth(),
+        pickupDateObj.getDate(),
+        pickupH,
+        pickupMin
+      );
+
+      // 既に過ぎた予約はスキップ
+      if (pickupDateTime < now) continue;
+
+      // 最も近い未受取予約を選ぶ
+      if (bestPickup === null || pickupDateTime < bestPickup) {
+        bestPickup = pickupDateTime;
+        bestRow = {
+          pickupDate: Utilities.formatDate(pickupDateObj, 'Asia/Tokyo', 'yyyy-MM-dd (E)'),
+          pickupTime: pickupTimeRaw,
+          name: row[3] || 'お客様',
+          phone: row[4] || '',
+          items: row[6] || '',
+          total: row[7] || '',
+        };
+      }
+    }
+
+    if (bestRow) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true, found: true, reservation: bestRow }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } else {
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true, found: false }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (err) {
+    console.error('handleQueryReservation error:', err);
     return ContentService
       .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
       .setMimeType(ContentService.MimeType.JSON);

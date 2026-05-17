@@ -2,6 +2,7 @@ const crypto = require('crypto');
 
 const CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET;
 const CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+const GAS_WEBHOOK_URL = process.env.GAS_WEBHOOK_URL;
 
 const RESERVE_URL = 'https://liff.line.me/2010011597-5zLtfRAm';
 const PHONE = '098-944-4191';
@@ -410,6 +411,61 @@ function verifySignature(rawBody, signature) {
   return expected === signature;
 }
 
+// 予約確認: GAS の handleQueryReservation を呼んで userId 別の最新未受取予約を取得し
+// LINE bot reply 用のテキストに整形する（2026-05-17 追加）
+async function buildQueryReservationReply(userId) {
+  if (!GAS_WEBHOOK_URL) {
+    return 'ごめんね💦 予約確認システムが準備中だよ。お電話で確認してね🐣\n📞 ' + PHONE;
+  }
+  try {
+    const res = await fetch(GAS_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'queryReservation', userId }),
+    });
+    if (!res.ok) {
+      console.error('GAS queryReservation HTTP error:', res.status);
+      return 'うーん、予約データの取得に時間がかかってるよ💦\nもう一度試すか、お電話で確認してね🐣\n📞 ' + PHONE;
+    }
+    const data = await res.json();
+    if (!data.ok) {
+      console.error('GAS queryReservation error:', data.error);
+      return 'うーん、予約データの取得でエラーが出たよ💦\nお電話で確認してね🐣\n📞 ' + PHONE;
+    }
+    if (!data.found || !data.reservation) {
+      return '今のところ、次のご予約は見つからなかったよ🐣\n\n新しくご予約する場合はこちら👇\n📲 ' + RESERVE_URL + '\n\n何かあればお電話でも🌸\n📞 ' + PHONE;
+    }
+    const r = data.reservation;
+    return `${r.name}様 🌸
+
+ご予約の確認だよ🐣✨
+━━━━━━━━━━━━━━━
+📅 ご予約日時
+　${r.pickupDate} ${r.pickupTime}
+
+🍱 ご注文内容
+　${r.items}
+
+💴 合計金額
+　${r.total}
+
+📍 店舗：いなりとチキン ビオ
+〒901-1206 沖縄県南城市大里字仲間1141
+（JAアトールむかい）
+
+🚫 お支払い方法：現金のみ
+━━━━━━━━━━━━━━━
+
+🌺 ${r.name}様にお会いできるのを、ビオ一同、楽しみにしてるよ🌸✨
+
+何か変更があればお電話で🐣
+📞 ` + PHONE;
+  } catch (err) {
+    console.error('buildQueryReservationReply error:', err);
+    return 'ごめんね💦 予約確認システムに繋がらなかったよ。\nお電話で確認してね🐣\n📞 ' + PHONE;
+  }
+}
+
 async function replyMessage(replyToken, text) {
   const res = await fetch('https://api.line.me/v2/bot/message/reply', {
     method: 'POST',
@@ -461,12 +517,24 @@ module.exports = async (req, res) => {
 
       if (event.type === 'message' && event.message.type === 'text') {
         const userText = event.message.text;
+        const eventUserId = event.source && event.source.userId;
 
         // userId取得コマンド（管理者通知の初期設定用）
         if (/^(userid|uid|id教えて|アイディー)$/i.test(userText.trim())) {
-          const uid = (event.source && event.source.userId) || '取得失敗';
+          const uid = eventUserId || '取得失敗';
           await replyMessage(event.replyToken,
             `あなたのuserIdはこちら👇\n\n${uid}\n\nこのIDを Vercel の環境変数 ADMIN_USER_ID に設定すると、新規予約があった時に自動で通知が届くようになります🐣✨`);
+          return;
+        }
+
+        // 予約確認コマンド（リッチメニュー「予約確認」ボタンから・2026-05-17 追加）
+        // userId別の最新未受取予約をGASから取得して返信。応答メッセージ扱いで通数消費ゼロ
+        if (/^(予約確認|予約の確認|マイ予約|予約状況|予約チェック)$/.test(userText.trim())) {
+          if (!eventUserId) {
+            await replyMessage(event.replyToken, 'ごめんね💦 userIdが取得できなかったよ。もう一度試してみてね🐣');
+            return;
+          }
+          await replyMessage(event.replyToken, await buildQueryReservationReply(eventUserId));
           return;
         }
 
