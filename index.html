@@ -4053,6 +4053,46 @@ html.rsv-fx-locked {
   border-radius: 14px;
   border: 1.5px dashed var(--brown);
 }
+/* 補助通知としての強調バージョン（2026-05-17 Push枠切れ対策・カレンダー登録誘導） */
+.line-modal__cal-section--featured {
+  margin-top: 24px;
+  padding: 22px 20px 20px;
+  background: linear-gradient(135deg, #fff4d6 0%, #ffe9b3 100%);
+  border: 3px solid var(--orange, #FF6B2B);
+  box-shadow: 0 6px 0 rgba(255, 107, 43, 0.25), 0 0 0 4px rgba(255, 107, 43, 0.08);
+  position: relative;
+  animation: bioCalPulse 2.5s ease-in-out infinite;
+}
+@keyframes bioCalPulse {
+  0%, 100% { box-shadow: 0 6px 0 rgba(255, 107, 43, 0.25), 0 0 0 4px rgba(255, 107, 43, 0.08); }
+  50% { box-shadow: 0 6px 0 rgba(255, 107, 43, 0.35), 0 0 0 8px rgba(255, 107, 43, 0.15); }
+}
+.line-modal__cal-badge {
+  display: inline-block;
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--orange, #FF6B2B);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 6px 16px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  box-shadow: 0 3px 8px rgba(255, 107, 43, 0.4);
+}
+.line-modal__cal-section--featured .line-modal__cal-title {
+  font-size: 1.05rem;
+  color: var(--brown);
+  margin-top: 4px;
+}
+.line-modal__cal-section--featured .line-modal__cal-sub {
+  color: var(--brown);
+  font-weight: 600;
+  opacity: 0.85;
+}
 .line-modal__cal-title {
   margin: 0 0 10px;
   font-size: 0.95rem;
@@ -5293,10 +5333,11 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       </span>
     </a>
 
-    <!-- キャンセル防止：カレンダー登録セクション -->
-    <div class="line-modal__cal-section">
-      <p class="line-modal__cal-title">📅 カレンダーに登録 <span>→ 当日に自動でお知らせ🔔</span></p>
-      <p class="line-modal__cal-sub"><span>ご予約日を忘れないよう</span><span>カレンダーにも登録すると安心です🌸</span></p>
+    <!-- キャンセル防止：カレンダー登録セクション（補助通知として格上げ・2026-05-17） -->
+    <div class="line-modal__cal-section line-modal__cal-section--featured">
+      <p class="line-modal__cal-badge">🐣 ビオくんからの追加おすすめ</p>
+      <p class="line-modal__cal-title">📅 カレンダーに登録すれば1日前にも通知届くよ🌸</p>
+      <p class="line-modal__cal-sub"><span>LINE通知に加えて、</span><span>カレンダーでも自動でお知らせ🔔</span></p>
       <div class="line-modal__cal-btns">
         <a href="#" id="lineModalCalGoogle" target="_blank" rel="noopener" class="line-modal__cal-btn line-modal__cal-btn--google">
           📅 Google カレンダー
@@ -9002,55 +9043,70 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 
       if (cachedUserId && b64) {
         if (window.bioDebug) window.bioDebug('CTA setup: cachedUserId present, Push経路有効');
-        lineCta.onclick = function(ev) {
-          if (window.bioDebug) window.bioDebug('CTA tapped: Push API呼び出し開始');
 
-          // デバッグモード時：preventDefault + レスポンス待ち + 結果表示
-          if (window.__bioDebugMode) {
-            if (ev && ev.preventDefault) ev.preventDefault();
-            fetch('/api/send-reserve-push', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: cachedUserId, payload: b64 })
-            }).then(function(r) {
-              return r.text().then(function(text) { return { status: r.status, body: text }; });
-            }).then(function(result) {
-              window.bioDebug('Push response: ' + result.status + ' / ' + result.body);
-              setTimeout(function() {
-                try {
-                  if (typeof liff !== 'undefined' && liff.isInClient && liff.isInClient()) {
-                    liff.closeWindow();
-                  } else {
-                    window.location.href = lineCta.href;
-                  }
-                } catch (e) { window.location.href = lineCta.href; }
-              }, 5000);
-            }).catch(function(err) {
-              window.bioDebug('Push fetch error: ' + (err && err.message));
-              setTimeout(function() { window.location.href = lineCta.href; }, 5000);
-            });
-            return false;
-          }
+        // 自動フォールバック関数（Push失敗時に oaMessage URL へ）
+        var fallbackToOaMessage = function() {
+          var fallbackUrl = 'https://line.me/R/oaMessage/@708zxzjm/?' + encodeURIComponent('BIO_RSV:' + b64);
+          if (window.bioDebug) window.bioDebug('→ oaMessage fallback: ' + fallbackUrl.substr(0, 80) + '...');
+          window.location.href = fallbackUrl;
+        };
 
-          // 通常モード：fire-and-forget でPush発火
-          try {
-            fetch('/api/send-reserve-push', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: cachedUserId, payload: b64 }),
-              keepalive: true
-            }).catch(function(err){ console.error('cached push failed:', err); });
-          } catch (err) {
-            console.error('cached push sync failed:', err);
-          }
-          // LINE内ブラウザで開いてる場合 → liff.closeWindow()で即LINEチャットに戻る（iOSプロンプトナシ）
+        var goToLineSuccess = function() {
           try {
             if (typeof liff !== 'undefined' && liff.isInClient && liff.isInClient()) {
-              if (ev && ev.preventDefault) ev.preventDefault();
-              setTimeout(function() { try { liff.closeWindow(); } catch (e) {} }, 200);
-              return false;
+              liff.closeWindow();
+              return;
             }
-          } catch (e) { /* fallback to normal navigation */ }
+          } catch (e) {}
+          window.location.href = 'https://line.me/R/ti/p/@708zxzjm';
+        };
+
+        lineCta.onclick = function(ev) {
+          if (window.bioDebug) window.bioDebug('CTA tapped: Push API呼び出し開始');
+          if (ev && ev.preventDefault) ev.preventDefault();
+
+          // ボタンを「送信中」表示に切替（ユーザーが連打しないよう）
+          var ctaText = lineCta.querySelector('.line-modal__cta-text strong');
+          var originalText = ctaText ? ctaText.textContent : null;
+          if (ctaText) ctaText.textContent = '送信中...';
+          lineCta.style.pointerEvents = 'none';
+          lineCta.style.opacity = '0.7';
+
+          // 5秒タイムアウト：レスポンス遅延時も必ず遷移
+          var timeoutId = setTimeout(function() {
+            if (window.bioDebug) window.bioDebug('Push timeout (5s) → fallback');
+            fallbackToOaMessage();
+          }, 5000);
+
+          fetch('/api/send-reserve-push', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: cachedUserId, payload: b64 })
+          }).then(function(r) {
+            clearTimeout(timeoutId);
+            if (window.bioDebug) window.bioDebug('Push response: ' + r.status);
+            if (r.ok) {
+              // 成功 → LINEトーク画面に戻る（デバッグ時は表示時間確保）
+              var delay = window.__bioDebugMode ? 3000 : 200;
+              setTimeout(goToLineSuccess, delay);
+            } else {
+              // 429（枠切れ）等のエラー → 自動でoaMessageに切替
+              if (window.bioDebug) {
+                r.text().then(function(t) { window.bioDebug('Push error body: ' + t); });
+                setTimeout(fallbackToOaMessage, 3000);
+              } else {
+                fallbackToOaMessage();
+              }
+            }
+          }).catch(function(err) {
+            clearTimeout(timeoutId);
+            if (window.bioDebug) window.bioDebug('Push fetch error: ' + (err && err.message));
+            // ネットワークエラー等 → oaMessage fallback
+            var delay = window.__bioDebugMode ? 3000 : 0;
+            setTimeout(fallbackToOaMessage, delay);
+          });
+
+          return false;
         };
       } else {
         if (window.bioDebug) window.bioDebug('CTA setup: cachedUserIdなし → oaMessage URLにfallback');
