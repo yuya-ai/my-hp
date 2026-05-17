@@ -4093,6 +4093,100 @@ html.rsv-fx-locked {
   font-weight: 600;
   opacity: 0.85;
 }
+/* ビオくんキャラクター吹き出し（2026-05-17 カレンダー登録誘導の演出強化） */
+.bio-cal-character {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 14px 4px 18px;
+}
+.bio-cal-character__avatar {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  background: #fff;
+  border: 3px solid var(--orange, #FF6B2B);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+  animation: bioCharBobble 2.2s ease-in-out infinite;
+}
+.bio-cal-character__avatar-emoji {
+  font-size: 2rem;
+  line-height: 1;
+  display: block;
+}
+@keyframes bioCharBobble {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
+}
+.bio-cal-character__bubble {
+  flex: 1;
+  background: #fff;
+  border: 2px solid var(--brown, #231815);
+  border-radius: 14px;
+  padding: 10px 14px;
+  position: relative;
+  text-align: left;
+  box-shadow: 2px 2px 0 var(--brown, #231815);
+}
+.bio-cal-character__bubble::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 18px;
+  width: 0;
+  height: 0;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+  border-right: 12px solid var(--brown, #231815);
+}
+.bio-cal-character__bubble::after {
+  content: '';
+  position: absolute;
+  left: -9px;
+  top: 19px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 11px solid #fff;
+}
+.bio-cal-character__name {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--orange, #FF6B2B);
+  letter-spacing: 0.02em;
+}
+.bio-cal-character__text {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--brown, #231815);
+  line-height: 1.55;
+}
+.bio-cal-character__text small {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  opacity: 0.78;
+}
+@media (max-width: 767px) {
+  .bio-cal-character__avatar {
+    width: 48px;
+    height: 48px;
+  }
+  .bio-cal-character__avatar-emoji {
+    font-size: 1.7rem;
+  }
+  .bio-cal-character__text {
+    font-size: 0.88rem;
+  }
+}
 .line-modal__cal-title {
   margin: 0 0 10px;
   font-size: 0.95rem;
@@ -5333,11 +5427,20 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       </span>
     </a>
 
-    <!-- キャンセル防止：カレンダー登録セクション（補助通知として格上げ・2026-05-17） -->
+    <!-- キャンセル防止：カレンダー登録セクション（ビオくん吹き出し演出版・2026-05-17） -->
     <div class="line-modal__cal-section line-modal__cal-section--featured">
-      <p class="line-modal__cal-badge">🐣 ビオくんからの追加おすすめ</p>
-      <p class="line-modal__cal-title">📅 カレンダーに登録すれば1日前にも通知届くよ🌸</p>
-      <p class="line-modal__cal-sub"><span>LINE通知に加えて、</span><span>カレンダーでも自動でお知らせ🔔</span></p>
+      <p class="line-modal__cal-badge">📅 カレンダー登録</p>
+
+      <!-- ビオくんキャラクター吹き出し -->
+      <div class="bio-cal-character">
+        <div class="bio-cal-character__avatar">
+          <span class="bio-cal-character__avatar-emoji">🐣</span>
+        </div>
+        <div class="bio-cal-character__bubble">
+          <p class="bio-cal-character__name">ビオくん</p>
+          <p class="bio-cal-character__text">予約日、忘れないように<br>カレンダー登録してね🌸<br><small>1日前にお知らせが届くよ🔔</small></p>
+        </div>
+      </div>
       <div class="line-modal__cal-btns">
         <a href="#" id="lineModalCalGoogle" target="_blank" rel="noopener" class="line-modal__cal-btn line-modal__cal-btn--google">
           📅 Google カレンダー
