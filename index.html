@@ -4895,28 +4895,59 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
 <!-- LIFF SDK：LINE内ブラウザで開かれた時に裏でuserId取得 -->
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
 <script>
+  // 診断モード（URL に ?debug=1 付きで開いた時にデバッグログを画面に表示）
+  window.__bioDebugMode = (location.search.indexOf('debug=1') !== -1);
+  window.bioDebug = function(msg) {
+    if (!window.__bioDebugMode) return;
+    var el = document.getElementById('bio-debug-panel');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'bio-debug-panel';
+      el.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;font:11px ui-monospace,monospace;padding:8px;z-index:99999;max-height:40vh;overflow-y:auto;white-space:pre-wrap;line-height:1.4;';
+      if (document.body) document.body.appendChild(el);
+      else document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(el); });
+    }
+    var ts = new Date().toISOString().substr(14,5);
+    el.innerHTML = el.innerHTML + ts + ' ' + msg + '\n';
+    el.scrollTop = el.scrollHeight;
+  };
+
   // LIFF silent userId capture: LINE内ブラウザで開かれた時だけ動作
   // 外部Safari/Chromeでは何もしない（認証画面を出さない）
   (function() {
     var BIO_LIFF_ID = '2010011597-5zLtfRAm';
     window.__bioLiffReady = new Promise(function(resolve) {
       window.addEventListener('load', async function() {
+        window.bioDebug('LIFF SDK loaded: ' + (typeof liff !== 'undefined'));
         if (typeof liff === 'undefined') { resolve(false); return; }
         try {
           await liff.init({ liffId: BIO_LIFF_ID });
+          var isInClient = liff.isInClient();
+          var isLoggedIn = liff.isLoggedIn();
+          window.bioDebug('LIFF init OK / isInClient=' + isInClient + ' / isLoggedIn=' + isLoggedIn);
           // LINEアプリ内ブラウザ かつ ログイン済みの時だけuserId取得
-          if (liff.isInClient() && liff.isLoggedIn()) {
+          if (isInClient && isLoggedIn) {
             try {
               var profile = await liff.getProfile();
               if (profile && profile.userId) {
                 try { localStorage.setItem('bio_line_user_id', profile.userId); } catch (e) {}
+                window.bioDebug('userId saved: ' + profile.userId.substr(0, 8) + '...');
+              } else {
+                window.bioDebug('getProfile returned empty profile');
               }
-            } catch (e) { console.warn('LIFF profile fetch skipped:', e); }
+            } catch (e) {
+              window.bioDebug('getProfile failed: ' + (e && e.message));
+              console.warn('LIFF profile fetch skipped:', e);
+            }
             resolve(true);
             return;
+          } else if (isInClient && !isLoggedIn) {
+            window.bioDebug('LINE内ブラウザだがログイン未済');
+          } else if (!isInClient) {
+            window.bioDebug('LINE内ブラウザではない（外部ブラウザ）');
           }
         } catch (e) {
-          // LIFF init失敗（外部ブラウザ等）→ 完全にスキップ
+          window.bioDebug('LIFF init failed: ' + (e && e.message));
         }
         resolve(false);
       });
@@ -8970,7 +9001,38 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       try { cachedUserId = localStorage.getItem('bio_line_user_id'); } catch (e) {}
 
       if (cachedUserId && b64) {
+        if (window.bioDebug) window.bioDebug('CTA setup: cachedUserId present, Push経路有効');
         lineCta.onclick = function(ev) {
+          if (window.bioDebug) window.bioDebug('CTA tapped: Push API呼び出し開始');
+
+          // デバッグモード時：preventDefault + レスポンス待ち + 結果表示
+          if (window.__bioDebugMode) {
+            if (ev && ev.preventDefault) ev.preventDefault();
+            fetch('/api/send-reserve-push', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: cachedUserId, payload: b64 })
+            }).then(function(r) {
+              return r.text().then(function(text) { return { status: r.status, body: text }; });
+            }).then(function(result) {
+              window.bioDebug('Push response: ' + result.status + ' / ' + result.body);
+              setTimeout(function() {
+                try {
+                  if (typeof liff !== 'undefined' && liff.isInClient && liff.isInClient()) {
+                    liff.closeWindow();
+                  } else {
+                    window.location.href = lineCta.href;
+                  }
+                } catch (e) { window.location.href = lineCta.href; }
+              }, 5000);
+            }).catch(function(err) {
+              window.bioDebug('Push fetch error: ' + (err && err.message));
+              setTimeout(function() { window.location.href = lineCta.href; }, 5000);
+            });
+            return false;
+          }
+
+          // 通常モード：fire-and-forget でPush発火
           try {
             fetch('/api/send-reserve-push', {
               method: 'POST',
@@ -8991,6 +9053,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
           } catch (e) { /* fallback to normal navigation */ }
         };
       } else {
+        if (window.bioDebug) window.bioDebug('CTA setup: cachedUserIdなし → oaMessage URLにfallback');
         // 初回モバイル → oaMessage URLで友だち追加&pre-fillメッセージに任せる（onclick不要）
         lineCta.onclick = null;
       }
