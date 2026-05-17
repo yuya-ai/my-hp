@@ -1,9 +1,41 @@
 const CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID;
 const GAS_WEBHOOK_URL = process.env.GAS_WEBHOOK_URL;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 const RESERVE_URL = 'https://liff.line.me/2010011597-5zLtfRAm';
 const PHONE = '098-944-4191';
+
+// 月間メッセージ枠切れ等の重大エラー時に Yuya にメール通知
+// RESEND_API_KEY と ADMIN_EMAIL の両方が設定されている時のみ動作
+async function sendAlertEmail(subject, body) {
+  if (!RESEND_API_KEY || !ADMIN_EMAIL) {
+    console.warn('Resend not configured (set RESEND_API_KEY and ADMIN_EMAIL to enable alerts)');
+    return;
+  }
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Bio Alert <onboarding@resend.dev>',
+        to: [ADMIN_EMAIL],
+        subject,
+        text: body,
+      }),
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      console.error('Resend send failed:', res.status, t);
+    }
+  } catch (e) {
+    console.error('Resend send exception:', e);
+  }
+}
 
 function decodePayload(b64) {
   const std = b64.replace(/-/g, '+').replace(/_/g, '/');
@@ -189,6 +221,36 @@ module.exports = async (req, res) => {
   } catch (e) {
     console.error('send-reserve-push error:', e);
     const status = e.status || 500;
+
+    // 月間メッセージ枠切れ（429）の場合、Yuyaにメールアラート送信
+    // 同一エラーで毎回メールが飛ばないよう、1時間に1通の頻度制限は今回未実装
+    // （429自体が頻繁に起きるエラーじゃないため・必要なら後で追加）
+    if (status === 429 || (e.message && e.message.indexOf('monthly limit') !== -1)) {
+      try {
+        await sendAlertEmail(
+          '🚨【ビオLINE】月200通枠切れアラート',
+          [
+            'ビオ公式LINEの月間メッセージ枠（200通）を使い切りました。',
+            '予約完了通知のPush APIが429エラーを返している状態です。',
+            '',
+            `発生時刻: ${new Date().toISOString()}`,
+            `エラー詳細: ${e.message}`,
+            '',
+            '【対応方法】',
+            '1) 毎月1日 0:00（日本時間）に自動リセットを待つ',
+            '2) または LINE Manager でライトプラン（月5,000円）に変更',
+            '   → 5,000通まで即時利用可能',
+            '',
+            'LINE Manager: https://manager.line.biz/',
+            '',
+            '※このメールは、429エラーが発生するたびに送信されます。',
+          ].join('\n')
+        );
+      } catch (alertErr) {
+        console.error('alert email failed:', alertErr);
+      }
+    }
+
     return res.status(status).json({ error: e.message || 'internal error' });
   }
 };
