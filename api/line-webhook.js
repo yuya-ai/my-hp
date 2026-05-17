@@ -455,13 +455,9 @@ module.exports = async (req, res) => {
     const events = data.events || [];
 
     await Promise.all(events.map(async (event) => {
-      // 友だち追加（follow）→ welcome メッセージで案内（初回ユーザーが予約完了時に
-      // oaMessage URL経由で来た場合、この後 BIO_RSV: メッセージが pre-fill されて
-      // 送信される流れ。welcome は「ようこそ」基本案内のみで予約内容には触れない）
-      if (event.type === 'follow') {
-        await replyMessage(event.replyToken, faqAnswers.welcome);
-        return;
-      }
+      // 友だち追加（follow）時は何も送らない（完全ミニマル運用・2026-05-17 Yuya確定）
+      // → リッチメニューだけ表示・メッセージ消費ゼロ
+      // welcome テキストは不要、bot とのトークは「予約」リッチメニュータップ起点
 
       if (event.type === 'message' && event.message.type === 'text') {
         const userText = event.message.text;
