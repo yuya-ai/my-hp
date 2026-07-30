@@ -5814,6 +5814,7 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
       <details class="faq-item">
         <summary class="faq-item__q">Q. アレルギー対応はしていますか？</summary>
         <p class="faq-item__a">主な原材料は、<strong>米・酢・砂糖・油揚げ</strong>（いなり寿司）、<strong>鶏肉・小麦粉・にんにく・醤油・卵</strong>（ガーリックチキン）です。アレルギー成分について詳細をお知りになりたい場合は、お電話（<a href="tel:098-944-4191">098-944-4191</a>）にてお気軽にお問い合わせください。</p>
+        <button type="button" class="faq-allergy-btn" onclick="window.bioAskAllergy&&window.bioAskAllergy()" style="display:inline-flex;align-items:center;gap:8px;margin-top:16px;background:#FF6B2B;color:#fff;border:none;border-radius:999px;padding:14px 28px;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 5px 16px rgba(255,107,43,.32);font-family:inherit;transition:transform .15s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">🐣 アレルギーのご質問はこちらをタップ</button>
       </details>
 
     </div>
@@ -6652,6 +6653,20 @@ body.chat-active .float-stack .social-btn[data-tooltip].show-tip::before {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleWindow(); }
   });
   closeBtn.addEventListener('click', closeWindow);
+
+  // 🐣 外部（FAQの「こちらをタップ」）からビオくんのアレルギー解説を開く公開関数
+  window.bioAskAllergy = function() {
+    if (!chatWindow.classList.contains('is-open')) {
+      chatWindow.classList.add('is-open');
+      chatWindow.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('chat-active');
+    }
+    pushUserMsg('⚠️ アレルギー・原材料について教えて');
+    pushBotMsg(faqAnswers.allergy);
+    try { logChatEvent('faq_tap', { label: 'allergy_from_faq', key: 'allergy' }); } catch (e) {}
+    setTimeout(scrollToLatestUserQuestion, 60);
+    setTimeout(scrollToLatestUserQuestion, 320);
+  };
 
   function pushUserMsg(text) {
     var userMsg = document.createElement('div');
