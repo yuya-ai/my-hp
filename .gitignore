@@ -3,3 +3,9 @@
 .claude/
 images/
 my-hp/
+.vercel
+.netlify/
+
+# リッチメニュー試作（没案・1枚3〜4MB）— 採用版 bio-rich-menu.jpg と生成元 rich-menu-source.html のみ管理
+bio-rich-menu-*.png
+bio-rich-menu-*.jpg

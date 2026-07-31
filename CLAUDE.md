@@ -2,8 +2,22 @@
 
 ## このプロジェクトについて
 - **場所:** `/Users/apple/Desktop/my-hp/`
-- **メインファイル:** `index.html`（CSS・JS込みの self-contained）
+- **メインファイル:** `index.html`（最新の公開版・CSS・JS込みの self-contained）
 - **画像フォルダ:** `bio/`
+- **公開URL（Netlify・チャットボット稼働）:** https://scintillating-taffy-31cfc8.netlify.app/
+- **公開URL（Vercel・SEO/Search Console 登録先）:** https://my-hp-xi.vercel.app/
+
+## デプロイについて
+
+- **手動デプロイ**：ユーザーが「デプロイして」「公開して」と明示した時のみ実行する
+- デプロイコマンド: `npx --yes netlify-cli@latest deploy --prod --dir=.`
+- Vercel は main への push で自動デプロイ
+
+## チャットボット（ビオくん）
+
+- サーバー処理: `netlify/functions/chat.js`（Anthropic API 呼び出し）
+- APIキーは Netlify の環境変数 `ANTHROPIC_API_KEY`（コードには書かない）
+- ルーティング: `netlify.toml` の `/api/chat` → `/.netlify/functions/chat`
 
 ## 画像ファイル一覧
 
